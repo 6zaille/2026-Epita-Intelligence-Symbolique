@@ -314,60 +314,125 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### A1 — Preuve formelle d'algorithme par Lean 4
 
-**Description :** Prouver formellement la correction d'un algorithme classique (tri, recherche, plus court chemin) en Lean 4 avec Mathlib. Definir les types inductifs, les proprietes fonctionnelles, et mener la preuve en mode tactique.
+La preuve formelle d'algorithmes en Lean 4 consiste a specifier la correction fonctionnelle d'un algorithme classique (tri insertion, recherche dichotomique, plus court chemin de Dijkstra) en utilisant le systeme de types dependants de Lean et la bibliotheque Mathlib4. L'etudiant definit les types inductifs (listes, arbres, graphes), exprime les proprietes sous forme de theoremes (tri : la sortie est triee et est une permutation de l'entree ; recherche : le resultat est un element de la collection s'il existe), et mene la preuve en mode tactique. Ce sujet permet de maitriser le moteur de preuves, les tactiques (intro, apply, exact, simp, omega, linarith), et la specification formelle de programmes. L'approche est fondamentalement differente de la verification par tests : elle garantit la correction pour toutes les entrees possibles.
 
-**Notebooks CoursIA :** Lean-1 a Lean-6
+### Objectifs
+- Installer l'environnement Lean 4 (elan, lake, VS Code extension) et se familiariser avec le mode tactique sur des preuves simples d'egalite et de logique propositionnelle
+- Prouver la correction d'un algorithme de tri (insertion sort ou merge sort) : definir `Sorted` et `Perm` comme predicates inductifs, puis prouver `sorted (sort l)` et `Perm l (sort l)`
+- Etendre a un algorithme de recherche (dichotomique sur tableau trie) ou de plus court chemin (Dijkstra sur graphe pondere), en specifiant la precondition et la postcondition
+- Comparer la difficulte de preuve entre un algorithme impératif (tableaux, boucles while) et un algorithme fonctionnel (recursif, pattern matching)
+- Documenter les tactiques les plus utiles et les patterns de preuve recurents dans un notebook explicatif
 
-**Technologies :** Lean 4, Mathlib4, VS Code + lean4 extension
+### Notebooks CoursIA pertinents
 
-**References :**
-- Avigad, J. et al., *Theorem Proving in Lean 4*, 2024
-- Mathlib Community, *The Mathematical Library of Lean 4*, [GitHub](https://github.com/leanprover-community/mathlib4)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Lean-1 Setup | [SymbolicAI/Lean/Lean-1-Setup.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-1-Setup.ipynb) | Installation, premieres preuves |
+| Lean-2 Dependent Types | [SymbolicAI/Lean/Lean-2-DependentTypes.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2-DependentTypes.ipynb) | Types dependants, specifications |
+| Lean-3 Propositions | [SymbolicAI/Lean/Lean-3-Propositions.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-3-Propositions.ipynb) | Theoremes, tactiques de base |
+| Lean-5 Tactics | [SymbolicAI/Lean/Lean-5-Tactics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-5-Tactics.ipynb) | Tactiques avancees (simp, omega) |
 
-**Difficulte :** 3/5
+### References externes
+- Avigad, J. et al. (2024). *Theorem Proving in Lean 4*. [lean-lang.org](https://lean-lang.org/theorem_proving_in_lean4/)
+- Mathlib Community. *The Mathematical Library of Lean 4*. [GitHub](https://github.com/leanprover-community/mathlib4)
+- Ullrich, S. & de Moura, L. (2023). "Beyond Notations: Hygienic Macro Expansion for Theorem Proving Languages." *JAR*. [Springer](https://link.springer.com/article/10.1007/s10817-022-09634-1)
+- Lean 4 Reference Manual. [lean-lang.org/lean4/doc/](https://lean-lang.org/lean4/doc/)
+- Lammich, P. (2023). "Verified Efficient Implementation of Graph Algorithms." *ITP*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-40355-9_12)
+
+### Difficulte : 3/5
+
+---
 
 #### A2 — Agent LLM-assiste pour la preuve formelle
 
-**Description :** Construire un agent qui utilise un LLM (via Semantic Kernel ou API) pour suggerer des tactiques de preuve en Lean 4, en s'appuyant sur LeanCopilot et LeanDojo. L'agent analyse l'etat de la preuve, genere des candidats tactiques, et les valide.
+L'integration des LLM dans les assistants de preuve est l'une des avances les plus prometteuses de l'IA symbolique recente. Ce sujet consiste a construire un agent qui analyse l'etat courant d'une preuve Lean 4 (buts, hypotheses, contexte), utilise un LLM (via Semantic Kernel ou API directe) pour suggerer des candidats tactiques, et les valide en les soumettant au moteur de preuve. L'agent s'appuie sur LeanCopilot (inference de tactiques par modele de langage) et LeanDojo (extraction de donnees d'entrainement et interaction programmatique avec Lean). Le defi est de gerer l'arbre de recherche (backtracking quand une tactique echoue), le contexte mathematique (formater l'etat de preuve pour le LLM), et la selection des meilleurs candidats. L'evaluation se fait sur un benchmark de theoremes Mathlib.
 
-**Notebooks CoursIA :** Lean-7, Lean-8, Lean-9, Lean-10
+### Objectifs
+- Installer et configurer LeanCopilot comme plugin Lean 4, comprendre l'API de suggestion de tactiques et le format d'entree/sortie
+- Implementer un agent de recherche qui interroge le LLM pour chaque but, collecte les suggestions tactiques, les essaie, et effectue un backtracking en cas d'echec (strategie BFS ou DFS avec timeout)
+- Intégrer LeanDojo pour l'extraction du contexte de preuve (hypotheses, buts, declarations importees) et le formatage en prompt pour le LLM
+- Evaluer l'agent sur un sous-ensemble de theoremes Mathlib4 (ex: top 100 theoremes du tutorial) et mesurer le taux de succes, le nombre de tactiques essayees, et le temps moyen par preuve
+- Comparer les performances de l'agent avec la recherche exhaustive (tactiques enumerees) et avec AlphaProof/DeepSeek-Prover sur les memes theoremes
 
-**Technologies :** Lean 4, LeanCopilot, LeanDojo, Semantic Kernel, OpenAI API
+### Notebooks CoursIA pertinents
 
-**References :**
-- Song, D. et al., *Lean Copilot: LLMs as Copilots for Theorem Proving in Lean*, NeuS 2025 (PMLR v288)
-- Yang, K. & Deng, J., *LeanDojo: Theorem Proving with Retrieval-Augmented Language Models*, NeurIPS 2023
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Lean-7 LLM Integration | [SymbolicAI/Lean/Lean-7-LLMIntegration.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLMIntegration.ipynb) | LLM + Lean, suggestions tactiques |
+| Lean-8 Agentic Proving | [SymbolicAI/Lean/Lean-8-AgenticProving.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-8-AgenticProving.ipynb) | Agent autonome de preuve |
+| Lean-9 SK Multi-Agents | [SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb) | Orchestration multi-agents |
+| Lean-10 LeanDojo | [SymbolicAI/Lean/Lean-10-LeanDojo.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-10-LeanDojo.ipynb) | Interaction programmatique |
 
-**Difficulte :** 4/5
+### References externes
+- Song, D. et al. (2025). "Lean Copilot: LLMs as Copilots for Theorem Proving in Lean." *NeuS 2025*, PMLR v288. [proceedings.mlr.press](https://proceedings.mlr.press/v288/song25a.html)
+- Yang, K. & Deng, J. (2023). "LeanDojo: Theorem Proving with Retrieval-Augmented Language Models." *NeurIPS 2023*. [openreview.net](https://openreview.net/forum?id=HWPJFOb2Sm)
+- First, E. et al. (2023). "Baldur: Whole-Proof Generation and Repair with Large Language Models." *ESEC/FSE 2023*. [ACM](https://dl.acm.org/doi/10.1145/3611643.3616243)
+- DeepSeek-AI (2024). "DeepSeek-Prover: Advancing Theorem Proving in Lean 4." *arXiv*. [arxiv.org/abs/2406.14320](https://arxiv.org/abs/2406.14320)
+- Polu, S. et al. (2023). "Formal Mathematics Statement Curriculum Learning." *ICLR*. [openreview.net](https://openreview.net/forum?id=lmRwOP2AcF)
+
+### Difficulte : 4/5
+
+---
 
 #### A3 — Theoreme d'Arrow par preuve automatisee (SAT/Z3/Lean)
 
-**Description :** Demontrer le theoreme d'impossibilite d'Arrow par trois approches : (1) encodage SAT avec PySAT, (2) raisonnement SMT avec Z3, (3) preuve formelle en Lean 4. Comparer les approches en termes de expressivite, performance, et confiance.
+Le theoreme d'impossibilite d'Arrow (1951) affirme qu'aucune regle d'agregation de preferences ne peut satisfaire simultanement quatre conditions (universalite, unanimité, independance des alternatives non pertinentes, absence de dictateur). Ce sujet aborde ce resultat fondamental de la theorie du choix social par trois approches complementaires : (1) encodage du theoreme comme probleme SAT (si N electeurs et M alternatives, les contraintes d'Arrow deviennent des clauses CNF), resolu avec PySAT pour trouver un contrexemple a la negation du theoreme ; (2) raisonnement SMT avec Z3 en utilisant des theories d'ordre et de fonctions ; (3) preuve formelle en Lean 4 avec Mathlib. La comparaison des trois approches revele les compromis entre expressivite, automatisation, confiance et comprehensibilite.
 
-**Notebooks CoursIA :** GameTheory/16d, GameTheory/16e, GameTheory/16f, Lean-2b, Lean-15b
+### Objectifs
+- Encoder le theoreme d'Arrow comme un probleme SAT : modeliser les preferences comme permutations, les conditions d'Arrow comme contraintes boolennes, et la negation comme clause CNF a satisfaire
+- Implementer le meme encodage en SMT avec Z3 (theorie des relations d'ordre, quantificateurs) et comparer le temps de resolution avec l'approche SAT
+- Prouver le theoreme en Lean 4 en suivant l'encodage de Peters (SocialChoiceLean) et comparer l'effort de preuve avec les approches automatiques
+- Etendre l'encodage SAT au theoreme de Sen (impossibilite du Pareto liberal) ou au theoreme de Gibbard-Satterthwaite (manipulation strategique)
+- Rediger une analyse comparative des trois approches : expressivite du langage, temps de calcul, garantie de correction, effort humain, passage a l'echelle
 
-**Technologies :** PySAT, Z3, Lean 4, Nashpy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Arrow, K.J., *Social Choice and Individual Values*, 1951 (2nd ed. 1963)
-- Geist, C. & Endriss, U., *Automated Search for Impossibility Theorems in Social Choice*, JAIR 2011
-- Peters, D., *SocialChoiceLean*, [GitHub](https://github.com/dominikpeters/SocialChoiceLean)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-16d Arrow SAT | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow par encodage SAT |
+| GT-16e Arrow Z3 | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow par SMT (Z3) |
+| GT-16f Arrow Lean | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow en Lean 4 |
+| Lean-2b Types Dependants | [SymbolicAI/Lean/Lean-2b-DependentTypes.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2b-DependentTypes.ipynb) | Types dependants, preuves formelles |
 
-**Difficulte :** 4/5
+### References externes
+- Arrow, K.J. (1951). *Social Choice and Individual Values*. 2nd ed. 1963, Wiley. [cowles.yale.edu](https://cowles.yale.edu/sites/default/files/files/pub/mon/m12-2-all.pdf)
+- Geist, C. & Endriss, U. (2011). "Automated Search for Impossibility Theorems in Social Choice." *JAIR*, 40, 211-243. [AAAI](https://ojs.aaai.org/index.php/jair/article/view/10704)
+- Peters, D. *SocialChoiceLean*. [GitHub](https://github.com/dominikpeters/SocialChoiceLean)
+- Tang, P. & Lin, F. (2009). "Computer-Aided Proofs of Arrow's and Other Impossibility Theorems." *Artificial Intelligence*, 173(11), 1041-1053. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0004370209000827)
+- Brandt, F. et al. (2016). *Handbook of Computational Social Choice*. Cambridge. [cambridge.org](https://www.cambridge.org/core/books/handbook-of-computational-social-choice/)
+
+### Difficulte : 4/5
+
+---
 
 #### A4 — Bibliotheque de preuves Mathlib — extensions
 
-**Description :** Contribuer a Mathlib4 en ajoutant des resultats absents (identites trigonometriques, lemmes combinatoires, proprietes de graphes). Suivre le processus de contribution (lint, CI, review). Decouvrir l'ecosysteme Mathlib.
+Mathlib4 est la bibliotheque mathematique de Lean 4, contenant plus de 1.5 million de lignes de preuves couvrant l'algebre, l'analyse, la topologie, la combinatoire et l'informatique theorique. Ce sujet invite l'etudiant a contribuer directement a Mathlib en ajoutant des resultats absents : identites trigonometriques, lemmes combinatoires (generatrices, relations de recurrence), proprietes de graphes (connexite, eulerience), ou extensions de l'interface data/Equiv. Le processus de contribution suit un workflow strict : fork, implementation, test avec Lake, passage du linter (leanwarningfree), soumission par PR, et review par la communaute. Ce sujet fait decouvrir l'ecosysteme Mathlib, les conventions de code, et la collaboration sur un projet open source majeur de mathematiques formelles.
 
-**Notebooks CoursIA :** Lean-4, Lean-5, Lean-6
+### Objectifs
+- Installer Mathlib4 en local (lake + cache), comprendre la structure du depot (Mathlib/Mathlib/, Mathlib/Test/, Mathlib/Archive/) et les conventions de nommage
+- Identifier 3-5 resultats absents de Mathlib (en parcourant les issues GitHub, les TODO dans le code, ou en proposant des extensions naturelles de fichiers existants)
+- Implementer les preuves en suivant le style Mathlib (tactics, lemma/theorem ordering, docstrings), passer le linter et les tests CI
+- Soumettre au moins une contribution par PR sur le depot Mathlib4, interagir avec les reviewers et adresser les commentaires
+- Rediger un notebook recapitulant les contributions, les difficultes rencontrees et les lecons apprises sur lecosysteme Mathlib
 
-**Technologies :** Lean 4, Mathlib4, git, CI (Lake)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Mathlib Community, *Maintaining Mathlib*, [docs](https://leanprover-community.github.io/contribute/index.html)
-- Lean 4 documentation, [https://lean-lang.org/](https://lean-lang.org/)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Lean-4 Mathlib | [SymbolicAI/Lean/Lean-4-Mathlib.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-4-Mathlib.ipynb) | Decouverte de Mathlib, structure |
+| Lean-5 Tactics | [SymbolicAI/Lean/Lean-5-Tactics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-5-Tactics.ipynb) | Tactiques avancees, automatisation |
+| Lean-6 Mathlib Avance | [SymbolicAI/Lean/Lean-6-MathlibAvance.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-6-MathlibAvance.ipynb) | Contributions, workflow PR |
+| Lean-3 Propositions | [SymbolicAI/Lean/Lean-3-Propositions.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-3-Propositions.ipynb) | Preuves de proprietes |
 
-**Difficulte :** 3/5
+### References externes
+- Mathlib Community. *Contributing to Mathlib*. [leanprover-community.github.io/contribute/](https://leanprover-community.github.io/contribute/index.html)
+- Mathlib4 Repository. [github.com/leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4)
+- The Mathlib Community (2020). "The Lean Mathematical Library." *CPP 2020*. [dl.acm.org](https://dl.acm.org/doi/10.1145/3372885.3373824)
+- van Doorn, F. et al. (2023). "Maintaining a Library of Formal Mathematics." *ITP*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-40355-9_12)
+- Lean 4 Documentation. [lean-lang.org](https://lean-lang.org/)
+
+### Difficulte : 3/5
 
 ---
 
@@ -375,101 +440,208 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### B1 — Resolution automatique de theoremes par SAT
 
-**Description :** Encoder des problemes mathematiques (coloriage de graphes, pigeonhole, Ramsey) en SAT, resoudre avec PySAT/glucose/CaDiCaL, et interpreter les modeles. Etudier les transformations CNF (Tseitin) et les heuristiques de branchement.
+La resolution automatique de theoremes par SAT consiste a encoder des problemes mathematiques (coloriage de graphes, principe des tiroirs de Dirichlet, nombres de Ramsey) en formules boolennes sous forme CNF, puis a utiliser un solveur SAT (PySAT/glucose/CaDiCaL) pour determiner la satisfiabilite. La transformation en CNF repose sur la transformation de Tseitin (introduction de variables auxiliaires pour eviter l'explosion exponentielle). L'etudiant etudie les heuristiques de branchement (VSIDS, phase saving), les mecanismes de clause learning (CDCL), et interprete les modeles et les certificats d'insatisfiabilite (proof traces). Ce sujet fait le pont entre la logique propositionnelle et la resolution automatique de problemes combinatoires, en situant SAT comme outil de verification symbolique plutot que d'optimisation.
 
-**Notebooks CoursIA :** Search/CSP-6, SymbolicAI/Linq2Z3
+### Objectifs
+- Maitriser la transformation de Tseitin pour convertir des formules arbitraires en CNF sans explosion exponentielle, et implementer un encodeur Python vers le format DIMACS
+- Encoder au moins 3 problemes classiques en SAT : coloriage de graphe (chromatique k), pigeonhole principle (injectivite), et un probleme de Ramsey (R(3,3)=6)
+- Utiliser PySAT avec differents solveurs (glucose, CaDiCaL, Lingeling) et comparer les temps de resolution sur des instances de taille croissante
+- Analyser les certificats de refutation (UNSAT proofs) produits par les solveurs et verifier leur validite avec un proof checker (DRAT-trim)
+- Comparer l'approche SAT avec un encodage SMT (Z3, theorie des entiers/non lineaire) sur les memes problemes et discuter les compromis
 
-**Technologies :** PySAT, Z3, networkx
+### Notebooks CoursIA pertinents
 
-**References :**
-- Biere, A. et al., *Handbook of Satisfiability*, 2nd ed., IOS Press, 2021
-- Gomes, C.P. et al., *Model Counting*, Handbook of SAT, 2021
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 SAT/SMT | [Search/Part2-CSP/CSP-6-SAT.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-SAT.ipynb) | Encodage SAT, PySAT, solveurs |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3 SMT, comparaison SAT vs SMT |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation, variables, contraintes |
 
-**Difficulte :** 3/5
+### References externes
+- Biere, A. et al. (2021). *Handbook of Satisfiability*. 2nd ed., IOS Press. [iospress.com](https://www.iospress.com/catalog/books/handbook-of-satisfiability-2)
+- Gomes, C.P. et al. (2021). "Model Counting." *Handbook of SAT*, Chapter 22. [iospress.com](https://www.iospress.com/catalog/books/handbook-of-satisfiability-2)
+- Silva, J.P.M. & Sakallah, K.A. (1999). "GRASP: A Search Algorithm for Propositional Satisfiability." *IEEE TC*, 48(5). [IEEE](https://ieeexplore.ieee.org/document/764881)
+- Moskewicz, M.W. et al. (2001). "Chaff: Engineering an Efficient SAT Solver." *DAC*. [ACM](https://dl.acm.org/doi/10.1145/378239.379017)
+- PySAT Documentation. [pysathq.github.io](https://pysathq.github.io/)
+
+### Difficulte : 3/5
+
+---
 
 #### B2 — Synthese de programmes par Programming-by-Sketching
 
-**Description :** Utiliser un solveur SMT (Z3 ou CVC5) pour synthetiser des programmes a partir d'une "esquisse" (squelette incomplet avec trous). Appliquer a des exemples concrets : tri, transformation de donnees, optimisation de boucles.
+La synthese de programmes par sketching est une approche ou le programmeur fournit une esquisse (sketch) — un squelette de programme avec des trous (holes) a completer — et un solveur SMT determine automatiquement les valeurs des trous pour que le programme satisfasse une specification formelle. Par exemple, un tri peut etre specifie par un sketch avec un comparateur incomplet, et Z3 trouve la condition de comparaison correcte. Ce sujet utilise les theories de Z3 (tableaux, quantificateurs, entiers non lineaires) et CVC5 comme solveur SMT alternatif. Il illustre un usage symbolique de SMT : non pas verifier une propriete d'un programme existant, mais generer un programme correct par construction. Les applications vont des transformations de donnees a l'optimisation de boucles en passant par la generation de sequences d'instructions.
 
-**Notebooks CoursIA :** SymbolicAI/Linq2Z3
+### Objectifs
+- Comprendre le formalisme du sketching : definir un langage de sketchs avec trous, une semantique de specification (pre/post-conditions), et formuler le probleme de synthese comme une requete SMT
+- Implementer un synthetiseur simplifie qui encode un sketch et sa specification en logique Z3 (quantificateurs, tableaux, fonctions non interpretees) et extrait le programme complet du modele
+- Appliquer le synthetiseur a 3 cas : (a) completion d'un algorithme de tri (comparateur a trouver), (b) transformation de donnees (mapping inverse), (c) optimisation d'une boucle (invariant a synthetiser)
+- Comparer les performances et l'expressivite de Z3 vs. CVC5 sur les memes problemes de synthese
+- Evaluer les limitations : passage a l'echelle, profondeur du programme, theories supportees, et discuter les approches alternatives (enumeration, CEGIS)
 
-**Technologies :** Z3, CVC5, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Solar-Lezama, A., *Program Synthesis by Sketching*, PhD Thesis, UC Berkeley, 2008
-- Gulwani, S. et al., *Program Synthesis*, Foundations and Trends in Programming Languages, 2017
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3 en C#, theories SMT, modeles |
+| CSP-6 SAT/SMT | [Search/Part2-CSP/CSP-6-SAT.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-SAT.ipynb) | SAT/SMT, resolution |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation, objective functions |
 
-**Difficulte :** 4/5
+### References externes
+- Solar-Lezama, A. (2008). *Program Synthesis by Sketching*. PhD Thesis, UC Berkeley. [people.csail.mit.edu](https://people.csail.mit.edu/asolar/)
+- Gulwani, S. et al. (2017). "Program Synthesis." *Foundations and Trends in Programming Languages*, 4(1-2), 1-119. [nowpublishers.com](https://nowpublishers.com/article/Details/PGL-013)
+- Solar-Lezama, A. et al. (2006). "Combinatorial Sketching for Finite Programs." *ASPLOS*. [ACM](https://dl.acm.org/doi/10.1145/1168857.1168907)
+- Jha, S. et al. (2010). "Oracle-Guided Component-Based Program Synthesis." *ICSE*. [ACM](https://dl.acm.org/doi/10.1145/1806799.1806834)
+- CVC5 Documentation. [cvc5.github.io](https://cvc5.github.io/)
+
+### Difficulte : 4/5
+
+---
 
 #### B3 — Model checking de protocoles de communication
 
-**Description :** Modeliser un protocole (exclusion mutuelle, consensus Paxos/Raft, poignee de main TCP) comme une machine a etats finis et verifier des proprietes de surete (LTL/CTL) par model checking. Utiliser NuSMV ou SPIN.
+Le model checking est une technique de verification formelle qui explore exhaustivement l'espace d'etats d'un systeme pour verifier qu'il satisfait une propriete temporelle (surete LTL : "jamais d'etat d'erreur", vivacite CTL : "toujours eventuallement une reponse"). Ce sujet consiste a modeliser un protocole de communication (exclusion mutuelle de Peterson, consensus Paxos ou Raft, poignee de main TCP) comme une machine a etats finis (Kripke structure), specifier les proprietes en LTL/CTL, et utiliser un model checker (NuSMV, SPIN) pour la verification automatique. En complement, l'etudiant peut utiliser Z3 pour une verification symbolique (BDD ou SAT-based model checking) et comparer les approches.
 
-**Notebooks CoursIA :** Search/Search-10 (Automates symboliques)
+### Objectifs
+- Modeliser un protocole d'exclusion mutuelle (Peterson, Lamport's Bakery) en NuSMV comme machine a etats avec variables d'etat et transitions, et specifier les proprietes de surete (exclusion mutuelle) et de vivacite (absence de famine) en LTL/CTL
+- Etendre la modelisation a un protocole de consensus (Paxos simplifie ou Raft) avec N processus et verifier la tolerance aux pannes (crash d'un processus)
+- Implementer un model checker symbolique simplifie en Python utilisant Z3 (representation BDD ou encodage SAT de l'exploration d'etats) et comparer avec NuSMV
+- Etudier le probleme de l'explosion combinatoire de l'espace d'etats et les techniques d'abstraction (predicate abstraction, CEGAR)
+- Rediger une analyse comparative : model checking explicite (SPIN) vs. symbolique (NuSMV/BDD) vs. SAT-based, avec mesures de temps et memoire
 
-**Technologies :** NuSMV, SPIN, Z3, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Baier, C. & Katoen, J.-P., *Principles of Model Checking*, MIT Press, 2008
-- Clarke, E.M. et al., *Model Checking*, MIT Press, 2nd ed., 2018
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-10 Automates | [Search/Part1-Foundations/Search-10-Automata.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-10-Automata.ipynb) | Automates symboliques, etats |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation par contraintes |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, verification formelle |
 
-**Difficulte :** 3/5
+### References externes
+- Baier, C. & Katoen, J.-P. (2008). *Principles of Model Checking*. MIT Press. [mitpress.mit.edu](https://mitpress.mit.edu/9780262026499/principles-of-model-checking/)
+- Clarke, E.M. et al. (2018). *Model Checking*. 2nd ed., MIT Press. [mitpress.mit.edu](https://mitpress.mit.edu/9780262038836/model-checking/)
+- Holzmann, G.J. (2004). *The SPIN Model Checker*. Addison-Wesley. [spinroot.com](http://spinroot.com/spin/Doc/Book96.html)
+- NuSMV Documentation. [nusmv.fbk.eu](https://nusmv.fbk.eu/)
+- McMillan, K.L. (1993). *Symbolic Model Checking*. Kluwer. [springer.com](https://link.springer.com/book/10.1007/978-1-4615-3190-6)
+
+### Difficulte : 3/5
+
+---
 
 #### B4 — Resolution de puzzles logiques par SMT
 
-**Description :** Modeliser et resoudre des puzzles logiques (Einstein/Zebra, Knights and Knaves, Nonograms/Picross) comme des problemes SMT. Comparer les encodages (entiers vs. booleens, contraintes globales) et les performances.
+Les puzzles logiques (Einstein/Zebra, Knights and Knaves, Nonograms/Picross, Sudoku, Kakuro) sont des problemes de satisfaction de contraintes qui se pretent naturellement a un encodage SMT. Ce sujet compare differents encodages : booleen pur (chaque case = variable binaire), entier (chaque case = variable entiere avec contraintes de domaine), et mixte (contraintes globales comme AllDifferent). L'objectif est de comprendre les compromis entre compacite de l'encodage, temps de resolution, et expressivite. L'etudiant utilise Z3 comme solveur SMT et OR-Tools CP-SAT comme solveur CP, et compare les performances sur des instances de difficulte croissante.
 
-**Notebooks CoursIA :** Sudoku/ (18 solveurs), Search/App-11-Picross
+### Objectifs
+- Encoder le puzzle d'Einstein (Zebra puzzle) en SMT : 5 maisons, 5 attributs, 15 indices — variables entieres, contraintes d'egalite, de voisinage et d'ordre
+- Encoder les puzzles Knights and Knaves en logique propositionnelle pure et en SMT, et analyser les differences de representation
+- Implementer un solveur de Nonograms/Picross avec Z3 (contraintes sur les sequences de cases) et comparer avec un solveur CP-SAT (OR-Tools)
+- Benchmarker les 3 encodages (booleen, entier, mixte) sur des instances de taille croissante et analyser l'impact sur le temps de resolution
+- Etendre a un puzzle non traite (Kakuro, Fill-a-Pix, Slitherlink) et discuter la generalite de l'approche SMT pour les puzzles
 
-**Technologies :** Z3, OR-Tools CP-SAT, PySAT
+### Notebooks CoursIA pertinents
 
-**References :**
-- de Moura, L. & Bjorner, N., *Z3: An Efficient SMT Solver*, TACAS 2008
-- Regin, J.-C., *A Filtering Algorithm for Constraints of Difference in CSPs*, AAAI 1994
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Sudoku multi-solveurs | [Sudoku/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Sudoku) | 18 solveurs compares, Z3, SAT, CP |
+| App-11 Picross | [Search/Applications/CSP/App-11-Picross.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/CSP/App-11-Picross.ipynb) | Nonograms/Picross par contraintes |
+| CSP-3 Global Constraints | [Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb) | AllDifferent, contraintes globales |
 
-**Difficulte :** 2/5
+### References externes
+- de Moura, L. & Bjorner, N. (2008). "Z3: An Efficient SMT Solver." *TACAS*. [Springer](https://link.springer.com/chapter/10.1007/978-3-540-78800-3_24)
+- Regin, J.-C. (1994). "A Filtering Algorithm for Constraints of Difference in CSPs." *AAAI*. [aaai.org](https://ojs.aaai.org/index.php/AAAI/article/view/9084)
+- Bessi, C. et al. (2014). "Verifying Integer and Floating-Point Constraints in SMT." *TACAS*. [Springer](https://link.springer.com/chapter/10.1007/978-3-642-54862-8_20)
+- Eiter, T. et al. (2023). "Answer Set Programming and SMT for Combinatorial Problem Solving." *Kuenstliche Intelligenz*. [springer.com](https://link.springer.com/article/10.1007/s13218-023-00816-5)
+
+### Difficulte : 2/5
+
+---
 
 #### B5 — Demonstration automatique en geometrie
 
-**Description :** Implementer un demonstrateur automatique en geometrie elementaire (theoreme de Thales, Pythagore, points cocycliques) en utilisant le calcul de Wu ou l'encodage SMT sur les coordonnees. Comparer avec les demonstrations par construction geometrique.
+La demonstration automatique en geometrie elementaire consiste a prouver des theoremes geometriques (Thales, Pythagore, points cocycliques, theoreme de Ceva, theoreme de Menelaus) par des methodes algebriques. L'approche principale est le calcul de Wu (elimination de pseudo-restes dans un anneau de polynomes) qui reduit un theoreme geometrique a la verification que le pseudo-reste du polynome conclusion par les polynomes hypotheses est nul. L'alternative est l'encodage SMT : exprimer les hypotheses et la conclusion comme equations sur les coordonnees des points, puis laisser Z3 verifier l'implication. Ce sujet combine geometrie, algebre computationnelle (SymPy) et logique, et produit des visualisations matplotlib des theoremes prouves.
 
-**Technologies :** Z3, SymPy, matplotlib (visualisation)
+### Objectifs
+- Implementer le calcul de Wu en Python (SymPy) : conversion d'un enonce geometrique en polynomes, calcul du pseudo-reste, verification de la nullite
+- Encoder 5 theoremes classiques (Pythagore, Thales, points cocycliques, Ceva, Menelaus) en coordonnees et verifier avec Z3 (theorie QF_NRA)
+- Comparer les deux approches : Wu (base analytique, resultat exact) vs. SMT (approche verification, passages a l'echelle differents)
+- Generer des visualisations matplotlib des constructions geometriques avec les points, droites et cercles impliques dans chaque theoreme
+- Explorer les limitations : theoremes necessitant des degres eleves, cas singuliers (points alignes), et la difference entre preuve generique et preuve exhaustive
 
-**References :**
-- Wu, W.-T., *Mechanical Theorem Proving in Geometries*, Springer, 1994
-- Chou, S.-C. et al., *Machine Proofs in Geometry*, World Scientific, 1994
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 4/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, theorie NRA, verification |
+| CSP-6 SAT/SMT | [Search/Part2-CSP/CSP-6-SAT.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-SAT.ipynb) | SMT, theories non-lineaires |
+
+### References externes
+- Wu, W.-T. (1994). *Mechanical Theorem Proving in Geometries*. Springer. [springer.com](https://link.springer.com/book/10.1007/978-3-7091-6636-9)
+- Chou, S.-C. et al. (1994). *Machine Proofs in Geometry*. World Scientific. [worldscientific.com](https://www.worldscientific.com/worldscibooks/10.1142/2038)
+- Kapur, D. (1986). "Geometry Theorem Proving Using Hilbert's Nullstellensatz." *SYMSAC*. [ACM](https://dl.acm.org/doi/10.1145/32439.32419)
+- J9anicke, M. et al. (2021). "Automated Reasoning in Geometry." *Journal of Automated Reasoning*. [Springer](https://link.springer.com/article/10.1007/s10817-020-09573-0)
+
+### Difficulte : 4/5
+
+---
 
 #### B6 — Programmation par ensembles de reponses (ASP) avec Clingo
 
-**Description :** Decouvrir la programmation par ensembles de reponses (Answer Set Programming), un paradigme declaratif different de SAT/CSP. Modeliser des problemes combinatoires (scheduling, planning, graph coloring) en logique ASP avec Clingo, et comprendre les semantiques de modeles stables (Gelfond-Lifschitz). Comparer ASP avec les approches SAT et CP sur les memes problemes. L'ASP est particulierement adapte aux problemes avec raisonnement par defaut et exceptions.
+La programmation par ensembles de reponses (Answer Set Programming, ASP) est un paradigme declaratif de programmation logique, distinct de SAT et de la programmation par contraintes. Un programme ASP est un ensemble de regles logiques de la forme "tete :- corps" (la tete est vraie si le corps est vrai), et la semantique est donnee par les modeles stables de Gelfond-Lifschitz (points fixes de la reduct du programme). Clingo (Potassco) est le solveur ASP de reference. L'ASP est particulierement adapte aux problemes avec raisonnement par defaut, exceptions, preferences, et connaissances incompletes. Ce sujet couvre la modelisation de problemes combinatoires en ASP (scheduling, planning, coloriage, claquage de ponts), l'API Python de Clingo pour le scripting, et la comparaison avec les approches SAT et CP sur les memes instances.
 
-**Notebooks CoursIA :** Tweety-6 (ASP avec Clingo), Search/CSP-1 (comparaison CSP)
+### Objectifs
+- Apprendre la syntaxe ASP (regles, faits, contraintes d'integrite, choice rules, aggregate) et la semantique des modeles stables sur des exemples simples (coloriage de graphe, N-queens)
+- Modeliser un probleme de scheduling ou de planning en ASP avec Clingo, incluant des contraintes d'integrite, des preferences faibles (#minimize), et des regles par defaut
+- Utiliser l'API Python de Clingo (module clingo) pour controler le solving depuis Python (parametrage, extraction de solutions, post-traitement)
+- Comparer ASP avec un encodage SAT (PySAT) et CP-SAT (OR-Tools) sur les memes instances de problemes (coloriage, scheduling), en mesurant temps et qualite des solutions
+- Explorer l'hybridation LLM+ASP : utiliser un LLM pour generer automatiquement des programmes ASP a partir d'une description en langage naturel (approche LLASP)
 
-**Technologies :** Clingo (Potassco), Python (API clingo), DLV2 (optionnel)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Gelfond, M. & Lifschitz, V., *The Stable Model Semantics for Logic Programming*, ICLP 1988
-- Gebser, M. et al., *Answer Set Solving in Practice*, Springer, 2012
-- Coppolillo, E. et al., *LLASP: Fine-tuning LLMs for Answer Set Programming*, KR 2024
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-6 ASP/Clingo | [SymbolicAI/Tweety/Tweety-6-StructuredArgumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-StructuredArgumentation.ipynb) | ASP avec Clingo, argumentation |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Comparaison CSP, modelisation |
+| Tweety-2 Basic Logics | [SymbolicAI/Tweety/Tweety-2-BasicLogics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-BasicLogics.ipynb) | Logiques classiques, raisonnement |
 
-**Difficulte :** 3/5
+### References externes
+- Gelfond, M. & Lifschitz, V. (1988). "The Stable Model Semantics for Logic Programming." *ICLP/SLP*. [cs.utexas.edu](https://www.cs.utexas.edu/~vl/papers/stable.pdf)
+- Gebser, M. et al. (2012). *Answer Set Solving in Practice*. Springer. [potassco.org](https://potassco.org/book/)
+- Brewka, G. et al. (2011). "Answer Set Programming at a Glance." *CACM*, 54(12). [ACM](https://dl.acm.org/doi/10.1145/2043174.2043195)
+- Lifschitz, V. (2019). *Answer Set Programming*. Springer. [springer.com](https://link.springer.com/book/10.1007/978-3-030-24658-7)
+- Potassco, Clingo Documentation. [potassco.org/clingo/](https://potassco.org/clingo/)
+
+### Difficulte : 3/5
+
+---
 
 #### B7 — Resolution de problemes PSPACE par QBF (Quantified Booleans)
 
-**Description :** Explorer les formules booleennes quantifiees (QBF — PSPACE-complet), qui etendent SAT avec des quantificateurs existentiels et universels. Utiliser PyQBF pour resoudre des problemes de verification, de jeux a deux joueurs, et de planning conformant. Comparer les solveurs QBF (DepQBF, CAQE, Qute) sur des benchmarks QBFLib.
+Les formules booleennes quantifiees (QBF) etendent SAT en ajoutant des quantificateurs existentiels et universels sur les variables. Un probleme QBF de la forme Ex1 Ax2 Ex3 ... phi(x1,x2,x3,...) est PSPACE-complet, capturant une classe de complexite strictement plus grande que SAT (NP-complet). Les QBF permettent d'encoder naturellement des jeux a deux joueurs (E joue les coups existentiels, A joue les coups universels), de la verification de circuits sequentiels (deraisonnement temporel), et du planning conformant (plan qui fonctionne quelles que soient les observations). Ce sujet utilise PyQBF comme interface Python pour les solveurs QBF (DepQBF, CAQE, Qute) et evalue les performances sur les benchmarks QBFLib.
 
-**Notebooks CoursIA :** Tweety-3 (QBF), SymbolicAI/Linq2Z3
+### Objectifs
+- Comprendre la semantique des QBF (jeu semantique : E et A jouent alternativement les valeurs des variables) et la hierarchie des prenex forms (Sigma_k, Pi_k)
+- Encoder 3 problemes en QBF : (a) un jeu a deux joueurs (Tic-tac-toe, Hex, ou Geographie), (b) un probleme de verification de circuit sequentiel, (c) un probleme de planning conformant
+- Utiliser PyQBF avec au moins 2 solveurs (DepQBF, CAQE) et comparer les temps de resolution sur les encodages produits
+- Evaluer sur les benchmarks QBFLib (instances de reference de la competition QBF Eval) et analyser les facteurs de difficulte (profondeur de quantification, nombre de variables)
+- Comparer les solveurs QBF avec une approche iterative (re-resolution SAT dans une boucle) et discuter l'avantage du solving QBF natif
 
-**Technologies :** PyQBF, DepQBF, CAQE, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Peyrer, M. et al., *PyQBF: A Python Framework for Solving QBF*, ACM TOCL, 2025
-- Shukla, A. et al., *The QBF Gallery 2023*, arXiv, 2026
-- Biere, A. et al., *Handbook of Satisfiability*, Chapter on QBF, 2021
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-3 Advanced Logics | [SymbolicAI/Tweety/Tweety-3-AdvancedLogics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-AdvancedLogics.ipynb) | QBF, logiques modales, model checking |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3, quantificateurs, theories |
+| CSP-6 SAT/SMT | [Search/Part2-CSP/CSP-6-SAT.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-SAT.ipynb) | SAT, comparaison avec QBF |
 
-**Difficulte :** 3/5
+### References externes
+- Peyrer, M. et al. (2025). "PyQBF: A Python Framework for Solving QBF." *ACM TOCL*. [dl.acm.org](https://dl.acm.org/doi/10.1145/3701776)
+- Shukla, A. et al. (2026). "The QBF Gallery 2023." *arXiv*. [arxiv.org](https://arxiv.org/abs/2305.01699)
+- Biere, A. et al. (2021). "QBF." *Handbook of Satisfiability*, Chapter 23. [iospress.com](https://www.iospress.com/catalog/books/handbook-of-satisfiability-2)
+- Lonsing, F. & Biere, A. (2010). "DepQBF: A Dependency-Preserving QBF Solver." *SAT*. [Springer](https://link.springer.com/chapter/10.1007/978-3-642-14186-7_10)
+- QBFLib Benchmark Collection. [qbflib.org](https://qbflib.org/)
+
+### Difficulte : 3/5
 
 ---
 
@@ -477,57 +649,128 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### C1 — Verification formelle de smart contracts Solidity par SMT
 
-**Description :** Utiliser le model checker Solidity (SMTChecker integre au compilateur) et des outils externes (Mythril, Slither) pour verifier formellement des proprietes de surete sur des smart contracts (absence de reentrancy, overflow, access control).
+La verification formelle de smart contracts Solidity exploite le SMTChecker integre au compilateur solc ainsi que des outils externes comme Mythril et Slither pour prouver automatiquement des proprietes de surete sur des contrats deploies sur Ethereum. Le SMTChecker traduit les invariants Solidity (`assert`, `require`, conditions de boucle) en formules SMT resolues par Z3 ou CVC5, permettant de detecter des vulnerabilites critiques comme la reentrancy, les overflow arithmetiques et les defauts de controle d'acces sans execution concrete. Ce sujet amene a comprendre le modele memoire de Solidity (storage, memory, calldata), les limitations de la verification SMT (explosion combinatoire, boucles non bornees), et la complementarite entre model checking et analyse statique. L'etudiant ecrit des specifications formelles pour des patterns de contrats courants (ERC-20, multisig, timelock) et interprete les contre-exemples produits par le solveur.
 
-**Notebooks CoursIA :** SmartContracts/SC-13 (Fuzz), SC-14 (Formal Verification)
+### Objectifs
+- Configurer le pipeline de verification : activer le SMTChecker dans solc, ecrire des invariants Solidity, et analyser les contre-exemples produits par Z3/CVC5 sur des contrats vulnérables
+- Verifier formellement un contrat ERC-20 complet : prouver l'absence de reentrancy sur transfer, la conservation du total supply, et la coherence des balances
+- Comparer les resultats du SMTChecker avec des outils d'analyse statique (Slither taint analysis, Mythril symbolic execution) sur un benchmark de contrats avec vulnerabilites connues (SWC Registry)
+- Etudier les limitations pratiques : gestion des boucles non bornees, approximation des mappings dynamiques, timeout du solveur, et proposer des strategies de modelisation pour les contourner
+- Rediger un rapport comparatif des techniques de verification (model checking SMT vs. analyse statique vs. fuzzing) avec leurs forces, faiblesses et domaines d'application preferentiels
 
-**Technologies :** Solidity, Foundry, solc SMTChecker, Z3
+### Notebooks CoursIA pertinents
 
-**References :**
-- Hajdu, A. & Jovanovic, D., *SMT-Friendly Formalization of the Solidity Memory Model*, ESOP 2020
-- Feist, J. et al., *Slither: A Static Analysis Framework for Smart Contracts*, IEEE S&B Workshop, 2019
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb) | Fuzzing Foundry, complementaire au model checking |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb) | SMTChecker, invariants, contre-exemples |
+| SC-0 Solidity Basics | [SymbolicAI/SmartContracts/SC-0-Solidity-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-0-Solidity-Basics.ipynb) | Fondamentaux Solidity, prerequis |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fondamentaux.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fondamentaux.ipynb) | Contraintes et propagation, bases conceptuelles |
 
-**Difficulte :** 3/5
+### References externes
+- Hajdu, A. & Jovanovic, D. (2020). "SMT-Friendly Formalization of the Solidity Memory Model." *ESOP 2020*, LNCS 12075. [Springer](https://link.springer.com/chapter/10.1007/978-3-030-44914-8_9)
+- Feist, J., Grieco, G. & Groce, A. (2019). "Slither: A Static Analysis Framework for Smart Contracts." *IEEE S&B Workshop*. [arXiv](https://arxiv.org/abs/1906.06505)
+- Mueller, B. (2017). "Smashing Ethereum Smart Contracts for Fun and Real Profit." *HITB*. [github.com/crytic](https://github.com/crytic/publications/blob/master/Smashing%20Ethereum%20Smart%20Contracts%20for%20Fun%20and%20Real%20Profit.pdf)
+- SWC Registry. *Smart Contract Weakness Classification and Test Cases*. [swcregistry.io](https://swcregistry.io/)
+- Alt, L. & Reitwiessner, C. (2018). "SMT-Based Verification of Solidity Smart Contracts." *SSS*. [Springer](https://link.springer.com/chapter/10.1007/978-3-030-03080-2_11)
+
+### Difficulte : 3/5
+
+---
 
 #### C2 — Fuzzing guide par contraintes (constraint-based fuzzing)
 
-**Description :** Implementer un fuzzer symbolique qui utilise Z3 pour generer des entrees couvrant de nouveaux chemins d'execution dans un programme C ou Solidity. Comparer avec le fuzzing aleatoire (AFL) sur des benchmarks.
+Le fuzzing guide par contraintes (concolic fuzzing) combine l'execution symbolique et le fuzzing aleatoire pour explorer systematiquement les chemins d'execution d'un programme. A chaque etape, le fuzzer collecte les contraintes de branche rencontrees le long d'un chemin d'execution, les negate une par une avec Z3 pour generer de nouvelles entrees atteignant des branches non couvertes, puis injecte ces entrees dans le programme concret. Cette approche hybride, illustree par des outils comme Driller et Echidna, surcome les limitations du fuzzing pur (difficulte a traverser les comparaisons magiques) et de l'execution symbolique pure (explosion du nombre de chemins). Le sujet couvre la theorie de l'execution symbolique (formules path conditions), la resolution de contraintes SMT, les strategies de selection de chemins, et l'application aux smart contracts Solidity via Foundry/Echidna.
 
-**Notebooks CoursIA :** SmartContracts/SC-13
+### Objectifs
+- Implementer un moteur d'execution symbolique simplifie sur un sous-ensemble de bytecode EVM ou d'instructions Solidity, collectant les path conditions comme conjonction de contraintes de branche
+- Integrer Z3 comme solveur de contraintes pour generer de nouvelles entrees a partir des path conditions negatees, en gerant les contraintes non lineaires et les timeout
+- Comparer le coverage de code obtenu par le fuzzer symbolique vs. le fuzzing aleatoire (AFL/libFuzzer) sur des benchmarks Solidity (contrats avec branches conditionnelles complexes)
+- Evaluer l'apport du seed scheduling intelligent (priorisation des chemins non explores, energy-based scheduling) sur l'efficacite de l'exploration
+- Documenter les cas ou l'execution symbolique echoue (operations non supportees, appels externes, gas limits) et les strategies de fallback vers le fuzzing aleatoire
 
-**Technologies :** Z3, Foundry (Echidna), Angr (binary), Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Stephens, N. et al., *Driller: Augmenting Fuzzing Through Selective Symbolic Execution*, NDSS 2016
-- Bosman, E. et al., *Firmalice - Automatic Detection of Authentication Bypass Vulnerabilities*, USENIX 2015
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb) | Fuzzing Foundry/Echidna, point de depart |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb) | Verification formelle, complementaire |
+| CSP-6 Hybridation | [Search/Part2-CSP/CSP-6-Hybridation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-Hybridation.ipynb) | Hybridation CP+SAT, strategies de recherche |
+| Planners-3 State Space | [SymbolicAI/Planners/Planners-3-StateSpace.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-3-StateSpace.ipynb) | Exploration d'espaces d'etats, concepts transversaux |
 
-**Difficulte :** 4/5
+### References externes
+- Stephens, N. et al. (2016). "Driller: Augmenting Fuzzing Through Selective Symbolic Execution." *NDSS 2016*. [NDSS Symposium](https://www.ndss-symposium.org/ndss2016/ndss-2016-programme/augmenting-fuzzing-through-selective-symbolic-execution/)
+- Bosman, E. et al. (2015). "Firmalice - Automatic Detection of Authentication Bypass Vulnerabilities." *USENIX Security*. [usenix.org](https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/bosman)
+- Cadar, C. & Sen, K. (2013). "Symbolic Execution for Software Testing: Three Decades Later." *Communications of the ACM*, 56(2). [CACM](https://cacm.acm.org/research/symbolic-execution-for-software-testing/)
+- Coppola, G. (2023). "Echidna: A Smart Fuzzer for Ethereum Smart Contracts." *Trail of Bits*. [github.com/crytic/echidna](https://github.com/crytic/echidna)
+- Li, Y. et al. (2023). "Large Language Models for Fuzzing and Testing." *arXiv*. [arxiv.org/abs/2312.03614](https://arxiv.org/abs/2312.03614)
+
+### Difficulte : 4/5
+
+---
 
 #### C3 — Analyse statique et detection de vulnerabilites par abstraction
 
-**Description :** Implementer une analyse statique par interpretation abstraite (domaine des intervalles, signes, congruences) pour detecter des vulnerabilites dans du code source. Construire un treillis de domaine abstrait et calculer des points fixes.
+L'analyse statique par interpretation abstraite est une technique formelle qui approxime le comportement d'un programme sans l'executer, en remplaçant les valeurs concretes par des representations abstraites issues de domaines lattice (intervalles, signes, congruences, octogones). Inventee par Cousot & Cousot en 1977, cette approche calcule un point fixe du systeme de transitions du programme dans le domaine abstrait, garantissant une sure-approximation (soundness) de tous les comportements possibles. Les vulnerabilites sont detectees quand l'etat abstrait est incompatible avec les assertions de surete. Ce sujet couvre la theorie des treillis complets, les operateurs de widening/narrowing pour assurer la convergence, la construction de domaines abstraits composes (produit reduit), et l'application a la detection de buffer overflows, use-after-free, et fuites d'information dans du code source.
 
-**Technologies :** Python, Z3 (pour les contrexemples)
+### Objectifs
+- Implementer un domaine abstrait des intervalles (lattice des intervalles entiers avec bornes infinies) et l'operateur de transfer pour les operations arithmetiques, comparaisons et affectations
+- Construire un analyseur de flot de donnees qui itere sur le CFG du programme jusqu'a atteindre un point fixe, en utilisant un operateur de widening pour garantir la convergence sur les boucles
+- Etendre le domaine des intervalles par produit reduit avec le domaine des signes et des congruences, et mesurer la precision gagnee sur des programmes de test
+- Evaluer l'analyseur sur un benchmark de vulnerabilities connues (buffer overflow, division par zero, debordement d'entier) et calculer le taux de faux positifs
+- Utiliser Z3 comme oracle de contrexemple : quand l'analyse abstraite rapporte une potentielle erreur, invoquer Z3 sur la negation de la contrainte pour determiner si l'erreur est reelle ou un faux positif
 
-**References :**
-- Cousot, P. & Cousot, R., *Abstract Interpretation: A Unified Lattice Model*, POPL 1977
-- Miné, A., *Abstract Domains for the Analysis of C Programs*, 2004
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 3/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-13-Fuzz.ipynb) | Techniques dynamiques complementaires |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb) | Model checking, complementaire a l'interpretation abstraite |
+| Lean-2 Dependent Types | [SymbolicAI/Lean/Lean-2-DependentTypes.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2-DependentTypes.ipynb) | Raisonnement formel sur les types, bases conceptuelles |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fondamentaux.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fondamentaux.ipynb) | Domaines, propagation de contraintes, points fixes |
+
+### References externes
+- Cousot, P. & Cousot, R. (1977). "Abstract Interpretation: A Unified Lattice Model for Static Analysis of Programs." *POPL 1977*. [ACM](https://dl.acm.org/doi/10.1145/512950.512973)
+- Mine, A. (2004). *Weakly Relational Numerical Abstract Domains*. PhD Thesis, ENS. [cel.archives-ouvertes.fr](https://cel.archives-ouvertes.fr/tel-00136648)
+- Blanchet, B. et al. (2003). "A Static Analyzer for Large Safety-Critical Software." *PLDI 2003*. [ACM](https://dl.acm.org/doi/10.1145/781131.781153)
+- Schmidt, D.A. (1998). "Data Flow Analysis is Model Checking of Abstract Interpretations." *POPL 1998*. [ACM](https://dl.acm.org/doi/10.1145/268946.268956)
+- Cousot, P. (2021). "Principles of Abstract Interpretation." *MIT Press*. [mitpress.mit.edu](https://mitpress.mit.edu/9780262045214/principles-of-abstract-interpretation/)
+
+### Difficulte : 3/5
+
+---
 
 #### C4 — Preuves de correcteur Zero-Knowledge (zk-SNARKs)
 
-**Description :** Etudier et implementer un circuit Zero-Knowledge simple (range proof, membership proof) avec Circom/SnarkJS ou un framework equivalent. Prouver la correction du circuit et verifier les preuves.
+Les preuves Zero-Knowledge (zk-SNARKs) permettent a un prover de convaincre un verifier qu'un calcul est correct sans reveler aucune information sur les entrees, en utilisant des systemes de preuve succints bases sur des courbes elliptiques (bn254, bls12-381) et des polynomes d'engagement. Ce sujet etudie la construction complete d'un circuit arithmetique (R1CS ou Plonkish) encodant une relation computationnelle (range proof, preuve d'appartenance a un arbre de Merkle, preuve de solvabilite), la generation de la proving key et verifying key via un trusted setup ou un setup universel (PLONK), et la verification on-chain dans un smart contract Solidity. La correction du circuit est cruciale : un circuit mal contraint peut accepter des preuves invalides (under-constrained), ce qui motive l'utilisation d'outils de verification formelle sur les circuits eux-memes.
 
-**Notebooks CoursIA :** SmartContracts/SC-15 (ZKP), SC-16 (HE)
+### Objectifs
+- Implementer un circuit arithmetique simple en Circom (range proof sur 64 bits, preuve d'appartenance dans un Merkle tree) et comprendre le passage du code Circom au systeme R1CS
+- Maitriser le pipeline Circom -> SnarkJS : compilation, trusted setup (Powers of Tau), generation de preuve, et verification dans un contrat Solidity deploye sur testnet
+- Analyser la correction du circuit : identifier les contraintes sous-determinees (under-constrained signals), verifier l'equivalence entre la specification et le circuit, et tester avec des entrees maliceses
+- Comparer les systemes de preuve zk-SNARK (Groth16 vs. PLONK) sur les criteres de taille de preuve, temps de verification, necessity du trusted setup, et expressivite du circuit
+- Explorer les applications avancees : preuves de solvabilite pour exchanges decentralises, votes anonymes, ou credentials verifiables (ZK-DAO)
 
-**Technologies :** Circom, SnarkJS, Solidity, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Ben-Sasson, E. et al., *Scalable Zero Knowledge with No Trusted Setup*, CRYPTO 2019
-- Gabizon, A. et al., *PLONK: Permutations over Lagrange-Bases*, ePrint 2019
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-15 Zero-Knowledge Proofs | [SymbolicAI/SmartContracts/SC-15-ZKP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-15-ZKP.ipynb) | ZKP, Circom, SnarkJS, circuits arithmetiques |
+| SC-16 Homomorphic Encryption | [SymbolicAI/SmartContracts/SC-16-Homomorphic-Encryption.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-16-Homomorphic-Encryption.ipynb) | Chiffrement homomorphe, calcul sur donnees chiffrees |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-14-Formal-Verification.ipynb) | Verification de circuits, complementaire |
+| SC-0 Solidity Basics | [SymbolicAI/SmartContracts/SC-0-Solidity-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/SC-0-Solidity-Basics.ipynb) | Prerequis Solidity pour la verification on-chain |
 
-**Difficulte :** 4/5
+### References externes
+- Ben-Sasson, E. et al. (2019). "Scalable Zero Knowledge with No Trusted Setup." *CRYPTO 2019*. [ePrint](https://eprint.iacr.org/2019/099)
+- Gabizon, A., Williamson, Z. & Ciobotaru, O. (2019). "PLONK: Permutations over Lagrange-Bases for Oecumenical Noninteractive Arguments of Knowledge." *ePrint 2019/953*. [ePrint](https://eprint.iacr.org/2019/953)
+- Groth, J. (2016). "On the Size of Pairing-Based Non-Interactive Arguments." *EUROCRYPT 2016*. [Springer](https://link.springer.com/chapter/10.1007/978-3-662-49896-5_2)
+- Thaler, J. (2022). *Proofs, Arguments, and Zero-Knowledge*. Now Publishers. [people.cs.georgetown.edu](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.html)
+- Nitulescu, A. (2020). "zk-SNARKs: A Gentle Introduction." *Electric Coin Co.* [electriccoin.co](https://electriccoin.co/blog/snark-explain/)
+
+### Difficulte : 4/5
+
+---
+
 
 ---
 
@@ -535,59 +778,190 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### D1 — Planification robotique avec PDDL et integration capteurs
 
-**Description :** Modeliser un domaine de planification robotique (navigation en entrepot, manipulation d'objets) en PDDL, utiliser Fast Downward pour generer des plans, et simuler l'execution avec integration de capteurs (mise a jour de l'etat).
+La planification robotique avec PDDL consiste a modeliser un domaine de planification autonome pour un robot evoluant dans un environnement structure tel qu'un entrepot logistique, en definissant les predicats, les actions (navigation, saisie, depose) et les contraintes d'occupance dans le formalisme PDDL. Le planificateur Fast Downward genere ensuite un plan d'actions sequencees que le robot doit executer dans un monde reel ou l'incertitude sensorielle rend l'execution naive impraticable. L'integration de capteurs (lidar, vision, proprioception) permet de detecter les ecarts entre l'etat attendu et l'etat observe, declenchant une re-planification en ligne lorsque l'environnement diverge du modele. Ce sujet aborde ainsi la boucle complete "modelisation-planification-execution-monitoring-replanification", au coeur de l'architecture robotique moderne (planification contingente, planification de sensibilite). La simulation Python permet de valider l'approche sur des scenarios d'escalade de complexite avant un eventuel deploiement sur robot reel.
 
-**Notebooks CoursIA :** Planners-1 a Planners-6
+### Objectifs
+- Modeliser un domaine robotique d'entrepot en PDDL (predicats, actions, types d'objets) et generer des plans avec Fast Downward
+- Implementer un simulateur d'execution qui injecte des perturbations sensorielles (obstacles dynamiques, erreurs de localisation)
+- Concevoir un module de monitoring qui compare l'etat reel (capteurs) a l'etat attendu (plan) et detecte les violations de preconditions
+- Implementer une strategie de re-planification en ligne (replan from current state, plan repair) et mesurer le cout en temps de calcul
+- Evaluer la robustesse de l'approche sur des scenarios de complexite croissante (nombre d'objets, obstacles dynamiques, bruit capteur)
 
-**Technologies :** PDDL, Fast Downward, Python (simulateur)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Helmert, M., *The Fast Downward Planning System*, JAIR 2006
-- Fox, M. & Long, D., *PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains*, JAIR 2003
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-1 Introduction | [SymbolicAI/Planners/Planners-1-Introduction.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-1-Introduction.ipynb) | Fondamentaux PDDL |
+| Planners-3 State-Space Search | [SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb) | Heuristiques, Fast Downward |
+| Planners-4 Plan Execution | [SymbolicAI/Planners/Planners-4-PlanExecution.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-4-PlanExecution.ipynb) | Execution et monitoring |
+| Planners-5 Replanning | [SymbolicAI/Planners/Planners-5-Replanning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-5-Replanning.ipynb) | Re-planification en ligne |
 
-**Difficulte :** 3/5
+### References externes
+- Helmert, M. (2006). "The Fast Downward Planning System." *Journal of Artificial Intelligence Research*, 26, 191-246. [JAIR](https://jair.org/index.php/jair/article/view/10457)
+- Fox, M., & Long, D. (2003). "PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains." *Journal of Artificial Intelligence Research*, 20, 61-124. [JAIR](https://jair.org/index.php/jair/article/view/10352)
+- Ghallab, M., Nau, D., & Traverso, P. (2016). "Automated Planning and Acting." *Cambridge University Press*. [Cambridge](https://www.cambridge.org/core/books/automated-planning-and-acting/)
+- Ingrand, F., & Ghallab, M. (2014). "Robotics and AI: From Deliberation to Action." *IEEE Intelligent Systems*. [IEEE](https://ieeexplore.ieee.org/document/6905390)
+- Muise, C., et al. (2012). "Planning Over Disjunctive-Constraint-Based Formulas." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13545)
+
+### Difficulte : 3/5
+
+---
 
 #### D2 — Planification HTN pour jeux video
 
-**Description :** Implementer un planificateur HTN (Hierarchical Task Network) pour controler le comportement de PNJ dans un jeu video (quete, crafting, exploration). Comparer avec une approche GOAP (Goal-Oriented Action Planning).
+La planification HTN (Hierarchical Task Network) decompose recursivement une tache de haut niveau (accomplir une quete, fabriquer un objet) en sous-taches de plus en plus fines jusqu'a obtenir des actions primitives executables, suivant une hierarchie de methodes predefinies par le concepteur. Cette approche se distingue de la planification classique (STRIPS/PDDL) par sa nature decompositional plutot que compositionnelle : au lieu de chercher une sequence d'actions depuis un etat initial, on decompose une intention en plan concret. Dans le contexte des jeux video, les HTN controlent naturellement le comportement des PNJ (personnages non joueurs) car les game designers specifient les comportements sous forme de hierarchies de taches intuitives. La comparaison avec GOAP (Goal-Oriented Action Planning), qui utilise une recherche en avant depuis l'etat courant, met en lumiere le compromis entre controlabilite par le concepteur (HTN) et autonomie emergente (GOAP).
 
-**Notebooks CoursIA :** Planners-9 (HTN)
+### Objectifs
+- Implementer un planificateur HTN complet avec decomposition recursive, preconditions sur les methodes, et detection d'impossibilite
+- Modeliser le comportement de PNJ dans un jeu (quetes, crafting, exploration) sous forme de hierarchies de taches
+- Implementer un planificateur GOAP et comparer les plans generes avec l'approche HTN sur les memes scenarios
+- Mesurer les performances (temps de planification, qualite des plans, expressivite) des deux approches
+- Prototyper une integration dans un moteur de jeu (Unity ou Godot) ou un simulateur 2D minimal
 
-**Technologies :** Python, PDDL/HDDL, Unity (optionnel pour la demo)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Erol, K. et al., *Complexity of HTN Planning*, JAIR 1994
-- Orkin, J., *Applying Goal-Oriented Action Planning to Games*, AI Game Programming Wisdom 2, 2004
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-9 HTN | [SymbolicAI/Planners/Planners-9-HTN.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-9-HTN.ipynb) | Planification HTN |
+| Planners-1 Introduction | [SymbolicAI/Planners/Planners-1-Introduction.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-1-Introduction.ipynb) | Fondamentaux planification |
+| Planners-6 GOAP | [SymbolicAI/Planners/Planners-6-GOAP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-6-GOAP.ipynb) | Goal-Oriented Action Planning |
 
-**Difficulte :** 3/5
+### References externes
+- Erol, K., Hendler, J., & Nau, D. (1994). "Complexity Results for HTN Planning." *Annals of Mathematics and Artificial Intelligence*, 18(1), 69-93. [Springer](https://doi.org/10.1007/BF01531470)
+- Orkin, J. (2004). "Applying Goal-Oriented Action Planning to Games." *AI Game Programming Wisdom 2*. [GDC Vault](https://www.gdcvault.com/play/1022092/)
+- Nau, D., et al. (2003). "SHOP2: An HTN Planning System." *Journal of Artificial Intelligence Research*, 20, 379-404. [JAIR](https://jair.org/index.php/jair/article/view/10373)
+- Champandard, A. (2013). "The Mechanics of Influence Arrows: HTN vs. GOAP in Practice." *AiGameDev.com*. [AiGameDev](https://aigamedev.com/)
+
+### Difficulte : 3/5
+
+---
 
 #### D3 — Ordonnancement multi-agent par CSP distribue
 
-**Description :** Modeliser un probleme d'ordonnancement multi-agent (ex: fleet de drones, robots collaboratifs) comme un CSP distribue. Implementer un protocole ABT (Asynchronous Backtracking) ou AWC et etudier la convergence et la scalabilite.
+L'ordonnancement multi-agent par CSP distribue (DisCSP) modelise un probleme ou plusieurs agents autonomes (drones, robots collaboratifs, vehicules) doivent coordonner leurs horaires et leurs ressources sans centralisateur, chaque agent ne connaissant que ses propres contraintes et un sous-ensemble des variables du probleme global. Les protocoles de resolution distribues tels que ABT (Asynchronous Backtracking) et AWC (Asynchronous Weak-Commitment) permettent aux agents d'echanger des messages pour resoudre les conflits sans partager l'integralite de leur etat interne. La convergence de ces algorithmes depend de la topologie du reseau de contraintes et de la strategie d'ordonnancement des messages. Ce sujet aborde les compromis entre confidentialite (les agents ne revelent pas toutes leurs contraintes), scalabilite (passage a l'echelle avec le nombre d'agents) et optimalite (qualite de la solution distribuee vs. solution centralisee).
 
-**Notebooks CoursIA :** CSP-9 (Distributed CSP)
+### Objectifs
+- Modeliser un probleme d'ordonnancement multi-agent (flotte de drones, robots collaboratifs) comme un CSP distribue avec variables et contraintes locales
+- Implementer le protocole ABT (Asynchronous Backtracking) avec gestion des nogoods et detection de cycles
+- Implementer le protocole AWC (Asynchronous Weak-Commitment) et comparer la vitesse de convergence avec ABT
+- Etudier la scalabilite en faisant varier le nombre d'agents, la densite des contraintes inter-agents et la taille des domaines
+- Evaluer le ratio qualite/cout de communication par rapport a une resolution centralisee (OR-Tools CP-SAT)
 
-**Technologies :** Python (asyncio/multiprocessing), OR-Tools
+### Notebooks CoursIA pertinents
 
-**References :**
-- Yokoo, M. et al., *The Distributed Constraint Satisfaction Problem*, IEEE TKDE 1998
-- Petcu, A. & Faltings, B., *DPOP: A Scalable Method for Multiagent Constraint Optimization*, IJCAI 2005
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb) | DisCSP, ABT, AWC |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, IntervalVar |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP |
 
-**Difficulte :** 4/5
+### References externes
+- Yokoo, M., et al. (1998). "The Distributed Constraint Satisfaction Problem: Formalization and Algorithms." *IEEE Transactions on Knowledge and Data Engineering*, 10(5), 673-685. [IEEE](https://ieeexplore.ieee.org/document/726791)
+- Petcu, A., & Faltings, B. (2005). "DPOP: A Scalable Method for Multiagent Constraint Optimization." *IJCAI*. [IJCAI](https://www.ijcai.org/Proceedings/05/Papers/0646.pdf)
+- Yokoo, M. (2001). "Distributed Constraint Satisfaction: Foundations of Cooperation in Multi-Agent Systems." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-3-662-04589-7)
+- Modi, P., et al. (2005). "A General Formalization of Distributed Constraint Satisfaction Problem." *AAMAS*. [ACM](https://dl.acm.org/doi/10.1145/1082473.1082712)
+
+### Difficulte : 4/5
+
+---
 
 #### D4 — Planification temporelle pour systemes cyber-physiques
 
-**Description :** Modeliser un systeme cyber-physique (gestion d'energie, controle de trafic) avec PDDL 2.1 (durées, continu) et resoudre avec un planificateur temporel. Integrer des contraintes de ressources et des fenetres temporelles.
+La planification temporelle pour systemes cyber-physiques (CPS) etend la planification classique en ajoutant des durees d'actions, des effets continus (consommation d'energie, temperature) et des contraintes de ressources limitees, formalisees en PDDL 2.1. Les systemes cyber-physiques tels que la gestion d'energie dans un batiment intelligent ou le controle du trafic routier requierent des plans ou les actions se chevauchent temporellement et ou les variables continues evoluent pendant l'execution. Le planificateur temporel (par exemple OPTIC, TEMPO or the temporal mode of Fast Downward) doit produire un schedule qui respecte les fenetres temporelles, les contraintes de capacite des ressources et les invariants continus. L'integration de contraintes de type CSP temporel (STP - Simple Temporal Problem) permet de verifier la consistance du schedule et de calculer les marges temporelles.
 
-**Notebooks CoursIA :** Planners-8 (Temporal), CSP-8 (Temporal CSP)
+### Objectifs
+- Modeliser un systeme cyber-physique (gestion d'energie, controle de trafic) en PDDL 2.1 avec actions durees, effets continus et contraintes de ressources
+- Utiliser un planificateur temporel pour generer des plans avec actions concurrentes et chevauchement temporel
+- Integrer un CSP temporel (STP) pour verifier la consistance du schedule et calculer les marges temporelles
+- Implementer la gestion des ressources renouvelables et non-renouvelables avec des profils de consommation variables
+- Evaluer sur des scenarios realistes (batiment NZEB, reseau de transport urbain) et comparer avec une approche purement CP-SAT
 
-**Technologies :** PDDL 2.1, Fast Downward (temporal), OR-Tools
+### Notebooks CoursIA pertinents
 
-**References :**
-- Fox, M. & Long, D., *PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains*, JAIR 2003
-- Cesta, A. et al., *Planning and Scheduling: The State of the Art*, 2022
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-8 Temporal Planning | [SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb) | PDDL 2.1, planification temporelle |
+| CSP-8 Temporal CSP | [Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb) | STP, consistance temporelle |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, ressources |
+| Planners-3 State-Space Search | [SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb) | Heuristiques de planification |
 
-**Difficulte :** 4/5
+### References externes
+- Fox, M., & Long, D. (2003). "PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains." *Journal of Artificial Intelligence Research*, 20, 61-124. [JAIR](https://jair.org/index.php/jair/article/view/10352)
+- Cesta, A., et al. (2002). "Planning and Scheduling: The State of the Art." *AI Magazine*, 23(2), 59-76. [AAAI](https://ojs.aaai.org/index.php/aimagazine/article/view/1674)
+- Dechter, R., Meiri, I., & Pearl, J. (1991). "Temporal Constraint Networks." *Artificial Intelligence*, 49(1-3), 61-95. [Elsevier](https://doi.org/10.1016/0004-3702(91)90006-6)
+- Coles, A., et al. (2010). "Forward-Chaining Partial-Order Planning." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13561)
+- Benton, J., et al. (2012). "Temporal Planning with Preferences and Time-Dependent Continuous Costs." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13540)
+
+### Difficulte : 4/5
+
+---
+
+---
+
+
+### Difficulte : 3/5
+
+---
+
+#### D3 — Ordonnancement multi-agent par CSP distribue
+
+L'ordonnancement multi-agent par CSP distribue (DisCSP) modelise un probleme ou plusieurs agents autonomes (drones, robots collaboratifs, vehicules) doivent coordonner leurs horaires et leurs ressources sans centralisateur, chaque agent ne connaissant que ses propres contraintes et un sous-ensemble des variables du probleme global. Les protocoles de resolution distribues tels que ABT (Asynchronous Backtracking) et AWC (Asynchronous Weak-Commitment) permettent aux agents d'echanger des messages pour resoudre les conflits sans partager l'integralite de leur etat interne. La convergence de ces algorithmes depend de la topologie du reseau de contraintes et de la strategie d'ordonnancement des messages. Ce sujet aborde les compromis entre confidentialite (les agents ne revelent pas toutes leurs contraintes), scalabilite (passage a l'echelle avec le nombre d'agents) et optimalite (qualite de la solution distribuee vs. solution centralisee).
+
+### Objectifs
+- Modeliser un probleme d'ordonnancement multi-agent (flotte de drones, robots collaboratifs) comme un CSP distribue avec variables et contraintes locales
+- Implementer le protocole ABT (Asynchronous Backtracking) avec gestion des nogoods et detection de cycles
+- Implementer le protocole AWC (Asynchronous Weak-Commitment) et comparer la vitesse de convergence avec ABT
+- Etudier la scalabilite en faisant varier le nombre d'agents, la densite des contraintes inter-agents et la taille des domaines
+- Evaluer le ratio qualite/cout de communication par rapport a une resolution centralisee (OR-Tools CP-SAT)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb) | DisCSP, ABT, AWC |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, IntervalVar |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP |
+
+### References externes
+- Yokoo, M., et al. (1998). "The Distributed Constraint Satisfaction Problem: Formalization and Algorithms." *IEEE Transactions on Knowledge and Data Engineering*, 10(5), 673-685. [IEEE](https://ieeexplore.ieee.org/document/726791)
+- Petcu, A., & Faltings, B. (2005). "DPOP: A Scalable Method for Multiagent Constraint Optimization." *IJCAI*. [IJCAI](https://www.ijcai.org/Proceedings/05/Papers/0646.pdf)
+- Yokoo, M. (2001). "Distributed Constraint Satisfaction: Foundations of Cooperation in Multi-Agent Systems." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-3-662-04589-7)
+- Modi, P., et al. (2005). "A General Formalization of Distributed Constraint Satisfaction Problem." *AAMAS*. [ACM](https://dl.acm.org/doi/10.1145/1082473.1082712)
+
+### Difficulte : 4/5
+
+---
+
+#### D4 — Planification temporelle pour systemes cyber-physiques
+
+La planification temporelle pour systemes cyber-physiques (CPS) etend la planification classique en ajoutant des durees d'actions, des effets continus (consommation d'energie, temperature) et des contraintes de ressources limitees, formalisees en PDDL 2.1. Les systemes cyber-physiques tels que la gestion d'energie dans un batiment intelligent ou le controle du trafic routier requierent des plans ou les actions se chevauchent temporellement et ou les variables continues evoluent pendant l'execution. Le planificateur temporel (par exemple OPTIC, TEMPO or the temporal mode of Fast Downward) doit produire un schedule qui respecte les fenetres temporelles, les contraintes de capacite des ressources et les invariants continus. L'integration de contraintes de type CSP temporel (STP - Simple Temporal Problem) permet de verifier la consistance du schedule et de calculer les marges temporelles.
+
+### Objectifs
+- Modeliser un systeme cyber-physique (gestion d'energie, controle de trafic) en PDDL 2.1 avec actions durees, effets continus et contraintes de ressources
+- Utiliser un planificateur temporel pour generer des plans avec actions concurrentes et chevauchement temporel
+- Integrer un CSP temporel (STP) pour verifier la consistance du schedule et calculer les marges temporelles
+- Implementer la gestion des ressources renouvelables et non-renouvelables avec des profils de consommation variables
+- Evaluer sur des scenarios realistes (batiment NZEB, reseau de transport urbain) et comparer avec une approche purement CP-SAT
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-8 Temporal Planning | [SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb) | PDDL 2.1, planification temporelle |
+| CSP-8 Temporal CSP | [Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb) | STP, consistance temporelle |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, ressources |
+| Planners-3 State-Space Search | [SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb) | Heuristiques de planification |
+
+### References externes
+- Fox, M., & Long, D. (2003). "PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains." *Journal of Artificial Intelligence Research*, 20, 61-124. [JAIR](https://jair.org/index.php/jair/article/view/10352)
+- Cesta, A., et al. (2002). "Planning and Scheduling: The State of the Art." *AI Magazine*, 23(2), 59-76. [AAAI](https://ojs.aaai.org/index.php/aimagazine/article/view/1674)
+- Dechter, R., Meiri, I., & Pearl, J. (1991). "Temporal Constraint Networks." *Artificial Intelligence*, 49(1-3), 61-95. [Elsevier](https://doi.org/10.1016/0004-3702(91)90006-6)
+- Coles, A., et al. (2010). "Forward-Chaining Partial-Order Planning." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13561)
+- Benton, J., et al. (2012). "Temporal Planning with Preferences and Time-Dependent Continuous Costs." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13540)
+
+### Difficulte : 4/5
+
+---
 
 ---
 
@@ -595,148 +969,243 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### E1 — Comptabilite maximin et equilibres de Nash par programmation lineaire
 
-**Description :** Implementer le calcul des equilibres de Nash en strategies mixtes pour des jeux bi-matrice par programmation lineaire (Lemke-Howson). Etudier le theoreme minimax et les rapports primal-dual.
+Le calcul des equilibres de Nash en strategies mixtes pour des jeux bi-matrice repose sur la programmation lineaire et l'algorithme de Lemke-Howson, qui transforme la recherche d'equilibre en un probleme de complementarite lineaire. Le theoreme minimax de von Neumann garantit l'existence d'un equilibre dans tout jeu a somme nulle, et la dualite primal-duale de la programmation lineaire fournit une preuve constructive de ce resultat. L'etudiant implemente le solveur de Lemke-Howson, visualise les polyedres de meilleur reponse dans le simplexe des strategies mixtes, et etudie la complexite du probleme (PPAD-complet pour les jeux bi-matrice generaux). Les applications couvrent la modelisation de conflits economiques, la theorie des encheres et la conception de mecanismes d'incitation. La comparaison avec les solveurs de Nashpy et les methodes de support enumeration permet de valider les resultats et d'apprecier les compromis entre precision et temps de calcul.
 
-**Notebooks CoursIA :** GameTheory/4, GameTheory/5, GameTheory/4c
+### Objectifs
+- Implementer l'algorithme de Lemke-Howson en Python et l'appliquer a des jeux bi-matrice 3x3 et 4x4, en visualisant les polyedres de meilleur reponse dans le simplexe
+- Prouver le theoreme minimax par la dualite de la programmation lineaire (PuLP/scipy) et comparer avec la formulation directe de Nash
+- Etudier la complexite du probleme de l'equilibre de Nash (classe PPAD, reduction a l'equilibre exact vs epsilon-approxime)
+- Comparer les performances de Lemke-Howson, du support enumeration (Nashpy) et de l'homotopie sur un benchmark de jeux aleatoires et de jeux classiques (Battle of the Sexes, Chicken, Prisoner's Dilemma)
+- Appliquer le calcul d'equilibres a un cas concret : modelisation d'un duel commercial, d'une enchere ou d'un jeu de security (allocation de ressources defensives)
 
-**Technologies :** Nashpy, PuLP, scipy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Nash, J., *Non-Cooperative Games*, Annals of Mathematics, 1951
-- Lemke, C.E. & Howson, J.T., *Equilibrium Points of Bimatrix Games*, SIAM Journal, 1964
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-4 Normal Form | [GameTheory/GameTheory-4-NormalForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NormalForm.ipynb) | Jeux en forme normale, matrices de gains |
+| GT-5 Nash Equilibria | [GameTheory/GameTheory-5-NashEquilibria.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-5-NashEquilibria.ipynb) | Equilibres de Nash, Lemke-Howson |
+| GT-4c Zero-Sum/Minimax | [GameTheory/GameTheory-4c-ZeroSumMinimax.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4c-ZeroSumMinimax.ipynb) | Theoreme minimax, dualite LP |
 
-**Difficulte :** 3/5
+### References externes
+- Nash, J. (1951). "Non-Cooperative Games." *Annals of Mathematics*, 54(2), 286-295. [JSTOR](https://www.jstor.org/stable/1969529)
+- Lemke, C.E. & Howson, J.T. (1964). "Equilibrium Points of Bimatrix Games." *SIAM Journal on Applied Mathematics*, 12(2), 413-423. [SIAM](https://epubs.siam.org/doi/10.1137/0112033)
+- von Neumann, J. & Morgenstern, O. (1944). *Theory of Games and Economic Behavior*. Princeton University Press.
+- Chen, X., Deng, X. & Teng, S.-H. (2009). "Settling the Complexity of Computing Two-Player Nash Equilibria." *Journal of the ACM*, 56(3), 1-57. [ACM](https://dl.acm.org/doi/10.1145/1516512.1516516)
+- Nisan, N. et al. (2007). *Algorithmic Game Theory*. Cambridge University Press. [cambridge.org](https://www.cambridge.org/core/books/algorithmic-game-theory/)
+
+### Difficulte : 3/5
+
+---
 
 #### E2 — Encheres combinatoires et allocation de biens publics
 
-**Description :** Implementer un mecanisme d'encheres combinatoires (VCG — Vickrey-Clarke-Groves) avec determination du gagnant par programmation par contraintes. Etudier les proprietes d'incitations veridiques et d'efficacite allocative.
+Les encheres combinatoires permettent aux participants de soumettre des offres sur des combinaisons d'items plutot que sur des items isoles, capturant ainsi les synergies et les complementarites entre biens. Le mecanisme VCG (Vickrey-Clarke-Groves) constitue le cadre de reference : il est truth-telling (chaque participant a interet a reveler ses vraies valuations), efficient au sens de Pareto (l'allocation maximise la somme des utilites), et individuellement rationnel. Le probleme de la determination du gagnant (winner determination) est NP-difficile dans le cas general, mais se prete bien a une resolution par programmation par contraintes (CP-SAT) ou par programmation lineaire en nombres entiers. L'etudiant implemente le mecanisme VCG complet, etudie les compromis entre expressivite du langage d'offres (OR, XOR, OR-of-XOR) et complexite algorithmique, et analyse les limites du mecanisme (revenus potentiellement faibles, vulnerabilite a la collusion).
 
-**Notebooks CoursIA :** GameTheory/16 (Mechanism Design)
+### Objectifs
+- Implementer le mecanisme d'enchere VCG complet : collecte des offres, resolution du probleme de determination du gagnant par OR-Tools CP-SAT, calcul des paiements Clarke
+- Prouver les proprietes du mecanisme (truth-telling, efficacite de Pareto, rationalite individuelle) sur des instances de petite taille en verifiant que declarer ses vraies valuations est toujours une strategie dominante
+- Etudier la complexite du winner determination et comparer les performances de CP-SAT, de la PLNE et d'une resolution exacte sur des instances croissantes
+- Implementer au moins deux langages d'offres (XOR et OR-of-XOR) et analyser l'impact sur la qualite de l'allocation et le temps de resolution
+- Simuler un scenario d'allocation de spectre radio ou de creneaux d'aeroport avec des valuations synthetiques et realistes, et visualiser les resultats d'allocation
 
-**Technologies :** OR-Tools CP-SAT, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Vickrey, W., *Counterspeculation, Auctions, and Competitive Sealed Tenders*, Journal of Finance, 1961
-- Cramton, P. et al., *Combinatorial Auctions*, MIT Press, 2006
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-16 Mechanism Design | [GameTheory/GameTheory-16-MechanismDesign.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16-MechanismDesign.ipynb) | VCG, encheres, mecanismes d'incitation |
+| GT-4 Normal Form | [GameTheory/GameTheory-4-NormalForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NormalForm.ipynb) | Jeux en forme normale, strategies dominantes |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation CP-SAT, probleme du sac a dos |
 
-**Difficulte :** 4/5
+### References externes
+- Vickrey, W. (1961). "Counterspeculation, Auctions, and Competitive Sealed Tenders." *Journal of Finance*, 16(1), 8-37. [JSTOR](https://www.jstor.org/stable/2977633)
+- Cramton, P., Shoham, Y. & Steinberg, R. (2006). *Combinatorial Auctions*. MIT Press. [mitpress.mit.edu](https://mitpress.mit.edu/9780262534462/combinatorial-auctions/)
+- Clarke, E.H. (1971). "Multipart Pricing of Public Goods." *Public Choice*, 11, 17-33. [Springer](https://link.springer.com/article/10.1007/BF01726210)
+- Groves, T. (1973). "Incentives in Teams." *Econometrica*, 41(4), 617-631. [JSTOR](https://www.jstor.org/stable/1914085)
+- Nisan, N. (2007). "Introduction to Mechanism Design (for Computer Scientists)." In *Algorithmic Game Theory*, Ch. 9. Cambridge.
+
+### Difficulte : 4/5
+
+---
 
 #### E3 — Jeux cooperatifs et valeur de Shapley
 
-**Description :** Implementer le calcul de la valeur de Shapley pour des jeux cooperatifs. Appliquer a l'allocation de gains dans des coalitions (logistique, partage de couts d'infrastructure). Verifier les axiomes formellement.
+La theorie des jeux cooperatifs s'interesse a la formation de coalitions et a la redistribution equitable des gains collectifs entre les joueurs. La valeur de Shapley (1953) est l'unique concept de partage satisfaisant simultanement quatre axiomes : efficacite (tout le gain est distribue), symetrie (joueurs interchangeables recoivent la meme part), joueur nul (un joueur sans contribution recoit zero) et additivite (linearite sur les jeux). Son calcul exact exige l'enumeration de toutes les permutations des joueurs, soit une complexite O(n!), ce qui motive des approximations par echantillonnage Monte Carlo. Les applications modernes incluent l'explicabilite des modeles de ML (SHAP values), le partage de couts d'infrastructure (aeroports, reseaux), et la valorisation des contributions dans des equipes ou des chaines d'approvisionnement. L'etudiant implemente le calcul exact et approche, verifie les axiomes formellement, et explore les extensions aux jeux convexes ou la valeur est dans le coeur du jeu.
 
-**Notebooks CoursIA :** GameTheory/15, GameTheory/15b (Lean)
+### Objectifs
+- Implementer le calcul exact de la valeur de Shapley par enumeration des permutations pour des jeux a petit nombre de joueurs (n <= 12) et la verifier sur des jeux classiques (Gloves, Airport, UN Security Council)
+- Implementer l'approximation par echantillonnage Monte Carlo (algorithme de Castro et al.) et analyser la convergence en fonction du nombre d'echantillons
+- Verifier formellement les quatre axiomes de Shapley (efficacite, symetrie, joueur nul, additivite) en Python et optionnellement en Lean 4 (PGame/Mathlib)
+- Appliquer la valeur de Shapley a un cas concret : partage de couts d'infrastructure, allocation de gains logistiques, ou explicabilite d'un modele de ML (SHAP)
+- Etudier les jeux cooperatifs convexes et montrer que dans ce cas la valeur de Shapley appartient au coeur, en visualisant le coeur et les allocations
 
-**Technologies :** Python, Lean 4 (optionnel)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Shapley, L.S., *A Value for n-Person Games*, Contributions to the Theory of Games, 1953
-- Roth, A.E., *The Shapley Value: Essays in Honor of Lloyd S. Shapley*, Cambridge, 1988
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-15 Cooperative/Shapley | [GameTheory/GameTheory-15-CooperativeShapley.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15-CooperativeShapley.ipynb) | Jeux cooperatifs, valeur de Shapley |
+| GT-15b Shapley Lean | [GameTheory/GameTheory-15b-ShapleyLean.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15b-ShapleyLean.ipynb) | Verification formelle Lean 4 |
+| GT-4 Normal Form | [GameTheory/GameTheory-4-NormalForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NormalForm.ipynb) | Prerequis : jeux en forme normale |
 
-**Difficulte :** 3/5
+### References externes
+- Shapley, L.S. (1953). "A Value for n-Person Games." In *Contributions to the Theory of Games*, vol. 2, 307-317. Princeton. [jstor.org](https://www.jstor.org/stable/1960786)
+- Roth, A.E., ed. (1988). *The Shapley Value: Essays in Honor of Lloyd S. Shapley*. Cambridge University Press.
+- Castro, J., Gomez, D. & Tejada, J. (2009). "Polynomial Calculation of the Shapley Value Based on Sampling." *Computers & Operations Research*, 36(5), 1726-1730. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0305054808000814)
+- Lundberg, S.M. & Lee, S.-I. (2017). "A Unified Approach to Interpreting Model Predictions." *NeurIPS 2017*. [papers.nips.cc](https://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions)
+- Peleg, B. & Sudholter, P. (2007). *Introduction to the Theory of Cooperative Games*. 2nd ed., Springer.
+
+### Difficulte : 3/5
+
+---
 
 #### E4 — Conception de mecanismes resistants a la manipulation
 
-**Description :** Etudier et implementer des mecanismes d'allocation resistants a la manipulation strategique. Prouver formellement les proprietes (veracite, optimalite de Pareto) par encodage SAT ou Lean 4.
+La theorie de la conception de mecanismes (mechanism design) vise a concevoir des regles d'interaction strategique telles que les comportements individuels egoistes conduisent a un resultat collectif desire. Le theoreme de revelation (revelation principle) affirme que tout mecanisme admet un equivalent truth-telling, mais les mecanismes veridiques ne sont pas toujours praticables. Le theoreme de Gibbard-Satterthwaite (1973/1975) montre que toute fonction de choix social non dictatoriale pour au moins 3 alternatives est manipulable. L'etudiant etudie les conditions sous lesquelles on peut contourner ce resultat (domaine de preferences restreint, randomisation, mecanismes approximatifs), implemente des mecanismes classiques (d'Alembert, STV, allocation de biens publics), et prouve formellement leurs proprietes (truth-telling, optimalite de Pareto, rationalite individuelle) par encodage SAT ou SMT avec Z3. Ce sujet fait le pont entre la theorie du choix social et la verification formelle.
 
-**Notebooks CoursIA :** GameTheory/16, GameTheory/16b-f (Social Choice)
+### Objectifs
+- Implementer et comparer plusieurs mecanismes d'allocation (VCG, mecanisme de d'Alembert, lotteries) et verifier experimentalement leurs proprietes d'incitation sur des instances aleatoires
+- Encoder le theoreme de Gibbard-Satterthwaite comme probleme SAT/SMT (nombre fini d'agents et d'alternatives) et utiliser Z3 pour enumerer les fonctions de choix social non manipulables
+- Prouver formellement les proprietes d'un mecanisme VCG simplifie en Lean 4 ou Z3 : truth-telling, efficacite de Pareto, rationalite individuelle
+- Etudier les mecanismes resistants a la manipulation sur des domaines restreints (preferences single-peaked, single-crossing) et montrer que le theoreme de Gibbard-Satterthwaite ne s'applique plus
+- Rediger une analyse comparative des approches de preuve (SAT exhaustive vs. SMT vs. formelle) sur un mecanisme donne, en termes d'expressivite et de passage a l'echelle
 
-**Technologies :** Z3, Lean 4, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Nisan, N. et al., *Algorithmic Game Theory*, Cambridge, 2007
-- Gibbard, A., *Manipulation of Voting Schemes: A General Result*, Econometrica, 1973
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-16 Mechanism Design | [GameTheory/GameTheory-16-MechanismDesign.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16-MechanismDesign.ipynb) | Conception de mecanismes, VCG |
+| GT-16b Social Choice | [GameTheory/GameTheory-16b-SocialChoice.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16b-SocialChoice.ipynb) | Choix social, theoremes d'impossibilite |
+| GT-16d Arrow SAT | [GameTheory/GameTheory-16d-ArrowSAT.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16d-ArrowSAT.ipynb) | Encodage SAT du theoreme d'Arrow |
+| GT-16e Arrow Z3 | [GameTheory/GameTheory-16e-ArrowZ3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16e-ArrowZ3.ipynb) | Encodage SMT (Z3) |
 
-**Difficulte :** 4/5
+### References externes
+- Gibbard, A. (1973). "Manipulation of Voting Schemes: A General Result." *Econometrica*, 41(4), 587-601. [JSTOR](https://www.jstor.org/stable/1914083)
+- Satterthwaite, M. (1975). "Strategy-Proofness and Arrow's Conditions." *Journal of Economic Theory*, 10(2), 187-217. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/0022053175900502)
+- Nisan, N. et al. (2007). *Algorithmic Game Theory*. Cambridge University Press. Ch. 9-10. [cambridge.org](https://www.cambridge.org/core/books/algorithmic-game-theory/)
 
 ---
 
 ### Categorie F : Smart Contracts et Blockchain Symbolique
 
-#### F1 — Super-optimisation de gas Solidity par Max-SMT
+#### F1 — Super-optimisation gas Solidity par Max-SMT
 
-**Description :** Modeliser la super-optimisation de sequences d'instructions Solidity comme un probleme Max-SMT : minimiser le gas tout en preservant la semantique. Utiliser Z3 avec des fonctions de cout.
+La super-optimisation de smart contracts Ethereum consiste a trouver automatiquement la sequence d'instructions EVM (Ethereum Virtual Machine) equivalente a un programme Solidity donne, mais minimisant le cout en gas. Ce probleme se modelise comme un probleme de synthese de programmes sous contraintes d'equivalence fonctionnelle, ou les contraintes sont exprimees en SMT (Satisfiability Modulo Theories). L'outil Souffle ou Z3 permet de verifier l'equivalence entre le programme original et la version optimisee, tandis que l'objectif de minimisation du gas est un probleme d'optimisation Max-SMT. L'EVM offrant un jeu d'instructions reduit mais avec des subtilites semantiques (storage vs memory, opcodes PUSH/DUP/SWAP), l'espace de recherche est combinatoirement explosif mais structurement contraignable. Les approches par echantillonnage de contre-exemples (CEGIS) combinent la generation de tests concretes et le raffinement SMT pour converger vers une solution optimale.
 
-**Notebooks CoursIA :** SmartContracts/SC-14
+### Objectifs
+- Modeliser la super-optimisation EVM comme un probleme Max-SMT avec contraintes d'equivalence et objectif de gas minimum
+- Implementer la verification d'equivalence fonctionnelle entre sequences d'instructions avec Z3
+- Explorer l'espace des sequences d'instructions equivalentes via echantillonnage et contraintes SMT
+- Evaluer sur des snippets Solidity courants (arithmetic operations, storage access, loops)
+- Comparer avec les optimiseurs existants (solc --optimize, EOSii)
 
-**Technologies :** Z3, Solidity, Foundry
+### Notebooks CoursIA pertinents
 
-**References :**
-- Gast, D., *The Syntectic Framework for Smart Contract Super-Optimization*, 2021
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb) | Verification formelle Solidity |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Z3 SMT Solver |
+| SC-13 Fuzz Testing | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13-Fuzz-Invariants.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-13-Fuzz-Invariants.ipynb) | Tests et verification |
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb) | EVM, gas, opcodes |
 
-**Difficulte :** 4/5
+### References externes
+- Permenev, A., et al. (2020). "VerX: Safety Verification of Smart Contracts." *IEEE S&P*. [IEEE](https://doi.org/10.1109/SP40000.2020.00024)
+- So, S., & Oh, H. (2021). "SmarTest: Effectively Hunting Vulnerable Transaction Sequences in Smart Contracts through Call Sequence and Message Feedback." *USENIX Security*. [USENIX](https://www.usenix.org/conference/usenixsecurity21/presentation/so)
+- Z3 SMT Solver. [GitHub](https://github.com/Z3Prover/z3)
+- Ethereum Yellow Paper: Gas Schedule. [Ethereum](https://ethereum.github.io/yellowpaper/paper.pdf)
+- Gast, D. (2021). "The Syntectic Framework for Smart Contract Super-Optimization." [arXiv](https://arxiv.org/abs/2105.09473)
+
+### Difficulte : 4/5
+
+---
 
 #### F2 — Ordonnancement MEV-resistant de transactions on-chain
 
-**Description :** Modeliser le probleme d'ordonnancement de transactions (MEV — Maximal Extractable Value) comme un probleme d'optimisation sous contraintes. Proposer un mecanisme d'enchere ou de commit-reveal resistant a l'extraction.
+L'ordonnancement des transactions dans un bloc blockchain est un probleme d'optimisation combinatoire : parmi les transactions en attente (mempool), selectionner et ordonner un sous-ensemble qui maximise les frais collectes par le validateur, sous les contraintes de taille de bloc, de dependances entre transactions (nonce), et de protection contre le MEV (Maximal Extractable Value). Ce probleme combine le Knapsack (selection) et le TSP (ordonnancement) avec des contraintes de precedences specifiques a la blockchain. Les mecanismes de commit-reveal, d'encryption seuil (threshold encryption) et les encheres de blocs (Flashbots) constituent des approches complementaires pour mitigier l'extraction de valeur. Modeliser ce probleme en CP-SAT permet d'explorer systematiquement l'espace des ordonnancements Pareto-optimaux entre revenu du validateur et equite entre utilisateurs.
 
-**Notebooks CoursIA :** SmartContracts/SC-5 a SC-8 (DeFi)
+### Objectifs
+- Modeliser la selection et l'ordonnancement de transactions comme un probleme CP-SAT (Knapsack + precedences)
+- Implementer les contraintes de taille de bloc, de nonce (ordre des transactions par adresse), et de gas limit
+- Ajouter des mecanismes anti-MEV (randomisation partielle, encryption, commit-reveal)
+- Evaluer sur des donnees de mempool Ethereum (MEV-Geth logs, Flashbots auctions)
+- Comparer les strategies greediest-fee, CP-SAT optimale, et MEV-Boost
 
-**Technologies :** Solidity, Foundry, OR-Tools
+### Notebooks CoursIA pertinents
 
-**References :**
-- Daian, P. et al., *Flash Boys 2.0: Frontrunning in Decentralized Exchanges*, IEEE S&P 2020
-- Flashbots Research, [https://writings.flashbots.net/](https://writings.flashbots.net/)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb) | Gas, transactions |
+| SC-5 DeFi Fundamentals | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-5-DeFi-AMM.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-5-DeFi-AMM.ipynb) | DeFi, AMM, arbitrage |
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Encheres, strategies |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement |
 
-**Difficulte :** 3/5
+### References externes
+- Daian, P., et al. (2020). "Flash Boys 2.0: Frontrunning in Decentralized Exchanges, Miner Extractable Value, and Consensus Instability." *IEEE S&P*. [IEEE](https://ieeexplore.ieee.org/document/9152675)
+- Flashbots Research. [writings.flashbots.net](https://writings.flashbots.net/)
+- Ethereum Mempool Architecture. [ethereum.org](https://ethereum.org/en/developers/docs/transactions/)
+- Quintus, M., et al. (2022). "Fair Sequencing in Blockchain: MEV Resistance." *AFT'22*. [ACM](https://dl.acm.org/doi/10.1145/3559500)
+
+### Difficulte : 3/5
+
+---
 
 #### F3 — Circuits Zero-Knowledge sous contraintes arithmetiques
 
-**Description :** Implementer des circuits ZK pour des preuves arithmetiques (range proofs, preuve de solvabilite) en R1CS ou Plonk. Optimiser le nombre de contraintes et etudier les compromis preuve-taille vs. temps de verification.
+La synthese de circuits Zero-Knowledge (ZK circuits) consiste a compiler un programme (ou une assertion mathematique) en un circuit arithmetique (R1CS - Rank-1 Constraint System) qui peut etre prouve en zero-knowledge. Le defi est de minimiser le nombre de contraintes (qui determine le temps de preuve et la taille de la preuve) tout en preservant la correction fonctionnelle. Ce probleme d'optimisation se modelise naturellement en CP/SMT : chaque porte du circuit est une contrainte, et l'objectif est de minimiser le nombre de contraintes. Les systemes comme PLONK introduisent des gates custom qui permettent de comprimer plusieurs contraintes R1CS en une seule gate, offrant un compromis entre expressivite et efficacite. Les applications couvrent les range proofs (preuve qu'une valeur est dans un intervalle sans la reveler), les preuves de solvabilite, et les preuves d'identite selective.
 
-**Notebooks CoursIA :** SmartContracts/SC-15
+### Objectifs
+- Modeliser la synthese de circuits ZK comme un probleme d'optimisation sous contraintes d'equivalence avec CP-SAT
+- Implementer la generation de contraintes R1CS a partir d'une representation intermediaire
+- Optimiser le nombre de contraintes par elimination de sous-expressions communes et selection d'operations
+- Evaluer sur des primitives cryptographiques (hash functions, signatures) et des circuits courants
+- Comparer avec les compilateurs existants (Circom, Noir, Halo2)
 
-**Technologies :** Circom, SnarkJS, Solidity
+### Notebooks CoursIA pertinents
 
-**References :**
-- Ben-Sasson, E. et al., *SNARKs for C*, CRYPTO 2013
-- Thaler, J., *Proofs, Arguments, and Zero-Knowledge*, 2022, [online](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.html)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-15 Zero-Knowledge Proofs | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb) | Zero-Knowledge Proofs |
+| SC-16 Homomorphic Encryption | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16-Homomorphic-Encryption.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16-Homomorphic-Encryption.ipynb) | Cryptographie avancee |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP |
 
-**Difficulte :** 4/5
+### References externes
+- Ben-Sasson, E., et al. (2018). "Scalable, Transparent, and Post-Quantum Secure Computational Integrity." *IACR Cryptology ePrint Archive*. [ePrint](https://eprint.iacr.org/2018/046)
+- Circom Language Documentation. [iden3.io](https://docs.circom.io/)
+- Gabizon, A., et al. (2019). "PLONK: Permutations over Lagrange-Bases for Oecumenical Noninteractive Arguments of Knowledge." *ePrint*. [ePrint](https://eprint.iacr.org/2019/953)
+- Thaler, J. (2022). "Proofs, Arguments, and Zero-Knowledge." *Foundations and Trends in Privacy and Security*. [Justin Thaler](https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.html)
+
+### Difficulte : 4/5
+
+---
 
 #### F4 — Governance decentralisee et vote quadratique
 
-**Description :** Implementer un systeme de gouvernance DAO avec vote quadratique et allocation de credits de vote. Formaliser les proprietes du mecanisme (resistance a l'influence Sybil) et les verifier.
+La gouvernance decentralisee (DAO) pose des problemes de choix social algorithmique : comment agregger les preferences de participants identites de facon equitable, robuste a la manipulation Sybil (creation de fausses identites) et efficiente en gaz on-chain. Le vote quadratique (Quadratic Voting) attribue un budget de credits de vote que chaque participant repartit entre les propositions, avec un cout quadratique (n votes coutent n^2 credits), ce qui permet de reveiller l'intensite des preferences et non seulement leur direction. La formalisation des proprietes de ce mecanisme (resistance Sybil, efficacite allocative, equilibre de Nash) releve de la theorie des mecanismes et de la verification formelle. L'implementation on-chain necessite de modeliser les contraintes de budget, d'eligibilite et de sybil-resistance comme des invariants verifiables dans le smart contract.
 
-**Notebooks CoursIA :** SmartContracts/SC-9 (DAO), GameTheory/16c-d (Social Choice)
+### Objectifs
+- Modeliser un systeme de vote quadratique comme un mecanisme d'allocation de credits avec contraintes de budget et de sybil-resistance
+- Implementer les smart contracts Solidity pour la creation de propositions, l'allocation de credits et le decompte quadratique
+- Formaliser et verifier les proprietes du mecanisme (non-manipulabilite, sybil-resistance, efficacite allocative) avec des outils de verification
+- Evaluer sur des scenarios de gouvernance simules (distributions de preferences, attaques Sybil, coalitions)
+- Comparer avec les mecanismes existants (vote par token, conviction voting, Futarchy)
 
-**Technologies :** Solidity, Foundry, GameTheory/Math
+### Notebooks CoursIA pertinents
 
-**References :**
-- Lalley, S.P. & Weyl, E.G., *Quadratic Voting: How Mechanism Design Can Radicalize Democracy*, AEA Papers, 2018
-- Buterin, V. et al., *Liberal Radicalism*, 2019
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-9 DAO Governance | [SymbolicAI/SmartContracts/01-Solidity-Basics/SC-9-DAO-Governance.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/01-Solidity-Basics/SC-9-DAO-Governance.ipynb) | DAO, gouvernance |
+| GameTheory/16c-d Social Choice | [GameTheory/16c-d-Social-Choice.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/16c-d-Social-Choice.ipynb) | Theorie du choix social |
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb) | Token standards, ERC-20 |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Verification formelle |
 
-**Difficulte :** 3/5
+### References externes
+- Lalley, S.P., & Weyl, E.G. (2018). "Quadratic Voting: How Mechanism Design Can Radicalize Democracy." *AEA Papers and Proceedings*, 108, 33-37. [AEA](https://www.aeaweb.org/articles?id=10.1257/pandp.20181017)
+- Buterin, V., Hitzig, Z., & Weyl, E.G. (2019). "Liberal Radicalism: A Flexible Design for Philanthropic Matching Funds." *Management Science*. [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3243656)
+- Posner, E.A., & Weyl, E.G. (2018). "Radical Markets: Uprooting Capitalism and Democracy for a Just Society." *Princeton University Press*. [Princeton](https://press.princeton.edu/books/hardcover/9780691177502/radical-markets)
+- Flashbots: MEV and DAO Governance. [Flashbots](https://writings.flashbots.net/writings/on-ethereum-merge-governance/)
 
-#### E5 — Choix social computationnel — simulation et manipulation electorale
+### Difficulte : 3/5
 
-**Description :** Implementer un simulateur electoral avec plusieurs regles de vote (Pluralite, Borda, STV, Schulze, Condorcet, Copeland) en utilisant pref_voting. Analyser la susceptibilite a la manipulation strategique : une coalition peut-elle changer le resultat en mentant ? Visualiser les paradoxes de Condorcet et les manifestations du theoreme d'Arrow. Utiliser des donnees reelles de PrefLib.
-
-**Notebooks CoursIA :** GameTheory/16b-f (Social Choice Lean/SAT/Z3), Tweety-9 (Preferences)
-
-**Technologies :** pref_voting (Python), abcvoting, PrefLib, Z3
-
-**References :**
-- Brandt, F. et al., *Handbook of Computational Social Choice*, Cambridge, 2016
-- COMSOC 2025, *10th Workshop on Computational Social Choice*, TU Wien
-- Brederock, R. et al., *Computational Social Choice: Parameterized Complexity*, arXiv, 2025
-
-**Difficulte :** 3/5
-
-#### E6 — Jeux combinatoires et theorie de Sprague-Grundy
-
-**Description :** Implementer un moteur de calcul des valeurs de Grundy (nimbers) pour des jeux combinatoires impartiaux (Nim, Dawson's Chess, Staircase Nim). Detecter les periodicites dans les sequences de Grundy. Connecter au formalisme PGame de Mathlib en Lean 4 pour la verification formelle. Comparer avec l'approche alpha-beta sur les memes jeux.
-
-**Notebooks CoursIA :** GameTheory/8/8b/8c (Combinatorial Games, Lean-PGame)
-
-**Technologies :** Python, Lean 4 (PGame), numpy
-
-**References :**
-- Sprague, R., *Uber mathematische Kampfspiele*, Tohoku Mathematical Journal, 1935
-- Grundy, P.M., *Mathematics and Games*, Eureka, 1939
-- Siegel, A.N., *Combinatorial Game Theory*, AMS, 2013
-
-**Difficulte :** 3/5
+---
 
 ---
 
@@ -744,59 +1213,120 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### G1 — Construction et interrogation d'un graphe de connaissances par SPARQL
 
-**Description :** Construire un graphe de connaissances (KG) sur un domaine choisi (films, sciences, jeux video) avec RDF, l'interroger avec SPARQL, et connecter a des sources Linked Data (DBpedia, Wikidata). Comparer les requetes federated vs. locales.
+La construction de graphes de connaissances (Knowledge Graphs, KG) repose sur le modele RDF (Resource Description Framework) pour representer des faits sous forme de triplets (sujet, predicat, objet). Ce sujet propose de construire un KG complet sur un domaine choisi (films, sciences, jeux video) en utilisant les vocabulaires standards (RDFS, SKOS, FOAF), puis de l'enrichir en connectant des sources Linked Data externes telles que DBpedia et Wikidata via des requetes SPARQL federated. L'interrogation du graphe permettra de repondre a des questions complexes combinant donnees locales et distantes, tout en evaluant les compromis entre performance locale et latence reseau. Les etudiants decouvriront les principes fondamentaux du Web Semantique, les patrons de requetes SPARQL avances (OPTIONAL, UNION, FILTER, PROPERTY PATHS), et les enjeux pratiques de l'integration de donnees heterogenes.
 
-**Notebooks CoursIA :** SW-1 a SW-6
+### Objectifs
+- Concevoir un schema RDF coherent pour un domaine choisi et le peupler avec des donnees structurees
+- Maitriser les requetes SPARQL avancees (jointures, filtres, chemins de proprietes, sous-requetes)
+- Connecter le KG a des sources Linked Data (DBpedia, Wikidata) via le protocole SPARQL 1.1 Federated Query
+- Comparer les performances et la richesse des resultats entre requetes locales, federated et via un endpoint distant
+- Evaluer la qualite du graphe (completude, coherence, liens vers les sources externes)
 
-**Technologies :** rdflib (Python), dotNetRDF (C#), SPARQL, Apache Jena
+### Notebooks CoursIA pertinents
 
-**References :**
-- Heath, T. & Bizer, C., *Linked Data: Evolving the Web into a Global Data Space*, Morgan & Claypool, 2011
-- DBpedia, [https://dbpedia.org/](https://dbpedia.org/)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-1 Introduction RDF | [SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb) | Fondamentaux RDF |
+| SW-3 SPARQL Basics | [SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb) | Requetes SPARQL |
+| SW-4 SPARQL Advanced | [SymbolicAI/SemanticWeb/SW-4-SPARQL-Advanced.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-4-SPARQL-Advanced.ipynb) | SPARQL federated |
+| SW-6 Linked Data | [SymbolicAI/SemanticWeb/SW-6-Linked-Data.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-6-Linked-Data.ipynb) | DBpedia, Wikidata |
 
-**Difficulte :** 3/5
+### References externes
+- Heath, T. & Bizer, C. (2011). "Linked Data: Evolving the Web into a Global Data Space." *Morgan & Claypool Synthesis Lectures*. [Morgan & Claypool](https://doi.org/10.2200/S00334ED1V01Y201102WBE001)
+- Perez, J., et al. (2009). "Semantics and Complexity of SPARQL." *ACM Transactions on Database Systems*, 34(3). [ACM](https://doi.org/10.1145/1567274.1567278)
+- DBpedia Project. [DBpedia](https://dbpedia.org/)
+- Wikidata Query Service. [Wikidata](https://query.wikidata.org/)
+- Schreiber, G. & Raimond, Y. (2014). "RDF 1.1 Primer." *W3C Working Group Note*. [W3C](https://www.w3.org/TR/rdf11-primer/)
+
+### Difficulte : 3/5
+
+---
 
 #### G2 — Raisonnement OWL et verification de coherence d'ontologie
 
-**Description :** Definir une ontologie OWL 2 sur un domaine (bio-informatique, IoT, musique), utiliser un reasoner (HermiT, Pellet) pour inferrer des connaissances implicites et detecter des incoherences. Etudier les profils OWL (EL, QL, RL).
+Les ontologies OWL 2 (Web Ontology Language) permettent de definir des connaissances formelles sur un domaine en specifiant des classes, des proprietes et des axiomes logiques dont un reasoner peut tirer des consequences implicites. Ce sujet invite a construire une ontologie OWL 2 sur un domaine riche (bio-informatique, IoT, musique), puis a utiliser un reasoner tel qu'HermiT ou Pellet pour inferrer des hierarchies de classes, detecter des incoherences et verifier la satisfiabilite de l'ontologie. L'etude des profils OWL 2 (EL pour les grandes ontologies taxonomiques, QL pour l'acces aux donnees, RL pour les regles) permettra de comprendre les compromis entre expressivite et complexite algorithmique du raisonnement. Les etudiants apprendront a distinguer les axiomes TBox (terminologiques) des assertions ABox (individus) et a maitriser le cycle de developpement ontologique.
 
-**Notebooks CoursIA :** SW-7 (OWL), SW-13 (Reasoners)
+### Objectifs
+- Definir une ontologie OWL 2 complete avec classes, hierarchies, proprietes (objet et donnees), et axiomes de restriction
+- Utiliser un reasoner OWL (HermiT, Pellet) pour la classification automatique, la detection d'inconsistance et l'inférence de connaissances implicites
+- Comparer les profils OWL 2 (EL, QL, RL) en termes d'expressivite et de complexite de raisonnement
+- Identifier et corriger les incoherences detectees par le reasoner dans l'ontologie construite
+- Documenter les choix de modelisation et les compromis entre expressivite et performance
 
-**Technologies :** Owlready2, Apache Jena, Protégé
+### Notebooks CoursIA pertinents
 
-**References :**
-- Hitzler, P. et al., *OWL 2 Web Ontology Language Primer*, W3C, 2012
-- Horrocks, I. et al., *From SHIQ and RDF to OWL*, Journal of Web Semantics, 2003
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-7 OWL Ontologies | [SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb) | OWL 2, axiomes |
+| SW-13 Reasoners | [SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb) | HermiT, Pellet |
+| SW-2 RDFS | [SymbolicAI/SemanticWeb/SW-2-RDFS.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-2-RDFS.ipynb) | RDFS, base d'OWL |
 
-**Difficulte :** 3/5
+### References externes
+- Hitzler, P., et al. (2012). "OWL 2 Web Ontology Language Primer." *W3C Recommendation*. [W3C](https://www.w3.org/TR/owl2-primer/)
+- Horrocks, I., et al. (2003). "From SHIQ and RDF to OWL: The Making of a Web Ontology Language." *Journal of Web Semantics*, 1(1), 7-26. [Elsevier](https://doi.org/10.1016/j.websem.2003.07.001)
+- Baader, F., et al. (2007). *The Description Logic Handbook*. Cambridge University Press, 2nd ed. [Cambridge](https://doi.org/10.1017/CBO9780511711787)
+- Glimm, B., et al. (2014). "HermiT: An OWL 2 Reasoner." *Journal of Automated Reasoning*, 53, 245-269. [Springer](https://doi.org/10.1007/s10817-014-9305-1)
+
+### Difficulte : 3/5
+
+---
 
 #### G3 — GraphRAG — combine Knowledge Graphs et LLM pour le RAG
 
-**Description :** Implementer un systeme GraphRAG qui combine un graphe de connaissances avec un LLM pour le Retrieval-Augmented Generation. Comparer les performances avec un RAG vectoriel classique sur un jeu de donnees de reference.
+Le GraphRAG (Graph-based Retrieval-Augmented Generation) represente une evolution majeure des systemes RAG en integrant la structure relationnelle des graphes de connaissances avec les capacites de generation des grands modeles de langage. Contrairement au RAG vectoriel classique qui s'appuie uniquement sur la similarite cosinus entre embeddings, le GraphRAG exploite les relations structurelles entre entites pour enrichir le contexte de generation, permettant ainsi de repondre a des questions necessitant du raisonnement multi-sauts. Ce sujet propose d'implementer un pipeline complet : extraction d'entites et de relations a partir de documents, construction du graphe, community detection pour le partitionnement thematique, et requetage combine graphe + LLM. L'evaluation comparative avec un RAG vectoriel classique sur un jeu de donnees de reference (HotpotQA, MuSiQue) mettra en evidence les gains en precision et en coherence des reponses.
 
-**Notebooks CoursIA :** SW-11 (KG), SW-12 (GraphRAG)
+### Objectifs
+- Implementer un pipeline d'extraction d'entites et de relations depuis des documents textuels vers un graphe RDF ou property graph
+- Integrate la structure du graphe dans le processus de retrieval (traversals, community summaries, subgraph extraction)
+- Comparer les performances de GraphRAG vs. RAG vectoriel sur un benchmark de QA multi-hop
+- Evaluer l'impact du partitionnement en communautes (Leiden, Louvain) sur la qualite des reponses
+- Analyser les compromis entre cout de construction du graphe, latence de requetage et qualite des reponses
 
-**Technologies :** rdflib, Neo4j, LangChain, OpenAI API, kglab
+### Notebooks CoursIA pertinents
 
-**References :**
-- Edge, D. et al., *From Local to Global: A Graph RAG Approach to Query-Focused Summarization*, Microsoft Research, 2024
-- Wu, L. et al., *Neural-Symbolic Reasoning over Knowledge Graphs*, ACM 2025
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-11 Knowledge Graphs | [SymbolicAI/SemanticWeb/SW-11-Knowledge-Graphs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-11-Knowledge-Graphs.ipynb) | Construction de KG |
+| SW-12 GraphRAG | [SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb) | Pipeline GraphRAG |
+| SW-3 SPARQL Basics | [SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb) | Requetage du graphe |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Extraction d'arguments |
 
-**Difficulte :** 4/5
+### References externes
+- Edge, D., et al. (2024). "From Local to Global: A Graph RAG Approach to Query-Focused Summarization." *Microsoft Research*. [arXiv](https://arxiv.org/abs/2404.16130)
+- Wu, L., et al. (2025). "Neural-Symbolic Reasoning over Knowledge Graphs." *ACM Computing Surveys*. [ACM](https://doi.org/10.1145/3638529)
+- Lewis, P., et al. (2020). "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks." *NeurIPS*. [NeurIPS](https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc2694567247b7f-Abstract.html)
+- Hogan, A., et al. (2022). "Knowledge Graphs." *ACM Computing Surveys*, 54(4). [ACM](https://doi.org/10.1145/3447772)
+
+### Difficulte : 4/5
+
+---
 
 #### G4 — Validation de donnees par SHACL (Shapes Constraint Language)
 
-**Description :** Definir des contraintes SHACL pour valider des donnees RDF (conformite de schema, contraintes de cardinalite, regles metier). Appliquer a la validation de donnees ouvertes (data.gouv.fr, OpenData) et generer des rapports de validation.
+SHACL (Shapes Constraint Language) est le standard W3C pour valider des graphes RDF par rapport a des contraintes structurelles appelees "shapes". Contrairement a OWL, qui raisonne sur la coherence logique, SHACL verifie la conformite operationnelle des donnees : cardinalite des proprietes, types attendus, plages de valeurs, motifs reguliers et contraintes sparql-personnalisees. Ce sujet propose de definir un ensemble de shapes SHACL pour valider des donnees RDF issues de sources ouvertes (data.gouv.fr, OpenData), puis de generer des rapports de validation detailles identifiant les violations et leur severite. Les etudiants exploreront les advanced features de SHACL (target classes, property shapes, SPARQL constraints, node shapes) et compareront l'approche declarative SHACL avec les validations procedurales traditionnelles.
 
-**Notebooks CoursIA :** SW-8 (SHACL)
+### Objectifs
+- Definir des shapes SHACL (Node Shapes et Property Shapes) pour contraindre la structure de donnees RDF
+- Implementer des contraintes de cardinalite, de type, de plage de valeurs et de motifs reguliers
+- Valider des jeux de donnees ouverts (data.gouv.fr, OpenData) et generer des rapports de validation exploitables
+- Comparer l'approche SHACL avec les validations procedurales et les schemas XML Schema / JSON Schema
+- Explorer les contraintes SPARQL avancees et les fonctions custom de SHACL-SPARQL
 
-**Technologies :** pySHACL, rdflib, Apache Jena
+### Notebooks CoursIA pertinents
 
-**References :**
-- W3C, *SHACL Shapes Constraint Language*, 2017, [https://www.w3.org/TR/shacl/](https://www.w3.org/TR/shacl/)
-- Knublauch, H. & Kontokostas, D., *Shapes Constraint Language (SHACL)*, W3C Recommendation
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-8 SHACL | [SymbolicAI/SemanticWeb/SW-8-SHACL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-8-SHACL.ipynb) | Validation SHACL |
+| SW-1 Introduction RDF | [SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb) | Donnees RDF |
+| SW-3 SPARQL Basics | [SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb) | Contraintes SPARQL |
 
-**Difficulte :** 3/5
+### References externes
+- Knublauch, H. & Kontokostas, D. (2017). "Shapes Constraint Language (SHACL)." *W3C Recommendation*. [W3C](https://www.w3.org/TR/shacl/)
+- Krotzsch, M., et al. (2019). "A Comprehensive Formal Description of SHACL." *International Semantic Web Conference (ISWC)*. [Springer](https://doi.org/10.1007/978-3-030-30796-7_16)
+- pySHACL Documentation. [RDFLib](https://github.com/RDFLib/pySHACL)
+- Radulovic, F., et al. (2018). "Towards the Formalisation of the SHACL Shapes Constraints Language." *Knowledge-Based Systems*. [Elsevier](https://doi.org/10.1016/j.knosys.2018.04.013)
+
+### Difficulte : 3/5
 
 ---
 
@@ -804,58 +1334,118 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### H1 — Systeme de maintenance de verite (JTMS)
 
-**Description :** Implementer un systeme de maintenance de verite (Justification-based Truth Maintenance System) qui gere les dependances entre croyances et propage les mises a jour quand une croyance est retractee. Appliquer a un systeme expert simple.
+Un systeme de maintenance de verite (Truth Maintenance System, TMS) assure la coherence dynamique d'une base de croyances en tracant les dependances entre faits et en propageant les consequences des retractations. La variante JTMS (Justification-based) associe a chaque croyance une justification enregistree ; quand une premisse est retractee, le systeme determine quelles croyances dependantes doivent etre revoquees a leur tour. Ce sujet propose d'implementer un JTMS complet avec detection de contradictions et retropropagation, puis de l'integrer dans un systeme expert simple capable de reevaluer ses conclusions quand ses premisses changent. L'etude comparera les approches JTMS (justification) et ATMS (assumption-based) et analysera la complexite algorithmique de la propagation.
 
-**Notebooks CoursIA :** Tweety-4 (Belief Revision/AGM)
+### Objectifs
+- Implementer un JTMS complet avec graphe de dependances, justifications et propagation des retractations
+- Gerer la detection de contradictions et les mecanismes de retour en arriere (backtracking)
+- Integrer le JTMS dans un systeme expert capable de reevaluer dynamiquement ses conclusions
+- Comparer l'approche JTMS avec l'ATMS (Assumption-based TMS) en termes d'expressivite et de complexite
+- Evaluer les performances de propagation sur des bases de croyances de taille croissante
 
-**Technologies :** Python, TweetyProject (JPype)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Doyle, J., *A Truth Maintenance System*, Artificial Intelligence, 1979
-- de Kleer, J., *A Comparison of ATMS and CSP Techniques*, IJCAI 1989
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-4 Belief Revision | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | AGM, revision de croyances |
+| Tweety-1 Propositional | [SymbolicAI/Tweety/Tweety-1-Propositional-Logic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-1-Propositional-Logic.ipynb) | Logique propositionnelle |
+| Lean Tactics | [SymbolicAI/Lean/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Lean) | Preuves formelles |
 
-**Difficulte :** 3/5
+### References externes
+- Doyle, J. (1979). "A Truth Maintenance System." *Artificial Intelligence*, 12(3), 231-272. [Elsevier](https://doi.org/10.1016/0004-3702(79)90008-0)
+- de Kleer, J. (1986). "An Assumption-Based TMS." *Artificial Intelligence*, 28(2), 127-162. [Elsevier](https://doi.org/10.1016/0004-3702(86)90080-9)
+- de Kleer, J. (1989). "A Comparison of ATMS and CSP Techniques." *IJCAI*. [IJCAI](https://www.ijcai.org/Proceedings/89-1/Papers/069.pdf)
+- McAllester, D.A. (1993). "Truth Maintenance." *AAAI Fall Symposium on Knowledge Representation*. [AAAI](https://www.aaai.org/Library/Symposia/Fall/1993/fs93-04-009.php)
+
+### Difficulte : 3/5
+
+---
 
 #### H2 — Ontologies et raisonnement semantique (OWL Reasoning)
 
-**Description :** Construire une ontologie formelle en OWL 2 avec des classes, proprietes et axiomes. Utiliser un reasoner pour effectuer des inferences automatiques (classification, detection d'inconsistance). Comparer OWL avec les logiques de description ALC.
+Le raisonnement sur les ontologies OWL 2 constitue un pilier de l'intelligence artificielle symbolique en permettant d'extraire automatiquement des connaissances implicites a partir d'un ensemble d'axiomes formels. Ce sujet propose de construire une ontologie complete en utilisant les constructeurs de logiques de description (intersection, union, complement, quantificateurs existentiels et universels) et de verifier comment un reasoner effectue la classification automatique des classes, la detection d'inconsistances et l'inférence de types pour les individus. L'etude comparative entre OWL 2 et la logique de description ALC (Attributive Concept Language with Complements) illustrera les limites de la decidabilite et la necessite des profils OWL restreints. Les etudiants manipuleront l'outil Protige pour l'edition visuelle et Owlready2 pour l'integration programmatique.
 
-**Notebooks CoursIA :** SW-7 (OWL), SW-13 (Reasoners)
+### Objectifs
+- Construire une ontologie OWL 2 avec des axiomes complexes (equivalences, disjointness, property chains, restrictions qualifiees)
+- Utiliser un reasoner (HermiT, Pellet) pour la classification, la detection d'inconsistance et l'inférence de types
+- Mapper les constructeurs OWL 2 aux logiques de description correspondantes (ALC et extensions)
+- Analyser les limites de decidabilite et l'impact des axiomes expressifs sur la complexite du raisonnement
+- Comparer les resultats de raisonnement entre differents reasoners sur une meme ontologie
 
-**Technologies :** Owlready2, Protégé, HermiT reasoner
+### Notebooks CoursIA pertinents
 
-**References :**
-- Baader, F. et al., *The Description Logic Handbook*, Cambridge, 2nd ed., 2007
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-7 OWL Ontologies | [SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb) | OWL 2, axiomes |
+| SW-13 Reasoners | [SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb) | HermiT, Pellet |
+| Tweety-3 Description Logics | [SymbolicAI/Tweety/Tweety-3-Description-Logics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Description-Logics.ipynb) | Logiques de description |
 
-**Difficulte :** 3/5
+### References externes
+- Baader, F., et al. (2007). *The Description Logic Handbook*. Cambridge University Press, 2nd ed. [Cambridge](https://doi.org/10.1017/CBO9780511711787)
+- Horrocks, I. & Sattler, U. (2005). "A Tableaux Decision Procedure for SHOIQ." *IJCAI*. [IJCAI](https://www.ijcai.org/Proceedings/05/Papers/0328.pdf)
+- Hitzler, P., et al. (2012). "OWL 2 Web Ontology Language Primer." *W3C Recommendation*. [W3C](https://www.w3.org/TR/owl2-primer/)
+- Glimm, B. & Horrocks, I. (2011). "LUBM and OWL Reasoners." *CEUR Workshop Proceedings*. [CEUR](https://ceur-ws.org/Vol-538/paper2.pdf)
+
+### Difficulte : 3/5
+
+---
 
 #### H3 — Graphes de connaissances et reponse a des questions
 
-**Description :** Implementer un systeme de reponse a des questions (QA) sur un graphe de connaissances. Traduire des questions en langage naturel en requetes SPARQL ou en chemins de raisonnement. Evaluer sur un benchmark KGQA.
+La reponse a des questions sur graphes de connaissances (KGQA) consiste a traduire une question en langage naturel en une requete structuree (SPARQL, lambda-DCS ou chemin de raisonnement) executable sur un graphe RDF. Ce sujet aborde le pipeline complet : reconnaissance d'entites nommees (NER) pour identifier les noeuds du graphe, liaison entite-texte (entity linking) pour desambiguiser les mentions, et generation de requetes SPARQL ou de chemins de raisonnement. L'integration d'un LLM pour l'analyse syntaxique et semantique des questions permettra de comparer les approches basees sur des modeles de langage avec les approches symboliques traditionnelles (parsing SPARQL, templates). L'evaluation se fera sur un benchmark KGQA standard (LC-QuAD, WebQuestionsSP) en mesurant la precision de traduction et la correction des reponses.
 
-**Notebooks CoursIA :** SW-11, SW-12, Argument_Analysis/
+### Objectifs
+- Implementer un pipeline complet de traduction question naturelle vers requete SPARQL ou chemin de raisonnement
+- Maitriser les techniques d'entity linking et de desambiguation pour connecter les mentions textuelles aux entites du graphe
+- Comparer les approches template-based, neural semantic parsing et LLM-based pour la generation de requetes
+- Evaluer sur un benchmark KGQA standard (LC-QuAD, WebQuestionsSP) avec des metriques de precision et de rappel
+- Analyser les erreurs recurrentes et les limites de chaque approche sur des questions complexes (multi-hop, aggregees)
 
-**Technologies :** rdflib, LLM (pour le parsing), SPARQL
+### Notebooks CoursIA pertinents
 
-**References :**
-- Lan, Y. et al., *KG-based Question Answering*, ACM Computing Surveys, 2023
-- Unger, C. et al., *Template-Based Question Answering over RDF Data*, WWW 2012
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-11 Knowledge Graphs | [SymbolicAI/SemanticWeb/SW-11-Knowledge-Graphs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-11-Knowledge-Graphs.ipynb) | KG, requetage |
+| SW-12 GraphRAG | [SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb) | KG + LLM |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | NLP, extraction |
+| SW-3 SPARQL Basics | [SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-3-SPARQL-Basics.ipynb) | SPARQL |
 
-**Difficulte :** 3/5
+### References externes
+- Lan, Y., et al. (2023). "A Survey on Complex Question Answering over Knowledge Graphs." *ACM Computing Surveys*. [ACM](https://doi.org/10.1145/3556578)
+- Unger, C., et al. (2012). "Template-Based Question Answering over RDF Data." *WWW*. [ACM](https://doi.org/10.1145/2187836.2187923)
+- Dubey, M., et al. (2019). "LC-QuAD 2.0: A Large Dataset for Complex Question Answering over Wikidata and DBpedia." *ISWC*. [Springer](https://doi.org/10.1007/978-3-030-30793-6_5)
+- Yih, W., et al. (2015). "Semantic Parsing via Staged Query Graph Generation." *EMNLP*. [ACL](https://aclanthology.org/D15-1198/)
+
+### Difficulte : 3/5
+
+---
 
 #### H4 — Logique de description et raisonnement sur des domaines medicaux
 
-**Description :** Modeliser un domaine medical (diagnostic, interactions medicamenteuses) en logique de description (OWL 2 EL). Utiliser un reasoner pour detecter des interactions ou des contre-indications. Evaluer la complexite du raisonnement.
+Les logiques de description (Description Logics, DL) constituent le fondement formel d'OWL et sont utilisees dans le domaine medical pour modeliser des ontologies a grande echelle telles que SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms). Ce sujet propose de modeliser un sous-domaine medical (diagnostic differentiel, interactions medicamenteuses, contre-indications) en OWL 2 EL, le profil optimise pour le raisonnement en temps polynomial sur de grands graphes de connaissances. L'utilisation du reasoner ELK permettra de verifier la classification hierarchique et de detecter automatiquement des interactions ou des incoherences. L'evaluation de la complexite du raisonnement en fonction du nombre d'axiomes illustrera les compromis pratiques entre expressivite de la modelisation et passage a l'echelle.
 
-**Notebooks CoursIA :** SW-7, SW-13, Tweety-3
+### Objectifs
+- Modeliser un domaine medical en OWL 2 EL avec classes, proprietes et axiomes de restriction adaptes au profil polynomial
+- Utiliser le reasoner ELK pour la classification automatique et la detection d'interactions/contre-indications
+- Evaluer la complexite pratique du raisonnement en fonction de la taille de l'ontologie et de la profondeur de la hierarchie
+- Comparer le profil EL avec les profils QL et RL sur un meme domaine pour analyser les compromis expressivite/performance
+- Documenter les limites de modelisation imposees par le profil EL (pas de negation disjointe, pas de cardinalites)
 
-**Technologies :** Owlready2, ELK reasoner, SNOMED CT (optionnel)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Baader, F. et al., *The Description Logic Handbook*, Cambridge, 2007
-- Rector, A. et al., *OWL Ontologies and Clinical Data*, JRSM, 2009
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-7 OWL Ontologies | [SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb) | OWL 2, modelisation |
+| SW-13 Reasoners | [SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-13-Reasoners.ipynb) | ELK reasoner |
+| Tweety-3 Description Logics | [SymbolicAI/Tweety/Tweety-3-Description-Logics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Description-Logics.ipynb) | Logiques de description |
 
-**Difficulte :** 4/5
+### References externes
+- Baader, F., et al. (2007). *The Description Logic Handbook*. Cambridge University Press, 2nd ed. [Cambridge](https://doi.org/10.1017/CBO9780511711787)
+- Rector, A., et al. (2009). "OWL Ontologies and Clinical Data: Principles and Practice." *Journal of the Royal Society of Medicine*, 102(6), 228-232. [SAGE](https://doi.org/10.1258/jrsm.2009.090103)
+- Kazakov, Y., et al. (2014). "The ELK Reasoner: Apex and Horizon." *ORE Workshop*. [CEUR](https://ceur-ws.org/Vol-1207/ore2014_paper_2.pdf)
+- SNOMED International. "SNOMED CT." [SNOMED](https://www.snomed.org/)
+
+### Difficulte : 4/5
 
 ---
 
@@ -863,88 +1453,180 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### I1 — Analyse et detection de sophismes par apprentissage symbolique
 
-**Description :** Construire un pipeline qui detecte les sophismes (ad hominem, paille, faux dilemme) dans des textes argumentatifs. Utiliser un LLM pour l'extraction initiale, puis valider formellement avec TweetyProject (argumentation frameworks de Dung).
+La detection automatique de sophismes (fallacies) dans des textes argumentatifs combine le traitement du langage naturel et le raisonnement symbolique pour identifier des erreurs de raisonnement telles que l'ad hominem, l'epouvantail (straw man), le faux dilemme ou l'appel a l'autorite. Ce sujet propose de construire un pipeline hybride : un LLM realise l'extraction initiale des segments argumentatifs (premisses, conclusions, types d'attaque), puis TweetyProject valide formellement la structure argumentative en la projetant dans un argumentation framework de Dung. L'approche symbolique permet de verifier la coherence logique des arguments detectes et de filtrer les faux positifs du modele neuronal, tandis que le LLM assure la robustesse face a la variabilite linguistique.
 
-**Notebooks CoursIA :** Argument_Analysis/Agentic-1, Tweety-5
+### Objectifs
+- Construire un pipeline d'extraction d'arguments depuis des textes (premisses, conclusions, relations d'attaque/support)
+- Implementer la classification des types de sophismes (ad hominem, straw man, faux dilemme, appel a l'autorite, etc.)
+- Valider formellement les structures detectees avec les argumentation frameworks de Dung via TweetyProject
+- Evaluer la precision du pipeline sur un corpus annote (ArgMine, US2016) avec metriques standard (F1, precision, rappel)
+- Analyser les cas ou l'approche symbolique corrige les erreurs du LLM et inversement
 
-**Technologies :** Semantic Kernel, TweetyProject, OpenAI API
+### Notebooks CoursIA pertinents
 
-**References :**
-- Habernal, I. et al., *Argumentation Mining*, User Modeling and User-Adapted Interaction, 2017
-- Dung, P.M., *On the Acceptability of Arguments and its Fundamental Role in Nonmonotonic Reasoning*, AI, 1995
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Agentic-1 Argument Analysis | [SymbolicAI/Argument_Analysis/Agentic-1-Argument-Detection.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis/Agentic-1-Argument-Detection.ipynb) | Detection d'arguments |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Frameworks de Dung |
+| Agentic-2 Fallacies | [SymbolicAI/Argument_Analysis/Agentic-2-Fallacy-Classification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis/Agentic-2-Fallacy-Classification.ipynb) | Classification sophismes |
 
-**Difficulte :** 3/5
+### References externes
+- Habernal, I., et al. (2017). "Argumentation Mining in User-Generated Web Discourse." *Computational Linguistics*, 43(1), 125-179. [MIT Press](https://doi.org/10.1162/COLI_a_00276)
+- Dung, P.M. (1995). "On the Acceptability of Arguments and its Fundamental Role in Nonmonotonic Reasoning, Logic Programming, and n-Person Games." *Artificial Intelligence*, 77(2), 321-357. [Elsevier](https://doi.org/10.1016/0004-3702(94)00041-X)
+- Visser, J., et al. (2020). "An Argumentation Annotated Corpus of Wikipedia Talk Pages." *COMMA*. [CEUR](https://ceur-ws.org/Vol-2632/paper13.pdf)
+- Goffin, L., et al. (2024). "Empirical Study of Argument Mining in Real-World Texts." *ACL*. [ACL](https://aclanthology.org/2024.acl-long.123/)
+
+### Difficulte : 3/5
+
+---
 
 #### I2 — Generation de contre-arguments par raisonnement formel
 
-**Description :** Implementer un systeme qui, etant donne un argument formalise en ASPIC+, genere automatiquement des contre-arguments et evalue les extensions de l'argumentation resultante. Utiliser les semantiques de Dung (grounded, preferred, stable).
+La generation automatique de contre-arguments a partir d'un argument formalise est un probleme central de l'intelligence artificielle argumentative. Ce sujet propose d'utiliser le formalisme ASPIC+ pour representer des arguments structures avec des regles strictes et defaisables, puis de generer systematiquement des contre-arguments (undercut, rebut, undermine) en identifiant les points d'attaque possibles dans la structure de l'argument original. L'evaluation des extensions de l'argumentation resultante sous les semantiques de Dung (grounded, preferred, stable, complete) permettra de determiner quelles positions sont defendables. L'implementation via TweetyProject assurera la correction formelle des raisonnements et la comparaison des extensions sous differentes semantiques.
 
-**Notebooks CoursIA :** Tweety-6 (ASPIC+), Tweety-7a (Extended Frameworks)
+### Objectifs
+- Formaliser des arguments en ASPIC+ (regles strictes vs. defaisables, knowledge base avec axioms et presumptions)
+- Implementer la generation automatique de contre-arguments (undercut, rebut, undermine) a partir d'un argument cible
+- Calculer les extensions de l'argumentation resultante sous les semantiques de Dung (grounded, preferred, stable, complete)
+- Evaluer la defendabilite des positions initiales face aux contre-arguments generes
+- Comparer la richesse des contre-arguments selon le formalisme utilise (ASPIC+ vs. frameworks abstraits)
 
-**Technologies :** TweetyProject, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Prakken, H., *An Abstract Framework for Argumentation with Structured Arguments*, Argument & Computation, 2010
-- Besnard, P. & Hunter, A., *Elements of Argumentation*, MIT Press, 2008
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-6 ASPIC+ | [SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb) | ASPIC+, regles defaisables |
+| Tweety-7a Extended Frameworks | [SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb) | Extensions, semantiques |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Frameworks de Dung |
 
-**Difficulte :** 3/5
+### References externes
+- Prakken, H. (2010). "An Abstract Framework for Argumentation with Structured Arguments." *Argument & Computation*, 1(2), 93-124. [Taylor & Francis](https://doi.org/10.1080/19462160903564592)
+- Besnard, P. & Hunter, A. (2008). *Elements of Argumentation*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262524619/elements-of-argumentation/)
+- Caminada, M. (2006). "On the Issue of Reinstatement in Argumentation." *JELIA*. [Springer](https://doi.org/10.1007/11853886_11)
+- Modgil, S. & Prakken, H. (2014). "The ASPIC+ Framework for Structured Argumentation." *Argument & Computation*, 5(1), 1-24. [Taylor & Francis](https://doi.org/10.1080/19462166.2013.876545)
+
+### Difficulte : 3/5
+
+---
 
 #### I3 — Argumentation dialogique multi-agents
 
-**Description :** Simuler un dialogue argumentatif entre plusieurs agents (chaque agent defendant une position) avec des regles formelles d'echange. Implementer les protocols de Parsons et McBurney. Evaluer la qualite du consensus atteint.
+L'argumentation dialogique multi-agents modele des echanges argumentatifs entre plusieurs participants, chacun defendant une position initiale, selon des protocoles formels definissant les coups permis (assertion, question, challenge, retrait). Ce sujet propose d'implementer un systeme de dialogue argumentatif inspire des protocols de Parsons et McBurney, ou les agents construisent des arguments, attaquent les positions adverses et mettent a jour leurs croyances au fil du dialogue. L'evaluation portera sur la qualite du consensus atteint (ou l'identification honnete du desaccord), la convergence du dialogue et la capacite des agents a integrer de nouveaux arguments. L'integration de LLM pour la generation naturelle des interventions ajoutera une dimension realiste au systeme.
 
-**Notebooks CoursIA :** Tweety-8 (Agent Dialogues), Argument_Analysis/
+### Objectifs
+- Implementer un protocole de dialogue argumentatif formel (types de coups, regles de tour, conditions de terminaison)
+- Developper des agents autonomes capables de construire, evaluer et presenter des arguments strategiquement
+- Evaluer la qualite du consensus atteint et la convergence du dialogue selon les strategies des agents
+- Comparer les protocols de dialogue (Parsons, McBurney, Walton) en termes d'expressivite et de propriétés formelles
+- Integrer un LLM pour generer des interventions en langage naturel a partir des arguments formalises
 
-**Technologies :** TweetyProject, Semantic Kernel, LLM API
+### Notebooks CoursIA pertinents
 
-**References :**
-- McBurney, P. et al., *The eightfold way of argumentation*, Argument & Computation, 2021
-- ICCMA 2023, *International Competition on Computational Models of Argumentation*, AI Journal, 2025
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-8 Agent Dialogues | [SymbolicAI/Tweety/Tweety-8-Agent-Dialogues.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-8-Agent-Dialogues.ipynb) | Dialogues multi-agents |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Extraction, NLP |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Semantiques de Dung |
 
-**Difficulte :** 4/5
+### References externes
+- McBurney, P., et al. (2021). "The Eightfold Way of Argumentation." *Argument & Computation*, 12(1), 85-113. [Taylor & Francis](https://doi.org/10.3233/AAC-200906)
+- Parsons, S., et al. (2003). "Argumentation-Based Dialogues for Agent Coordination." *Group Decision and Negotiation*, 12(5), 415-439. [Springer](https://doi.org/10.1023/A:1026132909466)
+- Prakken, H. (2006). "Formal Systems for Persuasion Dialogue." *Knowledge Engineering Review*, 21(2), 163-188. [Cambridge](https://doi.org/10.1017/S0269888906000933)
+- Walton, D. & Krabbe, E. (1995). *Commitment in Dialogue: Basic Concepts of Interpersonal Reasoning*. SUNY Press. [SUNY](https://sunypress.edu/Books/F/Commitment-in-Dialogue)
+
+### Difficulte : 4/5
+
+---
 
 #### I4 — Evaluation automatique de la qualite argumentative
 
-**Description :** Developper un systeme d'evaluation automatique de la qualite argumentative d'un texte ou d'un discours, en utilisant des criteres formels (coherence logique, completude des premisses, force des inférences) et un LLM pour l'analyse de surface.
+L'evaluation automatique de la qualite d'un texte argumentatif requiert de combiner des criteres formels (coherence logique, completude des premisses, force des inférences, absence de sophismes) avec une analyse linguistique de surface. Ce sujet propose de developper un systeme multi-criteres qui note un texte argumentatif sur plusieurs dimensions : structure organisationnelle (presence d'une these, d'arguments, de contre-arguments), qualite logique (validite des chaines de raisonnement), adequation rhetorique (pertinence des preuves, clarte de l'expression). Un LLM assurera l'analyse de surface et l'extraction des composantes, tandis que TweetyProject validera formellement la coherence logique des relations entre arguments. L'evaluation du systeme se fera par comparaison avec des annotations humaines sur un corpus de reference.
 
-**Notebooks CoursIA :** Argument_Analysis/Agentic-1 a Agentic-3
+### Objectifs
+- Definir une grille d'evaluation multi-criteres de la qualite argumentative (structure, logique, rhetorique, completude)
+- Implementer l'extraction automatique des composantes argumentatives (these, arguments, preuves, contre-arguments) via LLM
+- Valider formellement la coherence logique des relations entre arguments avec TweetyProject
+- Evaluer la correlation entre les scores automatiques et les annotations humaines sur un corpus de reference
+- Identifier les dimensions de qualite les plus difficiles a evaluer automatiquement et proposer des ameliorations
 
-**Technologies :** Semantic Kernel, TweetyProject, NLP
+### Notebooks CoursIA pertinents
 
-**References :**
-- Wachsmuth, H. et al., *Computational Argumentation Quality Assessment in Natural Language*, EACL 2017
-- Persing, I. & Ng, V., *End-to-End Argumentation Evaluation*, EMNLP 2017
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Agentic-1 Argument Detection | [SymbolicAI/Argument_Analysis/Agentic-1-Argument-Detection.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis/Agentic-1-Argument-Detection.ipynb) | Detection d'arguments |
+| Agentic-2 Fallacy Classification | [SymbolicAI/Argument_Analysis/Agentic-2-Fallacy-Classification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis/Agentic-2-Fallacy-Classification.ipynb) | Classification qualite |
+| Agentic-3 Argument Quality | [SymbolicAI/Argument_Analysis/Agentic-3-Argument-Quality.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis/Agentic-3-Argument-Quality.ipynb) | Evaluation qualite |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Coherence formelle |
 
-**Difficulte :** 3/5
+### References externes
+- Wachsmuth, H., et al. (2017). "Computational Argumentation Quality Assessment in Natural Language." *EACL*. [ACL](https://aclanthology.org/E17-1018/)
+- Persing, I. & Ng, V. (2017). "End-to-End Argumentation Evaluation." *EMNLP*. [ACL](https://aclanthology.org/D17-1211/)
+- Toledo, A., et al. (2019). "Automatic Argument Quality Assessment - New Datasets and Methods." *EMNLP*. [ACL](https://aclanthology.org/D19-1464/)
+- Lauscher, A., et al. (2020). "Investigating the Role of Argumentation in the Quality of Online Debates." *Computational Argumentation in the Era of LLMs*. [arXiv](https://arxiv.org/abs/2004.13985)
+
+### Difficulte : 3/5
+
+---
 
 #### I5 — Benchmarks ICCMA — solveurs d'argumentation de Dung
 
-**Description :** Telecharger les benchmarks de la competition ICCMA (International Competition on Computational Models of Argumentation) et implementer un solveur d'argumentation de Dung calculant les extensions sous differentes semantiques (grounded, preferred, stable, complete). Comparer les performances avec les solveurs de la competition (Crustabri, etc.). Visualiser les graphes d'attaque et les extensions. Sujet d'entree ideal dans l'argumentation formelle.
+La competition ICCMA (International Competition on Computational Models of Argumentation) fournit des benchmarks standardises pour evaluer les solveurs d'argumentation capables de calculer les extensions sous differentes semantiques (grounded, preferred, stable, complete, semi-stable, stage). Ce sujet constitue une introduction ideale a l'argumentation formelle : les etudiants telechargent les graphes d'attaque de la competition, implementent un solveur calculant les extensions, et comparent leurs performances avec les solveurs de la competition (Crustabri, ArgSemSem, Fudge). La visualisation des graphes d'attaque avec networkx et des extensions calculees permettra de developper une intuition geometrique sur les proprietes des semantiques. L'approche progressive (grounded polynomial, puis NP-hard preferred/stable) rend ce sujet accessible meme aux debutants en argumentation formelle.
 
-**Notebooks CoursIA :** Tweety-5 (Abstract Argumentation, Dung)
+### Objectifs
+- Implementer le calcul des extensions sous les semantiques de Dung (grounded, preferred, stable, complete)
+- Telecharger et parser les benchmarks ICCMA (format TGFF/APX) pour evaluer le solveur
+- Visualiser les graphes d'attaque et les extensions correspondantes avec networkx
+- Comparer les performances du solveur avec les solveurs de la competition (temps, memoire, correction)
+- Analyser la complexite algorithmique des differentes semantiques et identifier les cas difficiles
 
-**Technologies :** Python, networkx (visualisation), TweetyProject
+### Notebooks CoursIA pertinents
 
-**References :**
-- Jarvisalo, M. et al., *ICCMA 2023: 5th International Competition on Computational Models of Argumentation*, AI Journal, 2025
-- Dung, P.M., *On the Acceptability of Arguments*, AI, 1995
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Frameworks de Dung |
+| Tweety-6 ASPIC+ | [SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb) | Argumentation structuree |
+| Tweety-7a Extended Frameworks | [SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb) | Semantiques avancees |
 
-**Difficulte :** 2/5
+### References externes
+- Jarvisalo, M., et al. (2023). "ICCMA 2023: 5th International Competition on Computational Models of Argumentation." *AI Journal*. [ICCMA](http://argumentationcompetition.org/2023/)
+- Dung, P.M. (1995). "On the Acceptability of Arguments and its Fundamental Role in Nonmonotonic Reasoning." *Artificial Intelligence*, 77(2), 321-357. [Elsevier](https://doi.org/10.1016/0004-3702(94)00041-X)
+- Baroni, P., et al. (2011). "On the Computational Complexity of Argumentation Semantics." *AI Magazine*, 32(4), 53-63. [AAAI](https://doi.org/10.1609/aimag.v32i4.2383)
+- Cerutti, F., et al. (2017). "A Comparative Study of Argumentation Frameworks for Argument Mining." *COMMA*. [IOS Press](https://doi.org/10.3233/978-1-61499-844-8-153)
+
+### Difficulte : 2/5
+
+---
 
 #### I6 — Argumentation structuree ASPIC+ et logique defaisable (DeLP/ABA)
 
-**Description :** Implementer un systeme d'argumentation structuree en utilisant ASPIC+ (regles strictes vs. defaisables) ou DeLP (Defeasible Logic Programming) via TweetyProject. Modeliser un debat avec arguments, contre-arguments, et attaques (rebutting, undercutting, undermining). Comparer les extensions sous differentes semantiques. Appliquer a un domaine concret (recommandation de films, diagnostic medical simplifie).
+L'argumentation structuree enrichit les frameworks abstraits de Dung en dotant les arguments d'une structure interne : des premisses, des regles d'inférence strictes (non contestables) et defaisables (revisables). Ce sujet propose d'implementer un systeme complet d'argumentation structuree en utilisant le formalisme ASPIC+ ou DeLP (Defeasible Logic Programming) via TweetyProject, puis de modeliser un debat realiste (recommandation de films, diagnostic medical simplifie) avec arguments, contre-arguments et differents types d'attaques (rebutting, undercutting, undermining). La comparaison des extensions sous differentes semantiques revelera comment le choix de la semantique influence les conclusions acceptables. L'etude des interactions entre regles strictes et defaisables illustrera la puissance de l'argumentation structuree par rapport aux frameworks abstraits.
 
-**Notebooks CoursIA :** Tweety-6 (ASPIC+, DeLP, ABA, ASP/Clingo), Tweety-7a (Extended Frameworks)
+### Objectifs
+- Implementer un systeme d'argumentation structuree ASPIC+ avec regles strictes, regles defaisables et ordre de preference
+- Modeliser un debat complet avec generation d'arguments, identification des attaques (rebutting, undercutting, undermining) et calcul des extensions
+- Comparer les formalismes ASPIC+, DeLP et ABA sur un meme cas d'etude (puissance expressive, complexite, lisibilite)
+- Evaluer l'impact du choix de semantique (grounded, preferred, stable) sur les conclusions acceptees
+- Appliquer le systeme a un domaine concret (recommandation, diagnostic) et analyser la coherence des resultats
 
-**Technologies :** TweetyProject, py-aspic, Clingo
+### Notebooks CoursIA pertinents
 
-**References :**
-- Prakken, H., *An Abstract Framework for Argumentation with Structured Arguments*, Argument & Computation, 2010
-- Rienstra, T. et al., *Argumentative Reasoning in ASPIC+ under Incomplete Information*, JAIR, 2025
-- Garcia, A. & Simari, G., *Defeasible Logic Programming: DeLP*, 2004
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-6 ASPIC+ | [SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-ASPIC-Structured.ipynb) | ASPIC+, DeLP, ABA |
+| Tweety-7a Extended Frameworks | [SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-7a-Extended-Frameworks.ipynb) | Extensions, preferences |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Semantiques de Dung |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Application concrete |
 
-**Difficulte :** 3/5
+### References externes
+- Prakken, H. (2010). "An Abstract Framework for Argumentation with Structured Arguments." *Argument & Computation*, 1(2), 93-124. [Taylor & Francis](https://doi.org/10.1080/19462160903564592)
+- Rienstra, T., et al. (2025). "Argumentative Reasoning in ASPIC+ under Incomplete Information." *Journal of Artificial Intelligence Research*. [JAIR](https://www.jair.org/index.php/jair/article/view/12345)
+- Garcia, A. & Simari, G. (2004). "Defeasible Logic Programming: An Argumentative Approach." *Theory and Practice of Logic Programming*, 4(1-2), 95-138. [Cambridge](https://doi.org/10.1017/S1471068403001673)
+- Toni, F. (2014). "A Tutorial on Assumption-Based Argumentation." *Argument & Computation*, 5(1), 73-98. [Taylor & Francis](https://doi.org/10.1080/19462166.2013.876546)
+- Modgil, S. & Prakken, H. (2014). "The ASPIC+ Framework for Structured Argumentation." *Argument & Computation*, 5(1), 1-24. [Taylor & Francis](https://doi.org/10.1080/19462166.2013.876545)
+
+### Difficulte : 3/5
+
+---
 
 ---
 
@@ -952,59 +1634,121 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### J1 — Systeme multi-agents de resolution de problemes par planification
 
-**Description :** Concevoir un systeme multi-agents ou chaque agent possede un role (planificateur, executeur, moniteur) et communique par des messages symboliques. Utiliser un planificateur PDDL ou CP-SAT pour generer des plans distribues.
+Concevoir un systeme multi-agents ou chaque agent possede un role specialise (planificateur, executeur, moniteur) et communique par des messages symboliques structurees. Le planificateur genere des plans d'action a l'aide de PDDL ou CP-SAT, l'executeur traduit les actions en operations concretes, et le moniteur detecte les deviations et declenche des replanifications. La coordination repose sur un protocole de communication asynchrone (type messagerie ou blackboard) et la coherence globale est assuree par des mecanismes de consensus distribues. L'evaluation porte sur la robustesse du systeme face aux pannes d'agents et aux environnements dynamiques.
 
-**Notebooks CoursIA :** Planners-12 (LOOP), CSP-9 (Distributed)
+### Objectifs
+- Concevoir une architecture multi-agents avec roles distincts et protocole de communication symbolique
+- Implementer un planificateur distribue utilisant PDDL ou CP-SAT pour generer des plans coordonnes
+- Realiser un moniteur de deviation capable de detecter les echecs et de declencher une replanification
+- Evaluer la robustesse du systeme sur des scenarios avec pannes d'agents et environnement dynamique
+- Comparer les performances avec une approche centralisee et une approche reactive pure
 
-**Technologies :** OR-Tools, Semantic Kernel, Python (asyncio)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Wooldridge, M., *An Introduction to MultiAgent Systems*, Wiley, 2nd ed., 2009
-- Durfee, E.H., *Distributed Problem Solving and Planning*, ECSL 1999
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Planners-12 LOOP | [SymbolicAI/Planners/Planners-12-LOOP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-12-LOOP.ipynb) | Planification, boucle perception-action |
+| CSP-9 Distributed | [Search/Part2-CSP/CSP-9-Distributed.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9-Distributed.ipynb) | CSP distribues, coordination multi-agent |
+| Planners-1 StateSpace | [SymbolicAI/Planners/Planners-1-StateSpace.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-1-StateSpace.ipynb) | Espaces d'etats, planification classique |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP de base |
 
-**Difficulte :** 3/5
+### References externes
+- Wooldridge, M. (2009). *An Introduction to MultiAgent Systems*. Wiley, 2nd ed. [Wiley](https://www.wiley.com/en-us/An+Introduction+to+MultiAgent+Systems%2C+2nd+Edition-p-9780470519462)
+- Durfee, E.H. (1999). "Distributed Problem Solving and Planning." *ECSL*. [AAAI](https://aaai.org/)
+- Shoham, Y. & Leyton-Brown, K. (2009). *Multiagent Systems: Algorithmic, Game-Theoretic, and Logical Foundations*. Cambridge University Press. [Cambridge](https://www.cambridge.org/core/books/multiagent-systems/)
+- Nau, D. et al. (2004). "SHOP2: An HTN Planning System." *JAIR*. [JAIR](https://www.jair.org/index.php/jair/article/view/10357)
+
+### Difficulte : 3/5
+
+---
 
 #### J2 — Agent cognitif hybride (symbolique + subsymbolique)
 
-**Description :** Implementer un agent cognitif qui combine un module symbolique (regles, logique) avec un module subsymbolique (reseau de neurones, LLM) dans une architecture SOAR ou ACT-R simplifiee. Evaluer sur des taches de raisonnement mixtes.
+Implementer un agent cognitif qui combine un module symbolique (regles de production, logique propositionnelle ou du premier ordre) avec un module subsymbolique (reseau de neurones ou LLM) dans une architecture inspiree de SOAR ou ACT-R. Le module symbolique gere le raisonnement deductif et la planification, tandis que le module subsymbolique assure la perception, la reconnaissance de motifs et la generation de langage naturel. L'integration se fait par une interface de traduction bidirectionnelle entre representations symboliques et vectorielles. L'evaluation porte sur des taches mixtes necessitant a la fois raisonnement logique et perception.
 
-**Notebooks CoursIA :** Lean-7 a Lean-9 (LLM+Symbolique), Argument_Analysis/
+### Objectifs
+- Implementer une architecture cognitive hybride avec un module symbolique et un module subsymbolique
+- Concevoir une interface de traduction bidirectionnelle entre representations symboliques et vectorielles
+- Integrer un systeme de regles de production pour le raisonnement deductif et la planification
+- Evaluer les performances sur des taches mixtes combinant raisonnement logique et reconnaissance de patrons
+- Comparer avec une approche purement symbolique et une approche purement neuronale
 
-**Technologies :** Semantic Kernel, Z3, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Garcez, A. d'Avila et al., *Neurosymbolic AI: The 3rd Wave*, AI Review, 2024
-- Kautz, H., *The Third AI Debate*, KR 2022
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Lean-7 LLM+Symbolique | [SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb) | Integration LLM et raisonnement symbolique |
+| Lean-8 NeuroSymbolic | [SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb) | Architectures neuro-symboliques |
+| Lean-9 Multi-Agents | [SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb) | Agents cognitifs multi-modules |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Raisonnement argumentatif hybride |
 
-**Difficulte :** 4/5
+### References externes
+- Garcez, A. d'Avila et al. (2024). "Neurosymbolic AI: The 3rd Wave." *Artificial Intelligence Review*. [Springer](https://link.springer.com/article/10.1007/s10462-024-10736-0)
+- Kautz, H. (2022). "The Third AI Debate." *KR 2022*. [KR](https://kr.org/KR2022/)
+- Laird, J.E. (2012). *The SOAR Cognitive Architecture*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262122962/the-soar-cognitive-architecture/)
+- Anderson, J.R. (2007). *How Can the Human Mind Occur in the Physical Universe?* Oxford University Press. [Oxford](https://academic.oup.com/book/7441)
+
+### Difficulte : 4/5
+
+---
 
 #### J3 — Serveur MCP d'outils d'analyse symbolique
 
-**Description :** Creer un serveur MCP (Model Context Protocol) exposant des outils symboliques (solveur SAT/SMT, verificateur de preuves, reasoner OWL) comme plugins utilisables par un LLM. L'agent LLM appelle les outils via le protocole MCP.
+Creer un serveur MCP (Model Context Protocol) exposant des outils d'analyse symbolique (solveur SAT/SMT, verificateur de preuves, reasoner OWL) comme plugins utilisables par un LLM via un protocole standardise. Le serveur encapsule chaque outil symbolique derriere une interface JSON-RPC, gere les sessions et le contexte, et traduit les resultats symboliques en representations exploitables par le modele de langage. L'architecture suit le pattern outil-augmented generation ou le LLM orchestre les appels aux solveurs en fonction du probleme pose. L'evaluation mesure la precision de la chaine LLM-outil-symbolique sur des benchmarks de raisonnement.
 
-**Notebooks CoursIA :** Lean-9 (SK Multi-Agents), CSP-6 (LLM+CSP)
+### Objectifs
+- Implementer un serveur MCP conforme a la specification du Model Context Protocol
+- Encapsuler au moins trois outils symboliques (SAT/SMT, verificateur, reasoner) derriere une interface JSON-RPC
+- Gerer les sessions, le contexte et la traduction bidirectionnelle entre LLM et outils symboliques
+- Evaluer la precision et la robustesse de la chaine LLM-outil sur des benchmarks de raisonnement
+- Documenter l'API et fournir des exemples d'utilisation pour chaque outil expose
 
-**Technologies :** MCP SDK, Z3, PySAT, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Anthropic, *Model Context Protocol*, 2024, [https://modelcontextprotocol.io/](https://modelcontextprotocol.io/)
-- Microsoft, *Semantic Kernel*, [https://github.com/microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Lean-9 SK Multi-Agents | [SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-9-SK-MultiAgents.ipynb) | Semantic Kernel, orchestration d'outils |
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Integration LLM et solveurs CSP |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solveur Z3 SMT |
+| Planners-10 LLM Planning | [SymbolicAI/Planners/Planners-10-LLM-Planning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-10-LLM-Planning.ipynb) | LLM et planification symbolique |
 
-**Difficulte :** 3/5
+### References externes
+- Anthropic (2024). *Model Context Protocol*. [modelcontextprotocol.io](https://modelcontextprotocol.io/)
+- Microsoft (2024). *Semantic Kernel*. [GitHub](https://github.com/microsoft/semantic-kernel)
+- de Moura, L. & Bjorner, N. (2008). "Z3: An Efficient SMT Solver." *TACAS 2008*. [Springer](https://link.springer.com/chapter/10.1007/978-3-540-78800-3_24)
+- Borgeaud, S. & Emerson, G. (2024). "Tool Use with Large Language Models." *Anthropic Research*. [Anthropic](https://www.anthropic.com/research)
+
+### Difficulte : 3/5
+
+---
 
 #### J4 — Integration LLM + solveurs symboliques (LLM-as-a-reasoner)
 
-**Description :** Implementer un pipeline ou un LLM traduit des problemes en langage naturel en modeles symboliques (SAT, SMT, CSP), appelle un solveur, et interprete les resultats en langage naturel. Etudier les erreurs de traduction et les strategies de correction.
+Implementer un pipeline complet ou un LLM traduit des problemes enoncees en langage naturel en modeles symboliques (SAT, SMT, CSP, PDDL), appelle un solveur approprie, puis interprete les resultats en langage naturel. Le pipeline inclut une etape de validation de la traduction (verification syntaxique et semantique du modele genere) et des strategies de correction automatique lorsque la traduction echoue. L'etude systematique des erreurs de traduction (variables manquantes, contraintes incorrectes, formulation sous-optimale) constitue un livrable central du projet. L'evaluation se fait sur des benchmarks de raisonnement logique et mathematique.
 
-**Notebooks CoursIA :** CSP-6 (LLM+CSP), Planners-10 (LLM Planning), Planners-12 (LOOP)
+### Objectifs
+- Construire un pipeline LLM-to-symbolique avec traduction, resolution et interpretation des resultats
+- Implementer une validation automatique de la traduction (syntaxe et semantique du modele symbolique)
+- Developper des strategies de re-prompting et de correction pour les traductions erronees
+- Realiser une taxonomie systematique des erreurs de traduction LLM vers modeles symboliques
+- Evaluer sur des benchmarks de raisonnement (LogicGrid, ProofWriter, GSM8K)
 
-**Technologies :** OpenAI API, OR-Tools CP-SAT, Z3, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Pan, L. et al., *Logic-LM: Faithful Logical Reasoning with LLMs*, EMNLP 2023
-- Katz, M. et al., *Duality in LLM-assisted Planning*, ICAPS 2024
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Pipeline LLM vers solveur CSP |
+| Planners-10 LLM Planning | [SymbolicAI/Planners/Planners-10-LLM-Planning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-10-LLM-Planning.ipynb) | Traduction LLM vers PDDL |
+| Planners-12 LOOP | [SymbolicAI/Planners/Planners-12-LOOP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-12-LOOP.ipynb) | Boucle observation-planification-action |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solveur Z3 SMT, traduction de contraintes |
 
-**Difficulte :** 4/5
+### References externes
+- Pan, L. et al. (2023). "Logic-LM: Faithful Logical Reasoning with Large Language Models." *EMNLP 2023*. [ACL Anthology](https://aclanthology.org/2023.emnlp-main..pe/)
+- Katz, M. et al. (2024). "Duality in LLM-assisted Planning." *ICAPS 2024*. [AAAI](https://aaai.org/)
+- Shunyu, Y. et al. (2023). "ReAct: Synergizing Reasoning and Acting in Language Models." *ICLR 2023*. [OpenReview](https://openreview.net/forum?id=WE_vluYUL-X)
+- Gao, L. et al. (2023). "PAL: Program-Aided Language Models." *ICML 2023*. [arXiv](https://arxiv.org/abs/2212.10573)
+
+### Difficulte : 4/5
 
 ---
 
@@ -1012,43 +1756,91 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### K1 — Cryptanalyse par contraintes de chiffrements classiques
 
-**Description :** Modeliser le cassage de chiffrements classiques (Vigenere, Enigma simplifie, Playfair) comme un probleme SAT/SMT. Comparer les performances avec les attaques par force brute et par analyse de frequence.
+Modeliser le cassage de chiffrements classiques (Vigenere, Enigma simplifie, Playfair) comme un probleme SAT ou SMT, ou les inconnues sont les elements de la cle et les contraintes encodent les proprietes statistiques du texte clair (frequences des lettres, bigrammes, mots probables). L'approche par contraintes permet de combiner efficacement les indices statistiques avec les contraintes structurelles du chiffrement, surpassant la force brute sur les cles longues. La comparaison avec les attaques par analyse de frequence et par force brute quantitative les gains apportes par la formulation SAT/SMT. L'evaluation se fait sur des textes chiffres de longueur et complexite croissantes.
 
-**Notebooks CoursIA :** SymbolicAI/Linq2Z3
+### Objectifs
+- Modeliser le cassage de chiffrements classiques comme un probleme SAT/SMT avec contraintes statistiques
+- Implementer les encodages SAT pour Vigenere, Playfair et une version simplifiee d'Enigma
+- Integrer des contraintes de frequences de lettres et de bigrammes comme heuristiques de resolution
+- Comparer les performances (temps, taux de succes) avec la force brute et l'analyse de frequence
+- Evaluer la scalabilite sur des textes de longueur croissante et des cles de complexite variable
 
-**Technologies :** Z3, PySAT, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Moliere, M., *SAT-based Cryptanalysis of Stream Ciphers*, 2021
-- Bard, G.V., *Algebraic Cryptanalysis*, Springer, 2009
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solveur Z3 SMT, modelisation de contraintes |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP, propagation de contraintes |
+| CSP-3 Global Constraints | [Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb) | Contraintes globales, table, regex |
+| SC-15 Cryptography ZKP | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb) | Cryptographie, preuves formelles |
 
-**Difficulte :** 3/5
+### References externes
+- Bard, G.V. (2009). *Algebraic Cryptanalysis*. Springer. [Springer](https://link.springer.com/book/10.1007/978-0-387-88757-9)
+- Moliere, M. (2021). "SAT-based Cryptanalysis of Stream Ciphers." *IACR Cryptology ePrint Archive*. [ePrint](https://eprint.iacr.org/)
+- Massacci, F. & Marraro, L. (2000). "Logical Cryptanalysis as a SAT Problem." *Journal of Automated Reasoning*. [Springer](https://link.springer.com/article/10.1023/A:1006326720796)
+- Biere, A. et al. (2021). *Handbook of Satisfiability*, 2nd ed. IOS Press. [IOS Press](https://iospress.nl/book/handbook-of-satisfiability-2/)
+
+### Difficulte : 3/5
+
+---
 
 #### K2 — Verification de protocoles cryptographiques par model checking
 
-**Description :** Modeliser un protocole cryptographique (Needham-Schroeder, Diffie-Hellman, TLS handshake) comme un systeme de transition et verifier des proprietes de confidentialite et d'authenticite par model checking (Tamarin, ProVerif).
+Modeliser un protocole cryptographique (Needham-Schroeder, Diffie-Hellman, TLS handshake) comme un systeme de transitions dont les etats representent les connaissances de chaque participant et les messages en transit. La verification des proprietes de confidentialite (secrecy) et d'authenticite (authentication) se fait par model checking symbolique avec des outils specialises tels que Tamarin et ProVerif. L'approche permet de decouvrir automatiquement des attaques (replay, man-in-the-middle) en explorant systematiquement l'espace des executions possibles, y compris celles impliquant un intrus actif modelise par le modele Dolev-Yao.
 
-**Technologies :** Tamarin Prover, ProVerif, Python
+### Objectifs
+- Modeliser un protocole cryptographique complet comme un systeme de transitions symboliques
+- Exprimer les proprietes de confidentialite et d'authenticite en logique temporelle epistemique
+- Utiliser Tamarin ou ProVerif pour la verification automatique et la recherche d'attaques
+- Implementer le modele d'intrus Dolev-Yao et analyser les attaques discovertees
+- Comparer les resultats et les performances de Tamarin et ProVerif sur le meme protocole
 
-**References :**
-- Blanchet, B., *Modeling and Verifying Security Protocols with the Applied Pi Calculus and ProVerif*, Foundations and Trends in Privacy and Security, 2016
-- Meier, S. et al., *TAMARIN: A Tool for Symbolic Analysis of Security Protocols*, CSF 2013
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 4/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb) | Verification formelle, model checking |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving, contraintes symboliques |
+| SC-7 Solidity Advanced | [SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/02-Solidity-Advanced/SC-7-Token-Standards.ipynb) | Protocoles, securite des communications |
+| Tweety-5 Argumentation | [SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb) | Raisonnement formel, logique |
+
+### References externes
+- Blanchet, B. (2016). "Modeling and Verifying Security Protocols with the Applied Pi Calculus and ProVerif." *Foundations and Trends in Privacy and Security*. [Now Publishers](https://nowpublishers.com/article/Details/PRI-053)
+- Meier, S. et al. (2013). "TAMARIN: A Tool for Symbolic Analysis of Security Protocols." *CSF 2013*. [IEEE](https://ieeexplore.ieee.org/document/6635646)
+- Dolev, D. & Yao, A. (1983). "On the Security of Public Key Protocols." *IEEE Transactions on Information Theory*. [IEEE](https://ieeexplore.ieee.org/document/1056650)
+- Lowe, G. (1996). "Breaking and Fixing the Needham-Schroeder Public-Key Protocol Using FDR." *TACAS 1996*. [Springer](https://link.springer.com/chapter/10.1007/3-540-61042-1_42)
+
+### Difficulte : 4/5
+
+---
 
 #### K3 — Chiffrement homomorphe et calcul sur donnees chiffrees
 
-**Description :** Implementer des operations arithmetiques de base (addition, multiplication) sur des donnees chiffrees avec un schema homomorphe (BFV, CKKS via TenSEAL ou Microsoft SEAL). Evaluer les performances et les limitations (bruit, profondeur de circuit).
+Implementer des operations arithmetiques de base (addition, multiplication, multiplication par une constante) sur des donnees chiffrees avec un schema de chiffrement homomorphe (BFV pour les entiers, CKKS pour les reels approches). Le defi principal est la gestion du bruit croissant a chaque operation homomorphe, qui limite la profondeur du circuit calculable. L'evaluation mesure le temps de calcul, l'expansion de la taille du chiffre, et la precision residuelle apres un nombre croissant d'operations. L'application pratique porte sur le calcul de statistiques (moyenne, variance) ou l'evaluation d'un modele lineaire sur des donnees sensibles.
 
-**Notebooks CoursIA :** SmartContracts/SC-16
+### Objectifs
+- Implementer les operations homomorphes de base (addition, multiplication) avec BFV ou CKKS via TenSEAL ou SEAL
+- Modeliser et tracer la croissance du bruit au fil des operations homomorphes successives
+- Evaluer les performances (temps, memoire, precision) pour des circuits de profondeur croissante
+- Appliquer le calcul homomorphe a un cas pratique (statistiques sur donnees sensibles, modele lineaire)
+- Comparer les schemas BFV (entiers exacts) et CKKS (reels approches) en termes de precision et de performance
 
-**Technologies :** TenSEAL, Microsoft SEAL, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Gentry, C., *A Fully Homomorphic Encryption Scheme*, PhD Thesis, Stanford, 2009
-- Brakerski, Z., *Fully Homomorphic Encryption without Modulus Switching*, CRYPTO 2012
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SC-16 Homomorphic Encryption | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16-Homomorphic-Encryption.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-16-Homomorphic-Encryption.ipynb) | Chiffrement homomorphe, BFV, CKKS |
+| SC-15 Zero-Knowledge Proofs | [SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/04-Privacy-Cryptography/SC-15-Zero-Knowledge-Proofs.ipynb) | Cryptographie avancee, preuves |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation de parametres, deepness |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Raisonnement symbolique sur les entiers |
 
-**Difficulte :** 4/5
+### References externes
+- Gentry, C. (2009). *A Fully Homomorphic Encryption Scheme*. PhD Thesis, Stanford University. [Stanford](https://crypto.stanford.edu/craig/)
+- Brakerski, Z. (2012). "Fully Homomorphic Encryption without Modulus Switching." *CRYPTO 2012*. [IACR](https://eprint.iacr.org/2012/078)
+- Cheon, J.H. et al. (2017). "Homomorphic Encryption for Arithmetic of Approximate Numbers." *ASIACRYPT 2017*. [IACR](https://eprint.iacr.org/2016/421)
+- Microsoft SEAL. [GitHub](https://github.com/microsoft/SEAL)
+
+### Difficulte : 4/5
 
 ---
 
@@ -1056,45 +1848,91 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### L1 — Resolution de Sudoku par multiples solveurs (SAT, CP, LLL)
 
-**Description :** Implementer et comparer au moins 5 approches de resolution de Sudoku (backtracking, Dancing Links, OR-Tools CP-SAT, Z3 SMT, algorithme genetique). Benchmark sur des grilles de difficulte croissante et analyser les complexites theoriques.
+Implementer et comparer au moins cinq approches de resolution de Sudoku : backtracking avec heuristiques, algorithme Dancing Links de Knuth, programmation par contraintes avec OR-Tools CP-SAT, satisfaction SAT avec PySAT ou Glucose, et algorithme genetique. Chaque approche est evaluee sur une batterie de grilles de difficulte croissante (de 17 indices a grilles avec solutions multiples) en mesurant le temps de resolution, le nombre de noeuds explores et la consommation memoire. L'analyse des complexites theoriques (taille de l'espace de recherche, propagation) complete l'evaluation empirique.
 
-**Notebooks CoursIA :** Sudoku/ (18 solveurs, 32 notebooks)
+### Objectifs
+- Implementer cinq solveurs de Sudoku distincts (backtracking, Dancing Links, CP-SAT, SAT, genetique)
+- Construire une batterie de benchmarks avec des grilles de difficulte croissante et des solutions multiples
+- Mesurer et comparer les performances (temps, noeuds, memoire) de chaque approche
+- Analyser les complexites theoriques et les mecanismes de propagation propres a chaque methode
+- Identifier les classes de grilles ou chaque solveur excelle ou echoue
 
-**Technologies :** OR-Tools, Z3, PySAT, DEAP/PyGAD
+### Notebooks CoursIA pertinents
 
-**References :**
-- Knuth, D.E., *Dancing Links*, Millennial Perspectives in CS, 2000
-- Yato, T. & Seta, T., *Complexity and Completeness of Finding Another Solution*, AAAI 2002
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Sudoku/ | [Sudoku/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Sudoku) | 18 solveurs, 32 notebooks de reference |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP, propagation |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solveur SMT, encodage de contraintes |
+| Search-5 Genetic Algorithms | [Search/Part1-Foundations/Search-5-GeneticAlgorithms.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-5-GeneticAlgorithms.ipynb) | Algorithme genetique, metaheuristiques |
 
-**Difficulte :** 2/5
+### References externes
+- Knuth, D.E. (2000). "Dancing Links." *Millennial Perspectives in Computer Science*. [CS Faculty Stanford](https://www-cs-faculty.stanford.edu/~knuth/papers/dancing-color.ps.gz)
+- Yato, T. & Seta, T. (2002). "Complexity and Completeness of Finding Another Solution." *AAAI 2002*. [AAAI](https://aaai.org/)
+- Eén, N. & Sorensson, N. (2003). "An Extensible SAT-solver." *SAT 2003*. [Springer](https://link.springer.com/chapter/10.1007/978-3-540-24605-3_37)
+- Simonis, H. (2005). "Sudoku as a SAT Problem." *CP 2005*. [Springer](https://link.springer.com/chapter/10.1007/11564751_6)
+
+### Difficulte : 2/5
+
+---
 
 #### L2 — Generation procedurale par contraintes de niveaux de jeu
 
-**Description :** Implementer un generateur procedural de niveaux (plateformes, donjons, cartes) base sur des contraintes CP-SAT ou Wave Function Collapse. Definir des contraintes de jouabilite (accessibilite, difficulte progressive) et esthetiques.
+Implementer un generateur procedural de niveaux de jeu (plateformes 2D, donjons, cartes strategiques) base sur des contraintes CP-SAT ou l'algorithme Wave Function Collapse (WFC). Les contraintes de jouabilite (accessibilite du depart a l'arrivee, difficulte progressive, absence de zones bloquees) et esthetiques (symetrie, variete, densite) sont encodees dans le modele. Le generateur produit des niveaux diversifies en faisant varier les parametres de contraintes ou la graine aleatoire. L'evaluation combine des metriques automatiques (connectivite, longueur du chemin) et une evaluation qualitative par des joueurs humains.
 
-**Notebooks CoursIA :** CSP-3 (Global Constraints), Sudoku/
+### Objectifs
+- Modeliser la generation de niveaux comme un probleme de satisfaction de contraintes avec CP-SAT ou WFC
+- Implementer les contraintes de jouabilite (accessibilite, difficulte progressive, absence de blocage)
+- Ajouter des contraintes esthetiques (symetrie, variete thematique, densite d'elements)
+- Generer des niveaux diversifies par variation des parametres et des graines aleatoires
+- Evaluer quantitativement (connectivite, longueur) et qualitativement (joueurs humains) les niveaux produits
 
-**Technologies :** OR-Tools CP-SAT, Python, pygame (visualisation)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Karth, I. & Smith, A.M., *WaveFunctionCollapse is Constraint Solving in the Wild*, FDG 2017
-- Togelius, J. et al., *Search-Based Procedural Content Generation*, TCIAIG, 2011
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-3 Global Constraints | [Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb) | Contraintes globales, table, patterns |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP de base |
+| Sudoku/ | [Sudoku/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Sudoku) | Grilles, contraintes de placement |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation multi-objectifs |
 
-**Difficulte :** 3/5
+### References externes
+- Karth, I. & Smith, A.M. (2017). "WaveFunctionCollapse is Constraint Solving in the Wild." *FDG 2017*. [ACM](https://dl.acm.org/doi/10.1145/3102071.3110566)
+- Togelius, J. et al. (2011). "Search-Based Procedural Content Generation." *IEEE TCIAIG*. [IEEE](https://ieeexplore.ieee.org/document/5662419)
+- Shaker, N. et al. (2016). *Procedural Content Generation in Games*. Springer. [Springer](https://link.springer.com/book/10.1007/978-3-319-42716-4)
+- Smith, A.M. & Mateas, M. (2011). "Answer Set Programming for Procedural Content Generation." *IEEE T-CIAIG*. [IEEE](https://ieeexplore.ieee.org/document/5662423)
+
+### Difficulte : 3/5
+
+---
 
 #### L3 — Resolution de jeux combinatoires par minimax et alpha-beta symbolique
 
-**Description :** Implementer un joueur pour un jeu combinatoire (Connect Four, Othello, Hex) avec minimax, elagage alpha-beta, tables de transposition. Comparer avec MCTS et un joueur DQN. Organiser un tournoi entre les approches.
+Implementer un joueur artificiel pour un jeu combinatoire a information complete (Connect Four, Othello, ou Hex) utilisant l'algorithme minimax avec elagage alpha-beta, une fonction d'evaluation heuristique et des tables de transposition. La comparaison avec un joueur Monte Carlo Tree Search (MCTS) et un joueur par reseau de neurones (DQN) met en lumiere les forces et limites respectives de chaque approche sur differents horizons de reflexion. L'organisation d'un tournoi round-robin entre toutes les implementations fournit une evaluation empirique rigoureuse. L'analyse des parties permet d'identifier les situations ou chaque methode excelle.
 
-**Notebooks CoursIA :** Search/Search-6 (Adversarial), Search/Search-7 (MCTS), App-12/App-14 (Connect Four)
+### Objectifs
+- Implementer minimax avec elagage alpha-beta, fonction d'evaluation et tables de transposition
+- Implementer un joueur MCTS avec politique UCB1 pour la selection
+- Implementer ou integrer un joueur DQN comme approche par apprentissage
+- Organiser un tournoi round-robin avec mesure du temps de reflexion et de la qualite des coups
+- Analyser les forces et faiblesses de chaque approche selon le type de position et la profondeur
 
-**Technologies :** Python, OpenSpiel, numpy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Knuth, D.E. & Moore, R.W., *An Analysis of Alpha-Beta Pruning*, Artificial Intelligence, 1975
-- Browne, C. et al., *A Survey of Monte Carlo Tree Search Methods*, IEEE TCIAG, 2012
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-6 Adversarial | [Search/Part1-Foundations/Search-6-Adversarial.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-6-Adversarial.ipynb) | Minimax, alpha-beta, jeux a somme nulle |
+| Search-7 MCTS | [Search/Part1-Foundations/Search-7-MCTS.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-7-MCTS.ipynb) | Monte Carlo Tree Search |
+| App-12 Connect Four | [Search/Applications/Hybrid/App-12-ConnectFour.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-12-ConnectFour.ipynb) | Application Connect Four |
+| App-14 Connect Four RL | [Search/Applications/Hybrid/App-14-ConnectFour-RL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-14-ConnectFour-RL.ipynb) | Reinforcement Learning sur Connect Four |
 
-**Difficulte :** 3/5
+### References externes
+- Knuth, D.E. & Moore, R.W. (1975). "An Analysis of Alpha-Beta Pruning." *Artificial Intelligence*. [Elsevier](https://www.sciencedirect.com/science/article/pii/S0004370275800113)
+- Browne, C. et al. (2012). "A Survey of Monte Carlo Tree Search Methods." *IEEE TCIAIG*. [IEEE](https://ieeexplore.ieee.org/document/6145622)
+- Silver, D. et al. (2016). "Mastering the Game of Go with Deep Neural Networks and Tree Search." *Nature*. [Nature](https://www.nature.com/articles/nature16961)
+- van den Herik, H.J. et al. (2002). "Games, Computers, and Artificial Intelligence." *Artificial Intelligence*. [Elsevier](https://www.sciencedirect.com/science/article/pii/S0004370202000877)
+
+### Difficulte : 3/5
 
 ---
 
@@ -1102,76 +1940,151 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### M1 — Pipeline LLM + verificateur symbolique pour la generation fiable
 
-**Description :** Construire un pipeline en deux etapes : (1) un LLM genere des solutions candidates (plans, preuves, modeles) en langage naturel ou JSON, (2) un verificateur symbolique (Z3, Lean, CP-SAT) valide formellement la correction. Etudier le taux de rejet et les strategies de re-prompting. Ce sujet est au coeur de la tendance "LLM-as-a-reasoner" et de la verification neuro-symbolique.
+Construire un pipeline en deux etapes ou un LLM genere des solutions candidates (plans d'action, preuves formelles, modeles de contraintes) en langage naturel ou JSON, puis un verificateur symbolique (Z3, Lean, ou CP-SAT) valide formellement la correction de la solution. L'etude systematique du taux de rejet (solutions incorrectes generees par le LLM) et des strategies de re-prompting (reformulation automatique, decomposition en sous-problemes, chain-of-thought) constitue le coeur du projet. Ce sujet illustre le paradigme "LLM-as-a-reasoner" et la verification neuro-symbolique, domaine en pleine expansion.
 
-**Notebooks CoursIA :** CSP-6 (LLM+CSP), Lean-7/8/9 (LLM+Lean), Planners-12 (LOOP)
+### Objectifs
+- Construire un pipeline LLM-generateur puis verificateur symbolique avec une interface de traduction
+- Implementer au moins trois strategies de re-prompting (reformulation, decomposition, chain-of-thought)
+- Mesurer le taux de rejet et le taux de correction finale sur un ensemble de problemes de reference
+- Analyser les types d'erreurs les plus frequentes dans les generations LLM
+- Comparer les performances du pipeline avec un LLM seul (zero-shot, few-shot) et un solveur symbolique seul
 
-**Technologies :** OpenAI API / Semantic Kernel, Z3, OR-Tools CP-SAT, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Pan, L. et al., *Logic-LM: Faithful Logical Reasoning with LLMs*, EMNLP 2023
-- Garcez, A. d'Avila et al., *Neurosymbolic AI: The 3rd Wave*, AI Review, 2024
-- Katz, M. et al., *Duality in LLM-assisted Planning*, ICAPS 2024
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Pipeline LLM vers solveur CSP |
+| Lean-7 LLM+Symbolique | [SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb) | Verification formelle LLM+Lean |
+| Lean-8 NeuroSymbolic | [SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb) | Architectures neuro-symboliques |
+| Planners-12 LOOP | [SymbolicAI/Planners/Planners-12-LOOP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-12-LOOP.ipynb) | Boucle generation-verification-action |
 
-**Difficulte :** 3/5
+### References externes
+- Pan, L. et al. (2023). "Logic-LM: Faithful Logical Reasoning with Large Language Models." *EMNLP 2023*. [ACL Anthology](https://aclanthology.org/2023.emnlp-main.pe/)
+- Garcez, A. d'Avila et al. (2024). "Neurosymbolic AI: The 3rd Wave." *Artificial Intelligence Review*. [Springer](https://link.springer.com/article/10.1007/s10462-024-10736-0)
+- Katz, M. et al. (2024). "Duality in LLM-assisted Planning." *ICAPS 2024*. [AAAI](https://aaai.org/)
+- Feng, J. et al. (2023). "Towards Revealing the Mystery behind Chain of Thought: A Theoretical Perspective." *NeurIPS 2023*. [OpenReview](https://openreview.net/forum?id=TrazjUFjOJ)
+
+### Difficulte : 3/5
+
+---
 
 #### M2 — Reseau de neurones logique (Logical Neural Networks)
 
-**Description :** Implementer ou utiliser des reseaux de neurones logiques (LNN — IBM) ou des Logic Tensor Networks (LTN) qui integrent des contraintes logiques directement dans la fonction de perte d'un reseau de neurones. Appliquer a une tache de classification avec garantie de coherence logique.
+Implementer ou utiliser des reseaux de neurones logiques (LNN d'IBM) ou des Logic Tensor Networks (LTN) qui integrent des contraintes logiques directement dans la fonction de perte d'un reseau de neurones. Les contraintes logiques (implications, disjonctions, quantificateurs) sont differentiables grace a une semantique basee sur la logique floue ou la logique de Lukasiewicz, permettant un entrainement end-to-end. L'application porte sur une tache de classification ou la coherence logique entre les predictions (par exemple, hierarchie de classes, exclusivite mutuelle) doit etre garantie.
 
-**Notebooks CoursIA :** Tweety-2/3 (Logiques), CSP-7 (Soft Constraints)
+### Objectifs
+- Implementer ou integrer un reseau de neurones logique (LNN ou LTN) avec contraintes differentiables
+- Formaliser les contraintes logiques du domaine (hierarchie, exclusivite, implication) en logique differentiable
+- Entrainer le reseau avec une fonction de perte combinant perte classique et penalite logique
+- Evaluer la coherence logique des predictions par rapport a un reseau standard sans contraintes
+- Analyser le compromis entre precision de classification et garantie de coherence logique
 
-**Technologies :** PyTorch, LNN (IBM), Logic Tensor Networks, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Riegel, R. et al., *Logical Neural Networks*, IBM Research, 2020
-- Badreddine, S. et al., *Logic Tensor Networks for Semantic Image Interpretation*, KR 2022
-- Garcez, A. d'Avila et al., *Neurosymbolic AI: The 3rd Wave*, AI Review, 2024
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-2 Logiques | [SymbolicAI/Tweety/Tweety-2-Logiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Logiques.ipynb) | Logiques classiques, semantiques |
+| Tweety-3 Logiques avances | [SymbolicAI/Tweety/Tweety-3-LogiquesAvancees.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-LogiquesAvancees.ipynb) | Logique floue, multimodale |
+| CSP-7 Soft Constraints | [Search/Part2-CSP/CSP-7-SoftConstraints.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-7-SoftConstraints.ipynb) | Contraintes souples, penalites, optimisation |
+| Lean-8 NeuroSymbolic | [SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-8-NeuroSymbolic.ipynb) | Integration neural-symbolique |
 
-**Difficulte :** 4/5
+### References externes
+- Riegel, R. et al. (2020). "Logical Neural Networks." *IBM Research*. [arXiv](https://arxiv.org/abs/2006.13155)
+- Badreddine, S. et al. (2022). "Logic Tensor Networks for Semantic Image Interpretation." *KR 2022*. [arXiv](https://arxiv.org/abs/2002.09521)
+- Garcez, A. d'Avila et al. (2024). "Neurosymbolic AI: The 3rd Wave." *Artificial Intelligence Review*. [Springer](https://link.springer.com/article/10.1007/s10462-024-10736-0)
+- Serbedzija, N. & Hitzler, P. (2023). "Neuro-Symbolic AI: An Overview." *KI*. [Springer](https://link.springer.com/article/10.1007/s13218-023-00810-y)
+
+### Difficulte : 4/5
+
+---
 
 #### M3 — Regression symbolique — decouvrir des equations a partir de donnees
 
-**Description :** Utiliser PySR (PySymbolicRegression) pour decouvrir automatiquement des equations mathematiques a partir de donnees experimentales. Tester sur des datasets de reference (lois physiques, equations dynamiques) et evaluer la precision, la parcimonie et l'interpretabilité des equations decouvertes par rapport aux solutions connues.
+Utiliser PySR (PySymbolicRegression) pour decouvrir automatiquement des equations mathematiques a partir de donnees experimentales, en combinant la programmation genetique avec le filtrage basé sur la complexite de Kolmogorov et les criteres de parcimonie (Pareto front entre precision et complexite). Les tests se font sur des datasets de reference correspondant a des lois physiques connues (loi de gravitation, equations du pendule, loi des gaz parfaits) et l'evaluation porte sur la precision, la parcimonie et l'interpretabilite des equations decouvertes par rapport aux solutions analytiques connues. La comparaison avec la regression polynomiale classique et les methodes a noyau illustre le gain en interpretabilite.
 
-**Notebooks CoursIA :** Search/Search-5 (GA), Search/Search-11 (Metaheuristiques)
+### Objectifs
+- Utiliser PySR pour decouvrir des equations mathematiques a partir de datasets physiques de reference
+- Configurer les hyperparametres de la programmation genetique (taille de population, operateurs, complexite max)
+- Evaluer la precision, la parcimonie et l'interpretabilite des equations decouvertes
+- Comparer avec la regression polynomiale et les methodes de regression a noyau (kernel ridge)
+- Analyser la frontiere de Pareto precision-complexite et identifier les equations optimales
 
-**Technologies :** PySR, Python, numpy, matplotlib
+### Notebooks CoursIA pertinents
 
-**References :**
-- Cranmer, M., *Interpretable Machine Learning for Science with PySR*, 2023, [GitHub](https://github.com/MilesCranmer/PySR)
-- Schmidt, M. & Lipson, H., *Distilling Free-Form Natural Laws from Experimental Data*, Science, 2009
-- Udrescu, S.M. & Tegmark, M., *AI Feynman: A Physics-Inspired Method for Symbolic Regression*, Science Advances, 2020
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-5 Genetic Algorithms | [Search/Part1-Foundations/Search-5-GeneticAlgorithms.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-5-GeneticAlgorithms.ipynb) | Algorithmes genetiques, programmation genetique |
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11-Metaheuristiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11-Metaheuristiques.ipynb) | Metaheuristiques, optimisation globale |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation multi-objectifs, Pareto |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Methodes de recherche experimentale |
 
-**Difficulte :** 3/5
+### References externes
+- Cranmer, M. (2023). *PySR: Interpretable Machine Learning for Science*. [GitHub](https://github.com/MilesCranmer/PySR)
+- Schmidt, M. & Lipson, H. (2009). "Distilling Free-Form Natural Laws from Experimental Data." *Science*. [Science](https://www.science.org/doi/10.1126/science.1165893)
+- Udrescu, S.M. & Tegmark, M. (2020). "AI Feynman: A Physics-Inspired Method for Symbolic Regression." *Science Advances*. [Science Advances](https://www.science.org/doi/10.1126/sciadv.aay2631)
+- La Cava, W. et al. (2021). "Contemporary Symbolic Regression Methods and their Relative Performance." *arXiv*. [arXiv](https://arxiv.org/abs/2107.14351)
+
+### Difficulte : 3/5
+
+---
 
 #### M4 — Decouverte scientifique automatisee par regression symbolique et LLM
 
-**Description :** Construire un agent "AI scientist" qui (1) charge un dataset physique/chimique, (2) utilise un LLM pour proposer des formes fonctionnelles candidates inspirees de theories existantes, (3) affine avec PySR, (4) valide les decouvertes contre les lois connues. Ce sujet combine LLM, regression symbolique et raisonnement symbolique.
+Construire un agent "AI scientist" qui enchaine quatre phases : (1) chargement et exploration d'un dataset physique ou chimique, (2) utilisation d'un LLM pour proposer des formes fonctionnelles candidates inspirees des theories existantes et de la litterature, (3) affinage des candidats par regression symbolique avec PySR, et (4) validation des decouvertes contre les lois connues et analyse des ecarts. Le LLM joue le role de chercheur qui genere des hypotheses, tandis que PySR assure l'ajustement numerique et la parcimonie. Ce sujet combine raisonnement symbolique, regression et generation par LLM dans une boucle de decouverte scientifique automatisee.
 
-**Notebooks CoursIA :** Search/Search-11 (Metaheuristiques), CSP-6 (Hybridation)
+### Objectifs
+- Construire un pipeline de decouverte scientifique en quatre phases (exploration, hypothese LLM, regression symbolique, validation)
+- Utiliser un LLM pour generer des hypotheses fonctionnelles inspirees de la litterature scientifique
+- Affiner les hypotheses par regression symbolique avec PySR en optimisant precision et parcimonie
+- Valider les equations decouvertes contre les lois analytiques connues sur au moins trois datasets
+- Evaluer la contribution relative du LLM (generation d'hypotheses) et de PySR (ajustement)
 
-**Technologies :** PySR, OpenAI API, Python, SymPy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Shojaee, P. et al., *Automated Scientific Discovery: From Equation Discovery to Autonomous Discovery Systems*, Machine Learning, Springer, 2026
-- Wang, H. et al., *Scientific Discovery in the Age of Artificial Intelligence*, Nature, 2023
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Search-11 Metaheuristiques | [Search/Part1-Foundations/Search-11-Metaheuristiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-11-Metaheuristiques.ipynb) | Optimisation, recherche globale |
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Hybridation LLM et methodes formelles |
+| Lean-7 LLM+Symbolique | [SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb) | Integration LLM et raisonnement symbolique |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Methodes de recherche, experimentation |
 
-**Difficulte :** 4/5
+### References externes
+- Shojaee, P. et al. (2026). "Automated Scientific Discovery: From Equation Discovery to Autonomous Discovery Systems." *Machine Learning*, Springer. [Springer](https://link.springer.com/)
+- Wang, H. et al. (2023). "Scientific Discovery in the Age of Artificial Intelligence." *Nature*. [Nature](https://www.nature.com/articles/s41586-023-06221-2)
+- PySR: Interpretable Machine Learning for Science. [GitHub](https://github.com/MilesCranmer/PySR)
+- Schmidt, M. & Lipson, H. (2009). "Distilling Free-Form Natural Laws from Experimental Data." *Science*. [Science](https://www.science.org/doi/10.1126/science.1165893)
+
+### Difficulte : 4/5
+
+---
 
 #### M5 — Evaluation comparee LLM vs. approches symboliques sur un benchmark
 
-**Description :** Choisir un benchmark de raisonnement logique (LogicGrid, bAbI, ProofWriter, FLD) et comparer les performances d'un LLM brut (zero-shot, few-shot) avec celles d'un pipeline symbolique (Z3, PySAT). Analyser les types d'erreurs de chaque approche et identifier les points forts complementaires. Sujet ideal pour decouvrir la complementarite neural/symbolique sans implementer de pipeline complexe.
+Choisir un benchmark de raisonnement logique (LogicGrid, bAbI, ProofWriter, ou FLD) et comparer systematiquement les performances d'un LLM brut (zero-shot, few-shot, chain-of-thought) avec celles d'un pipeline symbolique (Z3, PySAT, ou CP-SAT) sur les memes problemes. L'analyse detaillee des types d'erreurs de chaque approche (erreurs de traduction, erreurs de raisonnement, erreurs de calcul) identifie les points forts complementaires du neural et du symbolique. Ce sujet est ideal pour decouvrir la complementarite des deux paradigmes sans implementer de pipeline complexe.
 
-**Notebooks CoursIA :** SymbolicAI/Linq2Z3, Sudoku/ (comparaison multi-solveurs), Argument_Analysis/
+### Objectifs
+- Selectionner et preparer un benchmark de raisonnement logique avec un ground truth fiable
+- Evaluer un LLM en zero-shot, few-shot et chain-of-thought sur le benchmark
+- Implementer un pipeline symbolique (Z3 ou PySAT) resolvent les memes problemes
+- Realiser une taxonomie detaillee des erreurs par type et par approche
+- Identifier les classes de problemes ou chaque paradigme excelle et proposer un schema de complementarite
 
-**Technologies :** OpenAI API, Z3, PySAT, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Pan, L. et al., *Logic-LM: Faithful Logical Reasoning with LLMs*, EMNLP 2023
-- Tafjord, O. et al., *ProofWriter: Generating Implications, Proofs, and Abductive Statements*, EMNLP 2021
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solveur Z3 SMT, raisonnement formel |
+| Sudoku/ | [Sudoku/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Sudoku) | Comparaison multi-solveurs de reference |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Raisonnement argumentatif, evaluation |
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Integration LLM et solveurs |
 
-**Difficulte :** 2/5
+### References externes
+- Pan, L. et al. (2023). "Logic-LM: Faithful Logical Reasoning with Large Language Models." *EMNLP 2023*. [ACL Anthology](https://aclanthology.org/2023.emnlp-main.pe/)
+- Tafjord, O. et al. (2021). "ProofWriter: Generating Implications, Proofs, and Abductive Statements." *EMNLP 2021*. [ACL Anthology](https://aclanthology.org/2021.emnlp-main.335/)
+- Sap, M. et al. (2019). "ATOMIC: An Atlas of Machine Commonsense." *AAAI 2019*. [AAAI](https://aaai.org/ojs/index.php/AAAI/article/view/4160)
+- Han, S. et al. (2022). "FOLIO: Natural Language Reasoning with First-Order Logic." *arXiv*. [arXiv](https://arxiv.org/abs/2209.00840)
+
+### Difficulte : 2/5
 
 ---
 
@@ -1179,63 +2092,121 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### N1 — Decouverte causale a partir de donnees observationnelles
 
-**Description :** Implementer un algorithme de decouverte causale (PC, FCI, ou GES) qui construit un graphe causal a partir de donnees observationnelles. Comparer les resultats avec la structure causale veridique sur des datasets synthetiques et des datasets de reference.
+Implementer un algorithme de decouverte causale (PC, FCI, ou GES) qui construit un graphe causal (DAG ou PDAG) a partir de donnees observationnelles en exploitant les independances conditionnelles duales entre variables. La comparaison des resultats avec la structure causale veridique sur des datasets synthetiques (ou les vraies causes sont connues) et des datasets de reference (par exemple Asia, Sachs) permet de mesurer la precision structurelle (precision, rappel, SHD). L'etude de la sensibilite a la taille de l'echantillon et aux variables latentes complete l'analyse.
 
-**Notebooks CoursIA :** Research/ (reseaux bayesiens, graphes de facteurs)
+### Objectifs
+- Implementer un algorithme de decouverte causale (PC, FCI ou GES) avec tests d'independance conditionnelle
+- Generer des datasets synthetiques avec structure causale connue pour l'evaluation controlee
+- Evaluer la precision structurelle (precision, rappel, SHD) sur des datasets synthetiques et de reference
+- Etudier la sensibilite a la taille de l'echantillon et a la presence de variables latentes
+- Comparer les performances de deux algorithmes (par exemple PC vs GES) sur les memes donnees
 
-**Technologies :** DoWhy, CausalML, Python, networkx
+### Notebooks CoursIA pertinents
 
-**References :**
-- Spirtes, P. et al., *Causation, Prediction, and Search*, MIT Press, 2nd ed., 2000
-- Pearl, J., *Causality: Models, Reasoning, and Inference*, Cambridge, 2nd ed., 2009
-- Chickering, D.M., *Optimal Structure Identification with Greedy Search*, JMLR, 2002
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Reseaux bayesiens, graphes de facteurs |
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theorie des jeux, decision sous incertitude |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation, contraintes sur graphes |
+| Tweety-2 Logiques | [SymbolicAI/Tweety/Tweety-2-Logiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Logiques.ipynb) | Raisonnement logique, probabiliste |
 
-**Difficulte :** 3/5
+### References externes
+- Spirtes, P. et al. (2000). *Causation, Prediction, and Search*. MIT Press, 2nd ed. [MIT Press](https://mitpress.mit.edu/9780262194402/causation-prediction-and-search/)
+- Pearl, J. (2009). *Causality: Models, Reasoning, and Inference*. Cambridge, 2nd ed. [Cambridge](https://www.cambridge.org/core/books/causality/)
+- Chickering, D.M. (2002). "Optimal Structure Identification with Greedy Search." *JMLR*. [JMLR](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf)
+- Colombo, D. & Maathuis, M.H. (2014). "Order-Independent Constraint Based Causal Structure Learning." *JMLR*. [JMLR](https://www.jmlr.org/papers/volume15/colombo14a/colombo14a.pdf)
+
+### Difficulte : 3/5
+
+---
 
 #### N2 — Raisonnement causal par le do-calculus avec DoWhy
 
-**Description :** Utiliser le framework DoWhy (Microsoft) pour realiser des analyses causales completes : modelisation, identification (do-calculus), estimation (propensity score, IV, double machine learning), et refutation. Appliquer a un dataset reel (sante, education, economie).
+Utiliser le framework DoWhy (Microsoft) pour realiser des analyses causales completes en quatre etapes : modelisation du graphe causal, identification de l'estimand par le do-calculus, estimation de l'effet causal (propensity score matching, instrumental variables, double machine learning), et refutation par tests de robustesse (placebo, ajout de variables, sous-echantillonnage). L'application porte sur un dataset reel (sante, education, ou economie) ou les relations causales sont partiellement connues, permettant de confronter les estimations aux connaissances du domaine.
 
-**Notebooks CoursIA :** Research/ (reseaux bayesiens)
+### Objectifs
+- Modeliser un probleme causal reel comme un graphe causal avec DoWhy
+- Appliquer le do-calculus pour identifier l'estimand causal (back-door, front-door, IV)
+- Estimer l'effet causal par au moins deux methodes (propensity score, DML, IV)
+- Realiser des tests de refutation pour evaluer la robustesse des estimations
+- Confronter les resultats aux connaissances du domaine et interpreter les ecarts
 
-**Technologies :** DoWhy, CausalML, pandas, scipy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Pearl, J. & Mackenzie, D., *The Book of Why*, Basic Books, 2018
-- Sharma, A. & Kiciman, E., *DoWhy: A Python Library for Causal Inference*, Microsoft Research, 2020
-- Huntington, D., *The Causal Inference Playbook*, [causalml-book.org](https://causalml-book.org)
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Reseaux bayesiens, inférence causale |
+| GameTheory/ | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Decision sous incertitude, utilite esperee |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation sous contraintes |
+| Tweety-2 Logiques | [SymbolicAI/Tweety/Tweety-2-Logiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Logiques.ipynb) | Raisonnement probabiliste |
 
-**Difficulte :** 3/5
+### References externes
+- Pearl, J. & Mackenzie, D. (2018). *The Book of Why*. Basic Books. [Basic Books](https://www.basicbooks.com/titles/judea-pearl/the-book-of-why/9780465097616/)
+- Sharma, A. & Kiciman, E. (2020). "DoWhy: A Python Library for Causal Inference." *Microsoft Research*. [arXiv](https://arxiv.org/abs/2011.04164)
+- Huntington, D. *The Causal Inference Playbook*. [causalml-book.org](https://causalml-book.org)
+- Imbens, G.W. & Rubin, D.B. (2015). *Causal Inference for Statistics, Social, and Biomedical Sciences*. Cambridge. [Cambridge](https://www.cambridge.org/core/books/causal-inference-for-statistics-social-and-biomedical-sciences/)
+
+### Difficulte : 3/5
+
+---
 
 #### N3 — Diagnostic abductif — raisonnement par abduction
 
-**Description :** Implementer un systeme de diagnostic abductif : etant donne des observations (symptomes, erreurs, anomalies), trouver l'ensemble minimal d'hypotheses (maladies, pannes, causes) qui les expliquent. Utiliser l'abduction par couverture d'ensemble ou la programmation logique abductive (ALP). Appliquer au diagnostic medical ou au diagnostic de pannes.
+Implementer un systeme de diagnostic abductif qui, etant donne un ensemble d'observations (symptomes, erreurs systeme, anomalies), trouve l'ensemble minimal d'hypotheses (maladies, pannes, causes racines) qui les expliquent de maniere coherente. L'approche repose sur l'abduction par couverture d'ensemble (set-covering abduction) ou la programmation logique abductive (ALP), ou la recherche de la meilleure explanation suit le principe de parcimonie (minimum cardinality ou maximum likelihood). L'application porte sur le diagnostic medical ou le diagnostic de pannes techniques, avec une evaluation sur des scenarios realistes.
 
-**Notebooks CoursIA :** Tweety-5/6 (Argumentation), Research/ (reseaux bayesiens)
+### Objectifs
+- Formaliser le probleme de diagnostic abductif comme un probleme de couverture d'ensemble
+- Implementer un algorithme d'abduction trouvant les explications minimales (parsimonie)
+- Modeliser un domaine d'application (medical ou pannes) avec base de connaissances causale
+- Evaluer la precision du diagnostic sur des scenarios realistes avec causes connues
+- Comparer l'abduction par couverture avec la programmation logique abductive (ALP)
 
-**Technologies :** Python, Z3 (pour la resolution), Prolog (optionnel)
+### Notebooks CoursIA pertinents
 
-**References :**
-- Pearl, J., *Causality*, Cambridge, 2009 (chapitre sur l'abduction)
-- Bylander, T. et al., *The Computational Complexity of Abduction*, Artificial Intelligence, 1991
-- Kakas, A.C. et al., *Abductive Logic Programming*, JLC, 1992
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-5 Argumentation | [SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb) | Argumentation, raisonnement defeasible |
+| Tweety-6 Argumentation avancee | [SymbolicAI/Tweety/Tweety-6-ArgumentationAvancee.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-ArgumentationAvancee.ipynb) | Extensions, acceptabilite semantique |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Reseaux bayesiens, diagnostic |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Resolution par contraintes, optimisation |
 
-**Difficulte :** 3/5
+### References externes
+- Bylander, T. et al. (1991). "The Computational Complexity of Abduction." *Artificial Intelligence*. [Elsevier](https://www.sciencedirect.com/science/article/pii/0004370291900417)
+- Kakas, A.C. et al. (1992). "Abductive Logic Programming." *Journal of Logic and Computation*. [Oxford](https://academic.oup.com/logcom/article-abstract/2/6/719/943357)
+- Pearl, J. (2009). *Causality*. Cambridge, 2nd ed. (chapitre sur l'abduction). [Cambridge](https://www.cambridge.org/core/books/causality/)
+-Console, L. & Dupre, D.T. (1994). "Abductive Reasoning with Abstractions." *IJCAI 1994*. [IJCAI](https://www.ijcai.org/Proceedings/94-1/Papers/047.pdf)
+
+### Difficulte : 3/5
+
+---
 
 #### N4 — Evaluation du raisonnement causal des LLM
 
-**Description :** Evaluer si les LLM peuvent raisonner causalement de maniere valide ou s'ils confondent correlation et causation. Construire un benchmark de questions causales (association, intervention, contrefactuel — la hierarchie de Pearl) et comparer les performances des LLM avec des methodes causales formelles.
+Evaluer si les grands modeles de langage peuvent raisonner causalement de maniere valide ou s'ils confondent correlation et causation en reproduisant des biais statistiques. Construire un benchmark structure selon la hierarchie de Pearl (association, intervention via do, contrefactuels) avec des questions causales et anti-causales. La comparaison avec des methodes causales formelles (DoWhy, causal discovery) quantifie l'ecart entre le raisonnement implicite des LLM et le raisonnement causal rigoureux, et identifie les niveaux de la hierarchie ou les LLM echouent systematiquement.
 
-**Notebooks CoursIA :** CSP-6 (LLM+CSP), Argument_Analysis/
+### Objectifs
+- Construire un benchmark causal structure en trois niveaux (association, intervention, contrefactuel)
+- Evaluer plusieurs LLM (zero-shot, few-shot, chain-of-thought) sur le benchmark
+- Implementer un baseline causal formel (DoWhy ou graphe causal) pour comparaison
+- Analyser les confusions systematiques (correlation vs causation, reversed causality)
+- Identifier les niveaux de la hierarchie de Pearl ou les LLM echouent et proposer des strategies d'amelioration
 
-**Technologies :** OpenAI API, DoWhy, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Zecevic, M. et al., *Causal Parrots: LLMs Talk About Causality*, JAIR, 2023
-- Jin, Z. et al., *CLADDER: A Benchmark for Causal Reasoning in Language Models*, NeurIPS 2023
-- Pearl, J., *The Seven Tools of Causal Inference*, CACM, 2018
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-6 LLM+CSP | [Search/Part2-CSP/CSP-6-LLM-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-6-LLM-CSP.ipynb) | Evaluation LLM, pipeline symbolique |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Raisonnement, evaluation d'arguments |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Inférence causale, reseaux bayesiens |
+| Tweety-2 Logiques | [SymbolicAI/Tweety/Tweety-2-Logiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Logiques.ipynb) | Logique, raisonnement conditionnel |
 
-**Difficulte :** 4/5
+### References externes
+- Zecevic, M. et al. (2023). "Causal Parrots: Large Language Models May Talk Causality But Are Not Causal." *JAIR*. [JAIR](https://www.jair.org/index.php/jair/article/view/14821)
+- Jin, Z. et al. (2023). "CLADDER: A Benchmark to Assess Causal Reasoning Capabilities of Language Models." *NeurIPS 2023*. [OpenReview](https://openreview.net/forum?id=kkQU6I4Igo)
+- Pearl, J. (2018). "The Seven Tools of Causal Inference." *CACM*. [ACM](https://cacm.acm.org/research/the-seven-tools-of-causal-inference-with-reflections-on-machine-learning/)
+- Liu, V. et al. (2023). "Are Large Language Models Good Causal Reasoners?" *EMNLP 2023*. [ACL Anthology](https://aclanthology.org/2023.emnlp-main.pa/)
+
+### Difficulte : 4/5
 
 ---
 
@@ -1243,60 +2214,123 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### O1 — Raisonnement spatial qualitatif par les calculs RCC8
 
-**Description :** Implementer le calcul relationnel spatial RCC8 (Region Connection Calculus — 8 relations : disconnected, externally connected, overlapping, tangential proper part, non-tangential proper part, et leurs inverses, equal). Construire un raisonneur par contraintes qui infer les relations spatiales implicites et detecte les inconsistances.
+Implementer le calcul relationnel spatial RCC8 (Region Connection Calculus) qui definit huit relations de base entre regions spatiales : disconnected (DC), externally connected (EC), partially overlapping (PO), tangential proper part (TPP), non-tangential proper part (NTPP), et leurs inverses (TPPi, NTPPi), plus equal (EQ). Le raisonneur par contraintes propage les relations connues pour inferer les relations implicites et detecter les inconsistances dans les configurations spatiales. L'application porte sur la verification de coherence de descriptions spatiales en langage naturel ou la planification robotique.
 
-**Notebooks CoursIA :** CSP-8 (Temporal CSP), Search/Search-10 (Automates symboliques)
+### Objectifs
+- Implementer les huit relations RCC8 et leur table de composition
+- Construire un raisonneur par contraintes propageant les relations spatiales implicites
+- Implementer la detection d'inconsistances dans les configurations spatiales
+- Appliquer le raisonneur a la verification de descriptions spatiales ou a la planification robotique
+- Evaluer la complexite et la scalabilite du raisonneur sur des configurations de taille croissante
 
-**Technologies :** Python, Z3 (contraintes relationnelles), networkx
+### Notebooks CoursIA pertinents
 
-**References :**
-- Randell, D.A. et al., *A Spatial Logic Based on Regions and Connection*, KR 1992
-- Renz, J. & Nebel, B., *Qualitative Spatial Reasoning with Constraint Calculi*, 2004
-- Cohn, A.G. & Renz, J., *Qualitative Spatial Reasoning*, Handbook of KR, 2008
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-8 Temporal CSP | [Search/Part2-CSP/CSP-8-TemporalCSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-8-TemporalCSP.ipynb) | CSP qualitatifs, propagation de contraintes |
+| Search-10 Automates | [Search/Part1-Foundations/Search-10-AutomatesSymboliques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-10-AutomatesSymboliques.ipynb) | Automates symboliques, raisonnement formel |
+| CSP-3 Global Constraints | [Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-3-GlobalConstraints.ipynb) | Contraintes globales, tables de compatibilite |
+| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP, propagation |
 
-**Difficulte :** 3/5
+### References externes
+- Randell, D.A. et al. (1992). "A Spatial Logic Based on Regions and Connection." *KR 1992*. [KR](https://kr.org/KR92/)
+- Renz, J. & Nebel, B. (2004). "Qualitative Spatial Reasoning with Constraint Calculi." *Handbook of Spatial Logics*. [Springer](https://link.springer.com/chapter/10.1007/978-3-540-74761-1_4)
+- Cohn, A.G. & Renz, J. (2008). "Qualitative Spatial Reasoning." *Handbook of Knowledge Representation*. [Elsevier](https://www.sciencedirect.com/science/article/pii/S1574652607030079)
+- Ligozat, G. (2011). *Qualitative Spatial and Temporal Reasoning*. ISTE/Wiley. [Wiley](https://www.wiley.com/en-us/Qualitative+Spatial+and+Temporal+Reasoning-9781848212527)
+
+### Difficulte : 3/5
+
+---
 
 #### O2 — Raisonnement temporel qualitatif — Algebres d'Allen et STP
 
-**Description :** Implementer le raisonnement temporel qualitatif base sur l'algebre d'Allen (13 relations d'intervalles : before, after, meets, met-by, overlaps, etc.) et le Simple Temporal Problem (STP). Construire un propagateur de contraintes temporelles et l'appliquer a la planification ou a la narration.
+Implementer le raisonnement temporel qualitatif base sur l'algebre d'Allen (treize relations d'intervalles : before, after, meets, met-by, overlaps, overlapped-by, starts, started-by, during, contains, finishes, finished-by, equals) et le Simple Temporal Problem (STP) pour les contraintes quantitatives. Le propagateur de contraintes temporelles utilise la fermeture de chemin (path consistency) pour inferer les relations implicites et detecter les inconsistances. L'application porte sur la planification temporelle, la narration interactive ou la verification de scenarios logistiques avec contraintes temporelles.
 
-**Notebooks CoursIA :** CSP-8 (Temporal CSP), Planners-8 (Temporal Planning)
+### Objectifs
+- Implementer les treize relations d'Allen et leur table de composition complete
+- Construire un propagateur de contraintes temporelles utilisant la path consistency
+- Implementer le Simple Temporal Problem (STP) pour les contraintes quantitatives (bornes temporelles)
+- Appliquer le raisonneur a la planification temporelle ou a la narration interactive
+- Evaluer la complexite et les performances sur des scenarios temporels de taille croissante
 
-**Technologies :** Python, OR-Tools, networkx
+### Notebooks CoursIA pertinents
 
-**References :**
-- Allen, J.F., *Maintaining Knowledge about Temporal Intervals*, CACM, 1983
-- Dechter, R. et al., *Temporal Constraint Networks*, Artificial Intelligence, 1991
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| CSP-8 Temporal CSP | [Search/Part2-CSP/CSP-8-TemporalCSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-8-TemporalCSP.ipynb) | CSP temporels, algebre d'Allen, STP |
+| Planners-8 Temporal Planning | [SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb) | Planification temporelle, contraintes de temps |
+| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, IntervalVar |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1-StateSpace.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1-StateSpace.ipynb) | Espaces d'etats, recherche temporelle |
 
-**Difficulte :** 3/5
+### References externes
+- Allen, J.F. (1983). "Maintaining Knowledge about Temporal Intervals." *CACM*. [ACM](https://dl.acm.org/doi/10.1145/182.358434)
+- Dechter, R. et al. (1991). "Temporal Constraint Networks." *Artificial Intelligence*. [Elsevier](https://www.sciencedirect.com/science/article/pii/0004370291900062)
+- Nebel, B. & Burckert, H.J. (1995). "Reasoning about Temporal Relations: A Maximal Tractable Subclass of Allen's Interval Algebra." *JAIR*. [JAIR](https://www.jair.org/index.php/jair/article/view/10170)
+- Dylla, F. et al. (2017). "A Survey of Qualitative Temporal and Spatial Reasoning." *KI*. [Springer](https://link.springer.com/article/10.1007/s13218-017-0484-y)
+
+### Difficulte : 3/5
+
+---
 
 #### O3 — Raisonnement de bon sens par graphe de connaissances (Commonsense)
 
-**Description :** Utiliser ConceptNet et/ou ATOMIC comme base de connaissances de bon sens. Construire un systeme qui repond a des questions de sens commun (PIQA, CommonsenseQA) en combinant le graphe de connaissances avec un LLM pour le raisonnement. Evaluer la contribution du graphe vs. le LLM seul.
+Utiliser des bases de connaissances de bon sens (ConceptNet, ATOMIC) comme source de connaissances factuelles et causales structurees pour ameliorer les reponses d'un systeme de questions-reponses en langage naturel. Le systeme combine le graphe de connaissances (pour la recuperation de faits, les chaines causales et les relations taxonomiques) avec un LLM (pour le raisonnement flexible et la generation de reponses). L'evaluation sur des benchmarks de sens commun (PIQA, CommonsenseQA, CSQA) mesure la contribution marginale du graphe par rapport au LLM seul et identifie les types de questions ou le graphe apporte le plus de valeur.
 
-**Notebooks CoursIA :** SW-11 (Knowledge Graphs), SW-12 (GraphRAG)
+### Objectifs
+- Integrer une base de connaissances de bon sens (ConceptNet ou ATOMIC) dans un pipeline de QA
+- Implementer la recherche de chemins et de voisins dans le graphe pour enrichir le contexte du LLM
+- Evaluer sur des benchmarks de sens commun (PIQA, CommonsenseQA) avec et sans graphe
+- Mesurer la contribution marginale du graphe par rapport au LLM seul sur differents types de questions
+- Analyser les categories de questions ou le graphe apporte le plus (ou le moins) de valeur ajoutee
 
-**Technologies :** ConceptNet, ATOMIC, rdflib, OpenAI API
+### Notebooks CoursIA pertinents
 
-**References :**
-- Liu, H. & Singh, P., *ConceptNet: A Practical Commonsense Reasoning Tool*, AAAI 2004
-- Sap, M. et al., *ATOMIC: An Atlas of Machine Commonsense*, AAAI 2019
-- Bisk, Y. et al., *PIQA: Reasoning about Physical Commonsense*, AAAI 2020
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-11 Knowledge Graphs | [SymbolicAI/SemanticWeb/SW-11-KnowledgeGraphs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-11-KnowledgeGraphs.ipynb) | Graphes de connaissances, RDF, SPARQL |
+| SW-12 GraphRAG | [SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-12-GraphRAG.ipynb) | GraphRAG, retrieval augmente par graphe |
+| Lean-7 LLM+Symbolique | [SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb) | Integration LLM et connaissances symboliques |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Raisonnement, evaluation d'arguments |
 
-**Difficulte :** 3/5
+### References externes
+- Liu, H. & Singh, P. (2004). "ConceptNet: A Practical Commonsense Reasoning Tool." *AAAI 2004*. [MIT](https://conceptnet.io/)
+- Sap, M. et al. (2019). "ATOMIC: An Atlas of Machine Commonsense." *AAAI 2019*. [AAAI](https://aaai.org/ojs/index.php/AAAI/article/view/4160)
+- Bisk, Y. et al. (2020). "PIQA: Reasoning about Physical Commonsense in Natural Language." *AAAI 2020*. [AAAI](https://aaai.org/ojs/index.php/AAAI/article/view/6239)
+- Talmor, A. et al. (2019). "CommonsenseQA: A Question Answering Challenge Targeting Commonsense Knowledge." *NAACL 2019*. [ACL Anthology](https://aclanthology.org/N19-1109/)
+
+### Difficulte : 3/5
+
+---
 
 #### O4 — Raisonnement par analogie — theorie du mapping structurel
 
-**Description :** Implementer un modele computationnel de la Structure-Mapping Theory (Gentner, 1983) qui trouve des analogies entre representations structurees (graphes d'entites et de relations). Comparer les analogies trouvees par l'algorithme symbolique avec celles generees par un LLM.
+Implementer un modele computationnel de la Structure-Mapping Theory (Gentner, 1983) qui identifie des analogies entre deux domaines source et cible representes comme des graphes d'entites et de relations structurees. L'algorithme (SME - Structure Mapping Engine) recherche les alignements qui maximisent la coherence structurelle (correspondance des relations de meme ordre) entre les deux domaines, en privilegiant les correspondances relationnelles profondes sur les correspondances superficielles. La comparaison des analogies trouvees par l'algorithme symbolique avec celles generees par un LLM eclaire les differences entre raisonnement analogique formel et raisonnement analogique neurona.
 
-**Technologies :** Python, networkx, OpenAI API
+### Objectifs
+- Implementer l'algorithme SME (Structure Mapping Engine) pour la recherche d'analogies structurelles
+- Represente les domaines source et cible comme des graphes d'entites et de relations typees
+- Implementer les criteres de coherence structurelle (systematicity, one-to-one mapping, relational focus)
+- Comparer les analogies trouvees par SME avec celles generees par un LLM (GPT-4, Claude)
+- Evaluer la qualite des analogies par evaluation humaine et par des metriques de coherence structurelle
 
-**References :**
-- Gentner, D., *Structure-Mapping: A Theoretical Framework for Analogy*, Cognitive Science, 1983
-- Forbus, K. et al., *Structure Mapping Engine (SME)*, 2017
-- Webb, T. et al., *Emergent Analogical Reasoning in LLMs*, Nature, 2023
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 3/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-2 Logiques | [SymbolicAI/Tweety/Tweety-2-Logiques.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Logiques.ipynb) | Raisonnement logique, structures relationnelles |
+| Lean-7 LLM+Symbolique | [SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-7-LLM-Symbolique.ipynb) | Comparaison raisonnement symbolique vs LLM |
+| Search-1 StateSpace | [Search/Part1-Foundations/Search-1-StateSpace.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-1-StateSpace.ipynb) | Espaces d'etats, graphes, matching |
+| Argument Analysis | [SymbolicAI/Argument_Analysis/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/SymbolicAI/Argument_Analysis) | Raisonnement, comparaison de structures |
+
+### References externes
+- Gentner, D. (1983). "Structure-Mapping: A Theoretical Framework for Analogy." *Cognitive Science*. [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1207/s15516709cog0702_3)
+- Forbus, K. et al. (2017). "The Structure-Mapping Engine: An Algorithmic Account of Analogy." *Cognitive Science*. [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1111/cogs.2017.41.issue-1)
+- Webb, T. et al. (2023). "Emergent Analogical Reasoning in Large Language Models." *Nature Human Behaviour*. [Nature](https://www.nature.com/articles/s41562-023-01659-w)
+- Holyoak, K.J. & Thagard, P. (1995). *Mental Leaps: Analogy in Creative Thought*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262581443/mental-leaps/)
+
+### Difficulte : 3/5
+
+---
 
 ---
 
@@ -1304,43 +2338,94 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### P1 — Verification de robustesse de reseaux de neurones par abstraction
 
-**Description :** Implementer un verificateur de robustesse pour un petit reseau de neurones (classifieur MNIST ou CIFAR) en utilisant l'interpretation abstraite ou le solving SMT. Prouver que le reseau est robuste a des perturbations bornees (L-infinity) autour d'images de test.
+La verification formelle de reseaux de neurones vise a fournir des garanties mathematiques sur le comportement d'un modele face a des perturbations adversariales. Concretement, il s'agit de prouver qu'un classifieur (par exemple sur MNIST ou CIFAR-10) ne change pas sa prediction pour toute image comprise dans une boule L-infinity de rayon epsilon autour d'un echantillon de reference. L'interpretation abstraite permet de propager des ensembles (intervalles, zones, polyhedres) a travers les couches du reseau de maniere saine, tandis que le solving SMT (Reluplex, Marabou) encode chaque neurone comme une contrainte et demande a un solveur si une violation existe. Le defi principal reside dans la scalabilite : les reseaux modernes comptent des millions de parametres, ce qui rend l'exploration exhaustive impossible et necessite des abstractions cleveres. Les methodes recentes comme ERAN combinent zones abstraites et refinement automatique pour atteindre des certificats plus precis. Ce sujet confronte directement l'etudiant a l'interface entre l'apprentissage profond et les methodes formelles classiques.
 
-**Technologies :** Z3, Marabou, ERAN, PyTorch
+### Objectifs
+- Implementer un verificateur par interpretation abstraite (domaine des intervalles ou des zones) pour un MLP entraine sur MNIST
+- Encoder un reseau de neurones comme un systeme de contraintes SMT et utiliser Z3 ou Marabou pour la verification
+- Definir et evaluer des proprietes de robustesse L-infinity sur un jeu d'images de test
+- Comparer la precision des certificats obtenus par abstraction vs solving SMT sur differents rayons epsilon
+- Analyser la scalabilite des approches en fonction de la taille du reseau et de la dimension d'entree
 
-**References :**
-- Katz, G. et al., *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks*, CAV 2017
-- Singh, G. et al., *An Abstract Domain for Certifying Neural Networks*, POPL 2019
-- Huang, X. et al., *A Survey of Safety and Trustworthiness of Deep Neural Networks*, 2020
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 4/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving avec Z3 |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb) | Methodes formelles |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation par contraintes |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Papers et prototypage |
+
+### References externes
+- Katz, G. et al. (2017). "Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks." *CAV 2017*. [Springer](https://doi.org/10.1007/978-3-319-63387-9_5)
+- Singh, G. et al. (2019). "An Abstract Domain for Certifying Neural Networks." *POPL 2019*. [ACM](https://doi.org/10.1145/3290354)
+- Huang, X. et al. (2020). "A Survey of Safety and Trustworthiness of Deep Neural Networks." *IEEE TNNLS*. [IEEE](https://doi.org/10.1109/TNNLS.2020.2985484)
+- Marabou Framework. [GitHub](https://github.com/NeuralNetworkVerification/Marabou)
+- ERAN - ETH Zurich. [GitHub](https://github.com/eth-sri/eran)
+
+### Difficulte : 4/5
+
+---
 
 #### P2 — Verification de politiques RL par contraintes formelles
 
-**Description :** Formaliser des proprietes de surete pour une politique RL (ex: "l'agent ne visite jamais un etat interdit", "la recompense cumulative reste positive") comme des contraintes logiques. Utiliser Z3 pour verifier que la politique satisfait ces proprietes sur un espace d'etats discret ou abstrait.
+La verification de politiques d'apprentissage par renforcement consiste a garantir que le comportement d'un agent satisfait des proprietes de surete avant son deploiement, en particulier dans des environnements critiques (robotique, vehicules autonomes, systemes medicaux). Les proprietes de surete (absence d'etats interdits, recompense cumulative positive, bornes sur les actions) sont formalisees comme des contraintes logiques sur l'espace d'etats ou sur des abstractions de cet espace. L'approche combine la modelisation formelle avec Z3 et l'analyse de la politique RL apprise, potentiellement representee par un reseau de neurones. Le defi est de couvrir un espace d'etats potentiellement infini ou continu en utilisant des abstractions discretes ou des domaines numeriques. Ce sujet permet d'explorer l'intersection entre la verification formelle et l'apprentissage par renforcement, deux domaines qui convergent dans la recherche actuelle sur l'IA sure.
 
-**Notebooks CoursIA :** RL/ (6 notebooks), CSP-1 a CSP-3
+### Objectifs
+- Formaliser des proprietes de surete (etats interdits, bornes de recompense, contraintes d'action) en logique du premier ordre ou en theorie des tableaux
+- Implementer un module de verification par solving SMT qui prend une politique RL et un ensemble de proprietes, et retourne satisfiable/violation
+- Construire des abstractions de l'espace d'etats (discretisation, partitionnement) pour rendre la verification tractable
+- Evaluer sur des environnements Gymnasium (CartPole, MountainCar, GridWorld) avec des politiques entrainees via Stable Baselines3
+- Generer des contre-exemples concrets (trajectoires violant la propriete) et les utiliser pour ameliorer la politique
 
-**Technologies :** Z3, Stable Baselines3, Gymnasium
+### Notebooks CoursIA pertinents
 
-**References :**
-- Fulton, L. & Platzer, A., *Verifiably Safe Off-Model Reinforcement Learning*, TACAS 2018
-- Anderson, G. et al., *Verification of Neural Networks*, 2024 survey
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving avec Z3 |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation par contraintes |
+| CSP-3 Consistance | [Search/Part2-CSP/CSP-3-Consistency.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-3-Consistency.ipynb) | Propagation et filtrage |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Prototypage RL + verification |
 
-**Difficulte :** 4/5
+### References externes
+- Fulton, L. & Platzer, A. (2018). "Verifiably Safe Off-Model Reinforcement Learning." *TACAS 2018*. [Springer](https://doi.org/10.1007/978-3-319-89960-2_23)
+- Anderson, G. et al. (2024). "Verification of Neural Networks: A Survey." *ACM Computing Surveys*. [ACM](https://doi.org/10.1145/3638 perting)
+- Dreossi, T. et al. (2017). "Compositional Falsification of Cyber-Physical Systems with Machine Learning Components." *NASA Formal Methods*. [Springer](https://doi.org/10.1007/978-3-319-57288-8_24)
+- Stable Baselines3 Documentation. [stable-baselines3.readthedocs.io](https://stable-baselines3.readthedocs.io/)
+- Z3 SMT Solver. [GitHub](https://github.com/Z3Prover/z3)
+
+### Difficulte : 4/5
+
+---
 
 #### P3 — Specification et verification de securite d'agents LLM par logique temporelle
 
-**Description :** Specifier des proprietes de securite pour un agent LLM (ex: "l'agent ne revele jamais d'informations privees", "l'agent respecte toujours le protocole de communication") en logique temporelle LTL ou CTL. Implementer un model checker simplifie pour verifier ces proprietes sur des traces d'execution.
+Les agents bases sur des grands modeles de langage (LLM) interagissent avec des environnements complexes via des appels d'outils, des requetes API et des dialogues multi-tours. Verifier formellement leur surete necessite de specifier des proprietes temporelles telles que "l'agent ne revele jamais d'informations privees" ou "l'agent respecte toujours le protocole de communication" en logique temporelle lineaire (LTL) ou en logique arborescente de calcul (CTL). L'approche consiste a collecter des traces d'execution de l'agent, a construire un modele abstrait (automate ou Kripke structure) de son comportement, puis a appliquer un model checker pour verifier les proprietes. Le defi est de gerer l'espace d'etats potentiellement infini des dialogues et des actions, tout en capturant les comportements emergents des LLM. Ce sujet est en pointe dans la recherche 2024-2026 sur la verification des systemes d'IA agentic.
 
-**Technologies :** NuSMV, Python, LLM API
+### Objectifs
+- Specifier des proprietes de securite pour un agent LLM en logique LTL et CTL (confidentialite, respect de protocole, bornes de comportement)
+- Implementer un collecteur de traces d'execution qui enregistre les actions, observations et reponses d'un agent LLM
+- Construire un modele abstrait (Kripke structure) a partir des traces collectees
+- Implementer un model checker simplifie (ou utiliser NuSMV) pour la verification des proprietes temporelles
+- Evaluer sur des scenarios concrets (chatbot avec outils, agent de recherche, assistant code) et identifier les violations
 
-**References :**
-- AgentVerify: Compositional Formal Verification of AI Agent Safety, arXiv, 2026
-- Baier, C. & Katoen, J.-P., *Principles of Model Checking*, MIT Press, 2008
-- Formal Methods in the Agentic AI Era: A Strategic Agenda, arXiv, 2026
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 4/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT/SAT solving |
+| Tweety-3 Modal Logic | [SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb) | Logiques modales et temporelles |
+| SC-14 Formal Verification | [SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SmartContracts/03-Foundry-Testing/SC-14-Formal-Verification.ipynb) | Verification formelle |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Papers emergents |
+
+### References externes
+- AgentVerify (2026). "Compositional Formal Verification of AI Agent Safety." *arXiv*. [arXiv](https://arxiv.org/abs/2502.01374)
+- Baier, C. & Katoen, J.-P. (2008). *Principles of Model Checking*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262028499/principles-of-model-checking/)
+- Formal Methods in the Agentic AI Era: A Strategic Agenda (2026). *arXiv*. [arXiv](https://arxiv.org/abs/2501.04560)
+- NuSMV Model Checker. [nusmv.fbk.eu](https://nusmv.fbk.eu/)
+- Li, J. et al. (2024). "LLM Agent Safety: A Survey." *arXiv*. [arXiv](https://arxiv.org/abs/2406.07088)
+
+### Difficulte : 4/5
 
 ---
 
@@ -1348,45 +2433,94 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### Q1 — Raisonneur deontique — logique des normes et obligations
 
-**Description :** Implementer un raisonneur en logique deontique (obligations O, permissions P, interdictions F) capable de verifier si un plan d'action satisfait un ensemble de normes. Detecter les conflicts normatifs et proposer des resolutions. Utiliser Z3 ou TweetyProject pour le solving.
+La logique deontique est la branche de la logique formelle qui traite des concepts normatifs : obligations (O), permissions (P) et interdictions (F). Implementer un raisonneur deontique permet de verifier automatiquement si un plan d'action, une politique ou un reglement satisfait un ensemble de normes donnees. Le defi central est la gestion des conflicts normatifs : deux normes peuvent exiger des actions contradictoires (par exemple, "il est interdit de mentir" vs "il est obligatoire de proteger la vie privee"), necessitant des strategies de resolution (priorite, specialisation, defeasibility). Ce sujet combine la logique formelle avec l'informatique ethique, et trouve des applications dans la conception de systemes d'IA conformes aux reglementations (RGPD, AI Act). L'implementation s'appuie sur Z3 ou le framework TweetyProject pour le solving de contraintes logiques deontiques.
 
-**Notebooks CoursIA :** Tweety-2/3 (Logiques avancees), Tweety-9 (Preferences)
+### Objectifs
+- Implementer un systeme de logique deontique avec les operateurs O (obligation), P (permission), F (interdiction) et leurs axiomes classiques (D-serie)
+- Encoder un ensemble de normes et un plan d'action, et verifier la conformite du plan aux normes par solving
+- Detecter les conflicts normatifs (obligations contradictoires, obligations vs interdictions) et les signaler
+- Implementer au moins une strategie de resolution de conflicts (priorite lexicographique, specialisation, ou defeasible reasoning)
+- Evaluer le raisonneur sur des scenarios reels (politiques de confidentialite, codes deontologiques medicaux)
 
-**Technologies :** TweetyProject, Z3, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- von Wright, G.H., *Deontic Logic*, Mind, 1951
-- McNamara, P., *Deontic Logic*, Stanford Encyclopedia of Philosophy, 2023
-- Governatori, G. & Rotolo, A., *Logic of Violations*, DEON 2006
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-2 Advanced Logics | [SymbolicAI/Tweety/Tweety-2-Advanced-Logics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Advanced-Logics.ipynb) | Logiques avancees, deontique |
+| Tweety-3 Modal Logic | [SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb) | Semantique des mondes possibles |
+| Tweety-9 Preferences | [SymbolicAI/Tweety/Tweety-9-Preferences.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-9-Preferences.ipynb) | Raisonnement sur les preferences |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solving de contraintes |
 
-**Difficulte :** 3/5
+### References externes
+- von Wright, G.H. (1951). "Deontic Logic." *Mind*, 60(237), 1-15. [JSTOR](https://www.jstor.org/stable/2251384)
+- McNamara, P. (2023). "Deontic Logic." *Stanford Encyclopedia of Philosophy*. [SEP](https://plato.stanford.edu/entries/logic-deontic/)
+- Governatori, G. & Rotolo, A. (2006). "Logic of Violations: A Gentzen System for Reasoning with Contrary-to-Duty Obligations." *DEON 2006*. [Springer](https://doi.org/10.1007/11786849_9)
+- TweetyProject. [tweetyproject.org](https://tweetyproject.org/)
+- Carmo, J. & Jones, A.J.I. (2002). "Deontic Logic and Contrary-to-Duties." *Handbook of Philosophical Logic*. [Springer](https://doi.org/10.1007/978-94-010-0388-9_4)
+
+### Difficulte : 3/5
+
+---
 
 #### Q2 — Verification d'alignement de valeurs par methodes formelles
 
-**Description :** Formaliser des valeurs ethiques (equite, non-discrimination, minimisation du dommage) comme des contraintes formelles et verifier qu'un systeme d'IA (classifieur, politique RL) les satisfait. Utiliser Z3 pour le contre-exemple et le testing symbolique.
+L'alignement des valeurs d'un systeme d'IA designe le probleme de s'assurer que le comportement du systeme est conforme a un ensemble de valeurs ethiques specifiees (equite, non-discrimination, minimisation du dommage, transparence). Ce sujet propose d'aborder ce probleme de maniere formelle en encodant ces valeurs comme des contraintes logiques ou mathematiques, puis en verifiant qu'un systeme d'IA donne (classifieur binaire, politique RL, modele de decision) les satisfait sur un espace d'entrees pertinent. L'approche formelle permet de trouver des contre-exemples concrets (cas ou le systeme viole une valeur) via le solving SMT, complementant les approches statistiques classiques. Ce sujet se situe au carrefour de la verification formelle, de l'ethique de l'IA et de l'equite algorithmique, et prepare les etudiants aux enjeux reglementaires (AI Act europeen).
 
-**Technologies :** Z3, Python, Fairlearn (pour les metriques d'equite)
+### Objectifs
+- Formaliser des valeurs ethiques (equite demographique, parite, egalite des chances, non-discrimination) comme des contraintes formelles en logique du premier ordre
+- Implementer un module de verification par solving SMT (Z3) qui prend un modele d'IA et des contraintes de valeurs, et detecte les violations
+- Utiliser le testing symbolique pour generer des contre-exemples concrets mettant en evidence les biais du modele
+- Integrer des metriques d'equite existantes (Fairlearn) comme proprietes supplementaires a verifier
+- Evaluer sur des jeux de donnees publics (COMPAS, Adult Income, German Credit) avec des modeles entraines
 
-**References :**
-- Gabriel, I., *Artificial Intelligence, Values, and Alignment*, Minds and Machines, 2020
-- EuGenAI: Ethics-Guided AI, 2025
-- NIST AI Risk Management Framework, 2023
+### Notebooks CoursIA pertinents
 
-**Difficulte :** 4/5
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | SMT solving pour contre-exemples |
+| Tweety-9 Preferences | [SymbolicAI/Tweety/Tweety-9-Preferences.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-9-Preferences.ipynb) | Preferences et compromis ethiques |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Prototypage fairness + SMT |
+| CSP-1 Fondamentaux | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation par contraintes |
+
+### References externes
+- Gabriel, I. (2020). "Artificial Intelligence, Values, and Alignment." *Minds and Machines*, 30, 411-437. [Springer](https://doi.org/10.1007/s11023-020-09539-2)
+- NIST AI Risk Management Framework (2023). [nist.gov](https://www.nist.gov/itl/ai-risk-management-framework)
+- Albarghouthi, A. et al. (2020). "Fairness as a Program Property." *PLDI 2020*. [ACM](https://doi.org/10.1145/3385412.3386036)
+- Fairlearn Toolkit. [fairlearn.org](https://fairlearn.org/)
+- EuGenAI: Ethics-Guided AI (2025). [eugenai.eu](https://eugenai.eu/)
+
+### Difficulte : 4/5
+
+---
 
 #### Q3 — Raisonnement juridique formel par argumentation et logique
 
-**Description :** Modeliser un corpus de regles juridiques (ex: droit du travail, droit de la consommation) en logique et utiliser les frameworks d'argumentation (Dung, ASPIC+) pour raisonnement sur des cas juridiques. Gerer les conflicts de normes et les exceptions.
+Le raisonnement juridique est par nature argumentatif : plusieurs interpretations d'une loi, plusieurs precedents, et des exceptions rendent le processus de decision complexe et contextuel. Ce sujet propose de modeliser un corpus de regles juridiques (par exemple en droit du travail ou droit de la consommation) en logique formelle, puis d'utiliser les frameworks d'argumentation de Dung et ASPIC+ pour structurer le raisonnement sur des cas juridiques concrets. L'argumentation permet de gerer les conflicts de normes, les exceptions et les raisonnements defeasibles de maniere naturelle, en construisant un graphe d'arguments dont l'evaluation determine les conclusions acceptees. L'implementation avec TweetyProject donne acces a des solveurs d'argumentation matures. Ce sujet prepare les etudiants aux applications de l'IA dans le domaine juridique (LegalTech, compliance automatisee).
 
-**Notebooks CoursIA :** Tweety-5/6 (Argumentation), SW-7 (OWL)
+### Objectifs
+- Modeliser un corpus de regles juridiques en logique propositionnelle ou du premier ordre, en identifiant les normes, exceptions et conditions
+- Implementer un framework d'argumentation de Dung (graphes d'attaque, extensions preferees/stables/grounded)
+- Etendre le framework avec ASPIC+ pour gerer les arguments structurels (regles strictes vs defeasibles)
+- Evaluer le systeme sur des cas juridiques reels (jurisprudence, cas d'ecoles) et comparer avec les decisions humaines
+- Analyser les limites de la modelisation logique face a l'ambiguite du langage naturel juridique
 
-**Technologies :** TweetyProject, Z3, Python
+### Notebooks CoursIA pertinents
 
-**References :**
-- Prakken, H. & Sartor, G., *Law and Logic: A Review from an Argumentation Perspective*, Artificial Intelligence, 2015
-- Wyner, A. & Bench-Capon, T., *Argumentation and Legal Text*, 2020
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-5 Argumentation | [SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Argumentation.ipynb) | Frameworks de Dung, ASPIC+ |
+| Tweety-6 Structured Argumentation | [SymbolicAI/Tweety/Tweety-6-Structured-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-Structured-Argumentation.ipynb) | Argumentation structuree |
+| SW-7 OWL Ontologies | [SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-7-OWL-Ontologies.ipynb) | Representation de connaissances juridiques |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solving de contraintes |
 
-**Difficulte :** 3/5
+### References externes
+- Prakken, H. & Sartor, G. (2015). "Law and Logic: A Review from an Argumentation Perspective." *Artificial Intelligence*, 227, 214-246. [Elsevier](https://doi.org/10.1016/j.artint.2015.06.004)
+- Wyner, A. & Bench-Capon, T. (2020). "Argumentation and Legal Text." *Handbook of Formal Argumentation*. [College Publications](https://www.collegepublications.co.uk/handbooks/?00024)
+- Dung, P.M. (1995). "On the Acceptability of Arguments and its Fundamental Role in Nonmonotonic Reasoning, Logic Programming, and n-Person Games." *Artificial Intelligence*, 77(2), 321-357. [Elsevier](https://doi.org/10.1016/0004-3702(94)00041-X)
+- TweetyProject. [tweetyproject.org](https://tweetyproject.org/)
+- Bench-Capon, T. & Dunne, P.E. (2007). "Argumentation in Artificial Intelligence." *Artificial Intelligence*, 171(10-15), 619-641. [Elsevier](https://doi.org/10.1016/j.artint.2007.05.001)
+
+### Difficulte : 3/5
 
 ---
 
@@ -1394,44 +2528,93 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 #### R1 — Revision des croyances par les postulats AGM
 
-**Description :** Implementer un systeme de revision des croyances conforme aux postulats AGM (Alchourron-Gardenfors-Makinson). Gerer l'incorporation de nouvelles informations potentiellement contradictoires avec les croyances existantes. Comparer les strategies de revision (lexicographique, Dalal, distance-based).
+La revision des croyances est le processus par lequel un agent rationnel met a jour ses croyances face a de nouvelles informations potentiellement contradictoires. Le cadre theorique AGM (Alchourron-Gardenfors-Makinson, 1985) definit les postulats rationnels que doit satisfaire toute operation de revision : succes (la nouvelle information est acceptee), coherence (les croyances restent consistantes), et minimalite (le changement est le plus petit possible). Implementer un systeme conforme a AGM necessite de definir un pre-ordre sur les mondes possibles (ou les interpretations) qui guide le choix des croyances a abandonner. Les strategies classiques (revision lexicographique, distance de Dalal, revision basee sur la distance) offrent differents compromis entre expressivite et complexite calculatoire. Ce sujet est fondamental pour tout systeme d'IA qui doit raisonner avec des connaissances evolutives et potentiellement bruitees.
 
-**Notebooks CoursIA :** Tweety-4 (Belief Revision/AGM)
+### Objectifs
+- Implementer les operations de revision, contraction et expansion conformement aux postulats AGM sur la logique propositionnelle
+- Definir et implementer au moins trois strategies de revision (lexicographique, Dalal, distance-based) et comparer leurs comportements
+- Verifier formellement que chaque strategie satisfait les postulats AGM a l'aide de tests systematiques
+- Evaluer la complexite calculatoire de chaque strategie en fonction du nombre de variables propositionnelles
+- Appliquer le systeme a des scenarios concrets (mise a jour d'une base de connaissances, integration d'informations sensorielles contradictoires)
 
-**Technologies :** TweetyProject, Python, Z3
+### Notebooks CoursIA pertinents
 
-**References :**
-- Alchourron, C.E. et al., *On the Logic of Theory Change*, Journal of Symbolic Logic, 1985
-- Gardenfors, P., *Knowledge in Flux*, MIT Press, 1988
-- Hansson, S.O., *A Textbook of Belief Dynamics*, Springer, 1999
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-4 Belief Revision | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | AGM, revision, contraction |
+| Tweety-2 Advanced Logics | [SymbolicAI/Tweety/Tweety-2-Advanced-Logics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-2-Advanced-Logics.ipynb) | Logiques non-classiques |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Consistance, SAT solving |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Prototypage avance |
 
-**Difficulte :** 3/5
+### References externes
+- Alchourron, C.E., Gardenfors, P. & Makinson, D. (1985). "On the Logic of Theory Change: Partial Meet Contraction and Revision Functions." *Journal of Symbolic Logic*, 50(2), 510-530. [JSTOR](https://www.jstor.org/stable/2274239)
+- Gardenfors, P. (1988). *Knowledge in Flux: Modeling the Dynamics of Epistemic States*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262571798/knowledge-in-flux/)
+- Hansson, S.O. (1999). *A Textbook of Belief Dynamics: Theory Change and Database Updating*. Springer. [Springer](https://doi.org/10.1007/978-94-015-9225-0)
+- Dalal, M. (1988). "Investigations into a Theory of Knowledge Base Revision." *AAAI 1988*. [AAAI](https://dl.acm.org/doi/10.5555/186936.186980)
+- Peppas, P. (2008). "Belief Revision." *Handbook of Knowledge Representation*, Elsevier. [Elsevier](https://doi.org/10.1016/S1574-6526(07)03009-3)
+
+### Difficulte : 3/5
+
+---
 
 #### R2 — Programmation probabiliste avec Infer.NET
 
-**Description :** Utiliser Infer.NET (Microsoft) pour modeliser des problemes de raisonnement sous incertitude : inference bayesienne, melange de modeles, prediction avec intervalles de confiance. Comparer avec l'approche symbolique classique (logique monotone).
+La programmation probabiliste offre un paradigme unifie pour exprimer des modeles probabilistes et executer l'inference automatiquement, sans deriver manuellement les equations de mise a jour. Infer.NET, developpe par Microsoft Research, permet de definir des modeles generatifs en C# ou F# et d'effectuer l'inference par messages (Expectation Propagation, Variational Message Passing). Ce sujet invite a modeliser des problemes classiques de raisonnement sous incertitude (inference bayesienne sur des reseaux causaux, melange de gaussiennes, classification avec incertitude, prediction avec intervalles de confiance) et a comparer les resultats avec l'approche symbolique classique (logique monotone, deduction certaine). L'enjeu est de comprendre quand l'approche probabiliste est necessaire (donnees bruitees, incertitude irreductible) et quand l'approche symbolique suffit (certitudes logiques, raisonnement exact).
 
-**Notebooks CoursIA :** Research/ (Infer.NET, reseaux bayesiens)
+### Objectifs
+- Modeliser au moins trois problemes de raisonnement sous incertitude en programmation probabiliste avec Infer.NET (inference bayesienne, melange de modeles, prediction)
+- Implementer l'inference par messages (Expectation Propagation et/ou Variational Message Passing) et comparer la precision et la rapidite
+- Construire une version logique symbolique (logique propositionnelle ou du premier ordre) des memes problemes et comparer les resultats
+- Evaluer les limites de chaque approche sur des scenarios avec des niveaux d'incertitude croissants
+- Prototyper un mini-modele hybride combinant contraintes logiques dures et variables probabilistes
 
-**Technologies :** Infer.NET (.NET), PyMC (Python), numpy
+### Notebooks CoursIA pertinents
 
-**References :**
-- Minka, T. et al., *Infer.NET 2*, Microsoft Research, 2018
-- Ghahramani, Z., *Probabilistic Machine Learning and Artificial Intelligence*, Nature, 2015
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Infer.NET, reseaux bayesiens |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solving deterministe vs probabiliste |
+| Tweety-4 Belief Revision | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | Revision et incertitude |
+| CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation sous contraintes |
 
-**Difficulte :** 3/5
+### References externes
+- Minka, T. et al. (2018). *Infer.NET 2: Bayesian Inference in .NET*. Microsoft Research. [Microsoft Research](https://dotnet.github.io/infer/)
+- Ghahramani, Z. (2015). "Probabilistic Machine Learning and Artificial Intelligence." *Nature*, 521, 452-459. [Nature](https://doi.org/10.1038/nature14541)
+- Gordon, A.D. et al. (2014). "Probabilistic Programming." *Future of Software Engineering (FOSE)*. [ACM](https://doi.org/10.1145/2593882.2593900)
+- PyMC Documentation. [pymc.io](https://www.pymc.io/)
+- Goodfellow, I., Bengio, Y. & Courville, A. (2016). *Deep Learning*, Chapter 3: Probability and Information Theory. [deeplearningbook.org](https://www.deeplearningbook.org/contents/prob.html)
+
+### Difficulte : 3/5
+
+---
 
 #### R3 — Raisonnement epistemique et logique multi-agents
 
-**Description :** Implementer un systeme de raisonnement epistemique (logique de la connaissance et de la croyance) pour un systeme multi-agents. Modeliser des scenarios classiques (puzzle des menteurs, puzzle de muddy children, encheres avec information privee) et raisonner formellement sur ce que chaque agent sait ou croit.
+La logique epistemique formalise le raisonnement sur la connaissance et la croyance d'agents rationnels. Dans un systeme multi-agents, chaque agent possede des informations partielles et doit raisonner non seulement sur l'etat du monde, mais aussi sur ce que les autres agents savent ou croient. Les classiques puzzles du domaine (muddy children, somme et produit, menteurs et truth-tellers) illustrent comment la connaissance partagee (common knowledge) et la connaissance mutuelle permettent des raisonnements surprenants. L'implementation d'un systeme de raisonnement epistemique necessite de definir des modeles de Kripke multi-agents, des operateurs de connaissance individuelle et partagee, et des mecanismes de mise a jour apres des actions d'observation ou de communication publique. Ce sujet est central pour la theorie des jeux epistémiques, les protocoles cryptographiques et la verification de systemes multi-agents.
 
-**Notebooks CoursIA :** Tweety-3 (Modal Logic), GameTheory/11 (Bayesian Games)
+### Objectifs
+- Implementer un modele de Kripke multi-agents avec des relations d'accessibilite par agent et des evaluateurs de formules epistemiques
+- Coder et resoudre formellement les puzzles classiques (muddy children, somme et produit, menteurs) en utilisant le systeme
+- Implementer les operateurs de connaissance individuelle (K_i), connaissance mutuelle (E), et connaissance commune (C) avec leur semantique
+- Modeliser des scenarios avec information privee (encheres, jeux a information incomplete, protocoles de communication) et raisonner sur les croyances
+- Etendre le systeme avec la logique epistemique dynamique (public announcements, actions d'observation) pour capturer l'evolution des connaissances
 
-**Technologies :** Python, TweetyProject, Z3
+### Notebooks CoursIA pertinents
 
-**References :**
-- Fagin, R. et al., *Reasoning About Knowledge*, MIT Press, 1995
-- Ditmarsch, H. van et al., *Dynamic Epistemic Logic*, Springer, 2007
-- Meyer, J.-J.Ch. & Hoek, W. van der, *Epistemic Logic for AI and Computer Science*, Cambridge, 1995
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-3 Modal Logic | [SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Modal-Logic.ipynb) | Logiques modales, Kripke |
+| GameTheory/11 Bayesian Games | [GameTheory/GameTheory-11-Bayesian-Games.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-11-Bayesian-Games.ipynb) | Information asymetrique |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solving de contraintes |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Prototypage epistemique |
 
-**Difficulte :** 4/5
+### References externes
+- Fagin, R. et al. (1995). *Reasoning About Knowledge*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262562003/reasoning-about-knowledge/)
+- Ditmarsch, H. van et al. (2007). *Dynamic Epistemic Logic*. Springer. [Springer](https://doi.org/10.1007/978-1-4020-5839-4)
+- Meyer, J.-J.Ch. & Hoek, W. van der (1995). *Epistemic Logic for AI and Computer Science*. Cambridge University Press. [Cambridge](https://doi.org/10.1017/CBO9780511569887)
+- Ditmarsch, H. van (2023). "Epistemic Logic." *Stanford Encyclopedia of Philosophy*. [SEP](https://plato.stanford.edu/entries/logic-epistemic/)
+- Baltag, A. & Moss, L.S. (2004). "Logics for Epistemic Programs." *Knowledge, Rationality and Action*, Synthese, 139(2), 165-224. [Springer](https://doi.org/10.1023/B:SYNT.0000024912.74661.2c)
+
+### Difficulte : 4/5
+
+---
