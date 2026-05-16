@@ -141,6 +141,8 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [B3](#b3---model-checking-de-protocoles-de-communication) | Model checking de protocoles de communication | 3/5 |
 | [B4](#b4---resolution-de-puzzles-logiques-par-smt) | Resolution de puzzles logiques par SMT | 2/5 |
 | [B5](#b5---demonstration-automatique-en-geometrie) | Demonstration automatique en geometrie | 4/5 |
+| [B6](#b6---programmation-par-ensembles-de-reponses-asp-avec-clingo) | Programmation par ensembles de reponses (ASP) avec Clingo | 3/5 |
+| [B7](#b7---resolution-de-problemes-pspace-par-qbf-quantified-booleans) | Resolution de problemes PSPACE par QBF (Quantified Booleans) | 3/5 |
 
 ### Categorie C : Verification Formelle et Surete des Logiciels
 
@@ -177,6 +179,8 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [E2](#e2---ordonnancement-mev-resistant-de-transactions-on-chain) | Ordonnancement MEV-resistant de transactions on-chain | 3/5 |
 | [E3](#e3---circuits-zero-knowledge-sous-contraintes-arithmetiques) | Circuits Zero-Knowledge sous contraintes arithmetiques | 4/5 |
 | [E4](#e4---governance-decentralisee-et-vote-quadratique) | Governance decentralisee et vote quadratique | 3/5 |
+| [E5](#e5---choix-social-computationnel-simulation-et-manipulation-electorale) | Choix social computationnel — simulation et manipulation electorale | 3/5 |
+| [E6](#e6---jeux-combinatoires-et-theorie-de-sprague-grundy) | Jeux combinatoires et theorie de Sprague-Grundy | 3/5 |
 
 ### Categorie G : Web Semantique et Graphes de Connaissances
 
@@ -204,6 +208,8 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [G2](#g2---generation-de-contre-arguments-par-raisonnement-formel) | Generation de contre-arguments par raisonnement formel | 3/5 |
 | [G3](#g3---argumentation-dialogique-multi-agents) | Argumentation dialogique multi-agents | 4/5 |
 | [G4](#g4---evaluation-automatique-de-la-qualite-argumentative) | Evaluation automatique de la qualite argumentative | 3/5 |
+| [I5](#i5---benchmarks-iccma-solveurs-dargumentation-de-dung) | Benchmarks ICCMA — solveurs d'argumentation de Dung | 2/5 |
+| [I6](#i6---argumentation-structuree-aspic--logique-defaisable-delpaba) | Argumentation structuree ASPIC+ et logique defaisable (DeLP/ABA) | 3/5 |
 
 ### Categorie J : Agents Symboliques et Architecture Cognitive
 
@@ -434,6 +440,36 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 - Chou, S.-C. et al., *Machine Proofs in Geometry*, World Scientific, 1994
 
 **Difficulte :** 4/5
+
+#### B6 — Programmation par ensembles de reponses (ASP) avec Clingo
+
+**Description :** Decouvrir la programmation par ensembles de reponses (Answer Set Programming), un paradigme declaratif different de SAT/CSP. Modeliser des problemes combinatoires (scheduling, planning, graph coloring) en logique ASP avec Clingo, et comprendre les semantiques de modeles stables (Gelfond-Lifschitz). Comparer ASP avec les approches SAT et CP sur les memes problemes. L'ASP est particulierement adapte aux problemes avec raisonnement par defaut et exceptions.
+
+**Notebooks CoursIA :** Tweety-6 (ASP avec Clingo), Search/CSP-1 (comparaison CSP)
+
+**Technologies :** Clingo (Potassco), Python (API clingo), DLV2 (optionnel)
+
+**References :**
+- Gelfond, M. & Lifschitz, V., *The Stable Model Semantics for Logic Programming*, ICLP 1988
+- Gebser, M. et al., *Answer Set Solving in Practice*, Springer, 2012
+- Coppolillo, E. et al., *LLASP: Fine-tuning LLMs for Answer Set Programming*, KR 2024
+
+**Difficulte :** 3/5
+
+#### B7 — Resolution de problemes PSPACE par QBF (Quantified Booleans)
+
+**Description :** Explorer les formules booleennes quantifiees (QBF — PSPACE-complet), qui etendent SAT avec des quantificateurs existentiels et universels. Utiliser PyQBF pour resoudre des problemes de verification, de jeux a deux joueurs, et de planning conformant. Comparer les solveurs QBF (DepQBF, CAQE, Qute) sur des benchmarks QBFLib.
+
+**Notebooks CoursIA :** Tweety-3 (QBF), SymbolicAI/Linq2Z3
+
+**Technologies :** PyQBF, DepQBF, CAQE, Python
+
+**References :**
+- Peyrer, M. et al., *PyQBF: A Python Framework for Solving QBF*, ACM TOCL, 2025
+- Shukla, A. et al., *The QBF Gallery 2023*, arXiv, 2026
+- Biere, A. et al., *Handbook of Satisfiability*, Chapter on QBF, 2021
+
+**Difficulte :** 3/5
 
 ---
 
@@ -672,6 +708,36 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 
 **Difficulte :** 3/5
 
+#### E5 — Choix social computationnel — simulation et manipulation electorale
+
+**Description :** Implementer un simulateur electoral avec plusieurs regles de vote (Pluralite, Borda, STV, Schulze, Condorcet, Copeland) en utilisant pref_voting. Analyser la susceptibilite a la manipulation strategique : une coalition peut-elle changer le resultat en mentant ? Visualiser les paradoxes de Condorcet et les manifestations du theoreme d'Arrow. Utiliser des donnees reelles de PrefLib.
+
+**Notebooks CoursIA :** GameTheory/16b-f (Social Choice Lean/SAT/Z3), Tweety-9 (Preferences)
+
+**Technologies :** pref_voting (Python), abcvoting, PrefLib, Z3
+
+**References :**
+- Brandt, F. et al., *Handbook of Computational Social Choice*, Cambridge, 2016
+- COMSOC 2025, *10th Workshop on Computational Social Choice*, TU Wien
+- Brederock, R. et al., *Computational Social Choice: Parameterized Complexity*, arXiv, 2025
+
+**Difficulte :** 3/5
+
+#### E6 — Jeux combinatoires et theorie de Sprague-Grundy
+
+**Description :** Implementer un moteur de calcul des valeurs de Grundy (nimbers) pour des jeux combinatoires impartiaux (Nim, Dawson's Chess, Staircase Nim). Detecter les periodicites dans les sequences de Grundy. Connecter au formalisme PGame de Mathlib en Lean 4 pour la verification formelle. Comparer avec l'approche alpha-beta sur les memes jeux.
+
+**Notebooks CoursIA :** GameTheory/8/8b/8c (Combinatorial Games, Lean-PGame)
+
+**Technologies :** Python, Lean 4 (PGame), numpy
+
+**References :**
+- Sprague, R., *Uber mathematische Kampfspiele*, Tohoku Mathematical Journal, 1935
+- Grundy, P.M., *Mathematics and Games*, Eureka, 1939
+- Siegel, A.N., *Combinatorial Game Theory*, AMS, 2013
+
+**Difficulte :** 3/5
+
 ---
 
 ### Categorie G : Web Semantique et Graphes de Connaissances
@@ -848,6 +914,35 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 **References :**
 - Wachsmuth, H. et al., *Computational Argumentation Quality Assessment in Natural Language*, EACL 2017
 - Persing, I. & Ng, V., *End-to-End Argumentation Evaluation*, EMNLP 2017
+
+**Difficulte :** 3/5
+
+#### I5 — Benchmarks ICCMA — solveurs d'argumentation de Dung
+
+**Description :** Telecharger les benchmarks de la competition ICCMA (International Competition on Computational Models of Argumentation) et implementer un solveur d'argumentation de Dung calculant les extensions sous differentes semantiques (grounded, preferred, stable, complete). Comparer les performances avec les solveurs de la competition (Crustabri, etc.). Visualiser les graphes d'attaque et les extensions. Sujet d'entree ideal dans l'argumentation formelle.
+
+**Notebooks CoursIA :** Tweety-5 (Abstract Argumentation, Dung)
+
+**Technologies :** Python, networkx (visualisation), TweetyProject
+
+**References :**
+- Jarvisalo, M. et al., *ICCMA 2023: 5th International Competition on Computational Models of Argumentation*, AI Journal, 2025
+- Dung, P.M., *On the Acceptability of Arguments*, AI, 1995
+
+**Difficulte :** 2/5
+
+#### I6 — Argumentation structuree ASPIC+ et logique defaisable (DeLP/ABA)
+
+**Description :** Implementer un systeme d'argumentation structuree en utilisant ASPIC+ (regles strictes vs. defaisables) ou DeLP (Defeasible Logic Programming) via TweetyProject. Modeliser un debat avec arguments, contre-arguments, et attaques (rebutting, undercutting, undermining). Comparer les extensions sous differentes semantiques. Appliquer a un domaine concret (recommandation de films, diagnostic medical simplifie).
+
+**Notebooks CoursIA :** Tweety-6 (ASPIC+, DeLP, ABA, ASP/Clingo), Tweety-7a (Extended Frameworks)
+
+**Technologies :** TweetyProject, py-aspic, Clingo
+
+**References :**
+- Prakken, H., *An Abstract Framework for Argumentation with Structured Arguments*, Argument & Computation, 2010
+- Rienstra, T. et al., *Argumentative Reasoning in ASPIC+ under Incomplete Information*, JAIR, 2025
+- Garcia, A. & Simari, G., *Defeasible Logic Programming: DeLP*, 2004
 
 **Difficulte :** 3/5
 
