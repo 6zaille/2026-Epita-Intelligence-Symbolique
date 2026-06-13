@@ -29,7 +29,7 @@ def download_and_save_hotpotqa(output_dir: Path, num_samples: int = 500) -> None
     """
     output_dir.mkdir(exist_ok=True)
 
-    ds = load_dataset("hotpot_qa", "fullwiki", split="validation", streaming=True)
+    ds = load_dataset("hotpotqa/hotpot_qa", "fullwiki", split="validation", streaming=True)
     samples = []
     for i, row in enumerate(ds):
         if i >= num_samples:
