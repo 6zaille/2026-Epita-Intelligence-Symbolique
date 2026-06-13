@@ -1,0 +1,120 @@
+"""Pipeline orchestrator for the GraphRAG system.
+
+This module ties together entity detection, subgraph extraction, context
+serialisation, and LLM completion into a single ``run`` function that accepts
+a natural-language question and returns a :class:`PipelineResult`.
+"""
+
+from dataclasses import dataclass, field
+from typing import List, Dict, Optional
+
+from .llm import LLMClient
+from .graph import KnowledgeGraph
+from .retriever import TraceStep, detect_entities, extract_subgraph, subgraph_to_context
+
+
+@dataclass
+class DocReference:
+    """A reference to a source document that contributed to the answer.
+
+    Attributes:
+        filename: The name or path of the referenced file.
+        pages: Optional list of relevant page numbers within the document.
+        sections: Optional list of relevant section names within the document.
+    """
+
+    filename: str
+    pages: Optional[List[int]] = None
+    sections: Optional[List[str]] = None
+
+
+@dataclass
+class PipelineResult:
+    """The complete output of a single pipeline run.
+
+    Attributes:
+        answer: The natural-language answer produced by the LLM.
+        trace: Ordered list of TraceStep records describing each BFS hop.
+        docs_used: List of DocReference instances for documents whose text
+            overlapped with the retrieved subgraph nodes.
+        subgraph_nodes: All node names included in the retrieved subgraph.
+        subgraph_edges: All edges (as ``(src, relation, tgt)`` tuples)
+            included in the retrieved subgraph.
+    """
+
+    answer: str
+    trace: List[TraceStep]
+    docs_used: List[DocReference]
+    subgraph_nodes: List[str]
+    subgraph_edges: List[tuple]
+
+
+_PROMPT = """You are a precise Q&A assistant. Use ONLY the knowledge graph context below to answer.
+If the context is insufficient, say so briefly.
+
+{context}
+
+Question: {question}
+
+Answer:"""
+
+
+def run(
+    question: str,
+    kg: KnowledgeGraph,
+    llm: LLMClient,
+    docs_map: Optional[Dict[str, str]] = None,
+    max_hops: int = 2,
+) -> PipelineResult:
+    """Execute the full GraphRAG pipeline for a single question.
+
+    The function performs the following steps in order:
+
+    1. **Entity detection** — scan the question for KG node names.
+    2. **Fallback** — if no entities are detected, select the top-3 nodes by
+       degree as seeds.
+    3. **Subgraph extraction** — BFS up to *max_hops* hops from the seeds.
+    4. **Context serialisation** — convert the subgraph to a prompt snippet.
+    5. **LLM completion** — call the LLM with the context and question.
+    6. **Doc matching** — mark any document whose text contains a subgraph node.
+    7. **Result assembly** — package everything into a PipelineResult.
+
+    Args:
+        question: The natural-language question to answer.
+        kg: The KnowledgeGraph to retrieve context from.
+        llm: An LLMClient whose ``complete`` method accepts a prompt string and
+            returns the generated answer string.
+        docs_map: Optional mapping of filename to document text used to
+            populate ``PipelineResult.docs_used``.  Defaults to ``None``.
+        max_hops: Maximum BFS depth when extracting the subgraph.
+            Defaults to 2.
+
+    Returns:
+        A PipelineResult containing the answer, BFS trace, matched documents,
+        and the nodes/edges of the retrieved subgraph.
+
+    Raises:
+        ValueError: If *question* is an empty string.
+    """
+    seeds = detect_entities(question, kg)
+    if not seeds:
+        degrees = dict(kg.nx_graph.degree())
+        seeds = sorted(degrees, key=degrees.get, reverse=True)[:3]
+
+    subgraph = extract_subgraph(kg, seeds, max_hops=max_hops)
+    context = subgraph_to_context(subgraph)
+    answer = llm.complete(_PROMPT.format(context=context, question=question))
+
+    docs_used: List[DocReference] = []
+    if docs_map:
+        for fname, text in docs_map.items():
+            if any(n.lower() in text.lower() for n in subgraph.nodes):
+                docs_used.append(DocReference(filename=fname))
+
+    return PipelineResult(
+        answer=answer,
+        trace=subgraph.trace,
+        docs_used=docs_used,
+        subgraph_nodes=subgraph.nodes,
+        subgraph_edges=subgraph.edges,
+    )
