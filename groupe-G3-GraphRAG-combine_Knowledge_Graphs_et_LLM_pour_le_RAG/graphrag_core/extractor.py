@@ -85,6 +85,8 @@ def extract_triples(text: str, llm: LLMClient) -> List[Triple]:
         except json.JSONDecodeError:
             continue
         for item in items:
+            if not isinstance(item, dict):
+                continue
             if not all(k in item for k in ("subject", "relation", "object")):
                 continue
             t = Triple(
