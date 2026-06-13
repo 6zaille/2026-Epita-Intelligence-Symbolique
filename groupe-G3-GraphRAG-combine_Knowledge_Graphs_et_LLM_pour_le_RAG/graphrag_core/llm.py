@@ -1,4 +1,5 @@
 import os
+import time
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
 
@@ -70,6 +71,9 @@ class AnthropicClient(LLMClient):
     def complete(self, prompt: str, history: list | None = None) -> str:
         """Send a prompt to Anthropic and return the response text.
 
+        Retries up to 5 times with exponential backoff on 429 rate-limit
+        errors, respecting the ``retry-after`` header when present.
+
         Args:
             prompt: The user prompt to send.
             history: Optional prior conversation turns (role/content dicts).
@@ -77,9 +81,22 @@ class AnthropicClient(LLMClient):
         Returns:
             The assistant's reply as a string.
         """
+        import anthropic
         messages = list(history or []) + [{"role": "user", "content": prompt}]
-        msg = self._client.messages.create(model=self.model, max_tokens=1024, messages=messages)
-        return msg.content[0].text
+        delay = 5.0
+        for attempt in range(6):
+            try:
+                msg = self._client.messages.create(
+                    model=self.model, max_tokens=1024, messages=messages
+                )
+                return msg.content[0].text
+            except anthropic.RateLimitError as exc:
+                if attempt == 5:
+                    raise
+                retry_after = float(getattr(exc, "response", None) and
+                                    exc.response.headers.get("retry-after", delay) or delay)
+                time.sleep(retry_after)
+                delay = min(delay * 2, 60.0)
 
 
 class OllamaClient(LLMClient):
