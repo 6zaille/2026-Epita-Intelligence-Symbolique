@@ -1,0 +1,18 @@
+[project]
+name = "my-logic-puzzle-solver"
+version = "0.1.0"
+description = "A simple project showcasing API for logic puzzle solving"
+readme = "README.md"
+authors = [
+    { name = "brendan.martin", email = "brendan.martin@epita.fr" },
+    { name = "valerian.pichot", email = "valerian.pichot@epita.fr" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+my-logic-puzzle-solver = "my_logic_puzzle_solver:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
