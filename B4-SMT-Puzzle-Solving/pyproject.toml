@@ -8,7 +8,10 @@ authors = [
     { name = "valerian.pichot", email = "valerian.pichot@epita.fr" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "ortools>=9.15.6755",
+    "z3-solver>=4.16.0.0",
+]
 
 [project.scripts]
 my-logic-puzzle-solver = "my_logic_puzzle_solver:main"
@@ -16,3 +19,8 @@ my-logic-puzzle-solver = "my_logic_puzzle_solver:main"
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "black>=26.5.1",
+]
