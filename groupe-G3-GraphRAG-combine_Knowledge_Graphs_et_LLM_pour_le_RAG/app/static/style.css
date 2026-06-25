@@ -125,3 +125,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:#f0f4ff;color:#1a1f
 .tt-name{font-weight:700;color:#1a1f36;margin-bottom:3px}
 .tt-type{font-size:10px;color:#6366f1;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .tt-rel{font-size:11px;color:#64748b;margin-top:2px}
+.graph-back-btn,.load-more-btn{font-size:11px;font-weight:600;color:#6366f1;background:transparent;border:1px solid rgba(99,102,241,.25);border-radius:20px;padding:5px 12px;cursor:pointer;white-space:nowrap}
+.graph-back-btn{background:#eef2ff}
+.graph-back-btn:hover,.load-more-btn:hover{background:#e0e7ff}
+.comm-bubble{cursor:pointer}
+.comm-bubble text{pointer-events:none}

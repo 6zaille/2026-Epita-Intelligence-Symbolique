@@ -29,7 +29,7 @@ function setAppState(s) {
     badge.classList.remove('visible'); buildBtn.textContent = '✓ Knowledge Graph built';
     buildBtn.disabled = true; exportBtn.disabled = false; newChatBtn.disabled = false;
     document.getElementById('progress-box').style.display = 'none';
-    loadGraph();
+    loadGraphOverview();
   } else if (s === 'building') {
     input.disabled = true; sendBtn.disabled = true;
     badge.textContent = '⚙ Building KG…'; badge.classList.add('visible');
@@ -241,19 +241,58 @@ function toggleDrawer(chipId, drawerId) {
   chip.textContent = base + (isOpen ? ' ↓' : ' ↑');
 }
 
+let viewMode = 'overview';
+let overviewData = null;
+let currentCommunityId = null;
+let currentLimit = 150;
+
 /**
- * Fetches graph data from the backend and renders the D3 visualization.
+ * Fetches the community-level overview and renders it as clickable bubbles.
  */
-async function loadGraph() {
+async function loadGraphOverview() {
   try {
-    const data = await (await fetch(`${API}/graph`)).json();
-    graphData = data;
-    renderGraph(data);
+    const data = await (await fetch(`${API}/graph/overview`)).json();
+    overviewData = data;
+    viewMode = 'overview';
+    document.getElementById('graph-back-btn').style.display = 'none';
+    document.getElementById('load-more-btn').style.display = 'none';
+    renderOverview(data);
     renderCommunityFilters(data.communities);
     document.getElementById('stat-nodes').textContent = data.stats.node_count;
     document.getElementById('stat-edges').textContent = data.stats.edge_count;
     document.getElementById('stat-comms').textContent = data.stats.community_count;
   } catch (_) {}
+}
+
+/**
+ * Renders one circle per community, sized by member count, via a D3 pack layout.
+ * @param {Object} data - Response from GET /graph/overview.
+ */
+function renderOverview(data) {
+  const svg = d3.select('#graph-svg');
+  svg.selectAll('*').remove();
+  const W = document.getElementById('graph-svg').clientWidth;
+  const H = document.getElementById('graph-svg').clientHeight;
+  const g = svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.3, 4]).on('zoom', e => g.attr('transform', e.transform)));
+
+  const root = d3.pack().size([W - 20, H - 20]).padding(8)(
+    d3.hierarchy({ children: data.communities }).sum(d => d.size || 1)
+  );
+
+  const bubble = g.selectAll('g').data(root.children || []).enter().append('g')
+    .attr('class', 'comm-bubble')
+    .attr('transform', d => `translate(${d.x + 10},${d.y + 10})`)
+    .on('click', (event, d) => openCommunity(d.data.id));
+
+  bubble.append('circle').attr('r', d => d.r)
+    .attr('fill', d => d.data.color + '22').attr('stroke', d => d.data.color).attr('stroke-width', 2);
+
+  bubble.append('text').text(d => d.data.label).attr('text-anchor', 'middle').attr('dy', -4)
+    .attr('font-size', 11).attr('fill', d => d.data.color).attr('font-weight', 700);
+
+  bubble.append('text').text(d => `${d.data.size} entities`).attr('text-anchor', 'middle').attr('dy', 11)
+    .attr('font-size', 9).attr('fill', d => d.data.color);
 }
 
 /**
