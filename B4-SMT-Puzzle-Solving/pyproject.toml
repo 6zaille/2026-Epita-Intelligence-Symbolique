@@ -16,6 +16,11 @@ dependencies = [
 [project.scripts]
 my-logic-puzzle-solver = "my_logic_puzzle_solver:main"
 
+[project.optional-dependencies]
+notebook = [
+    "matplotlib>=3.11.0",
+]
+
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
