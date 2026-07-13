@@ -3,6 +3,10 @@ from typing import Any
 
 
 class Solver(ABC):
+    def __init__(self):
+        self.num_variables = 0
+        self.num_constraints = 0
+
     @abstractmethod
     def create_int_var(self, name: str, lb: int, ub: int) -> Any: ...
 

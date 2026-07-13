@@ -7,29 +7,33 @@ from ..solver import Solver
 
 class Z3Solver(Solver):
     def __init__(self):
+        super().__init__()
         self.solver = z3.Solver()
         self.model = None
-        # self.vars = {}
 
     def create_int_var(self, name: str, lb: int, ub: int):
         v = z3.Int(name)
-        # self.vars[name] = v
+        self.num_variables += 1
         self.solver.add(v >= lb, v <= ub)
+        self.num_constraints += 1
         return v
 
     def create_bool_var(self, name: str):
         v = z3.Bool(name)
-        # self.vars[name] = v
+        self.num_variables += 1
         return v
 
     def constraint(self, expression):
         self.solver.add(expression)
+        self.num_constraints += 1
 
     def all_different(self, variables: Iterable):
         self.solver.add(z3.Distinct(*variables))
+        self.num_constraints += 1
 
     def abs_diff_eq(self, a, b, value: int) -> None:
         self.solver.add(z3.If(a - b >= 0, a - b, b - a) == value)
+        self.num_constraints += 1
 
     def bool_and(self, *variables):
         return z3.And(*variables)
@@ -45,6 +49,7 @@ class Z3Solver(Solver):
 
     def assert_true(self, var) -> None:
         self.solver.add(var)
+        self.num_constraints += 1
 
     def solve(self):
         valid = self.solver.check() == z3.sat
