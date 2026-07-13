@@ -31,6 +31,10 @@ class Z3Solver(Solver):
         self.solver.add(z3.Distinct(*variables))
         self.num_constraints += 1
 
+    def exactly_one(self, variables: list) -> None:
+        self.num_constraints += 1
+        self.solver.add(z3.PbEq([(v, 1) for v in variables], 1))
+
     def abs_diff_eq(self, a, b, value: int) -> None:
         self.solver.add(z3.If(a - b >= 0, a - b, b - a) == value)
         self.num_constraints += 1

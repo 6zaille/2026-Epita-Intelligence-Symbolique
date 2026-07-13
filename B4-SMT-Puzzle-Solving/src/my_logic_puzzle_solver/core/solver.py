@@ -20,6 +20,11 @@ class Solver(ABC):
     def all_different(self, variables: list) -> None: ...
 
     @abstractmethod
+    def exactly_one(self, variables: list) -> None:
+        """Adds constraint exactly one of `variables` is true."""
+        ...
+
+    @abstractmethod
     def abs_diff_eq(self, a, b, value: int) -> None:
         """Adds constraint `|a - b| == value`."""
         ...

@@ -28,6 +28,10 @@ class CPSATSolver(Solver):
         self.model.add_all_different(variables)
         self.num_constraints += 1
 
+    def exactly_one(self, variables: list) -> None:
+        self.num_constraints += 1
+        self.model.add_exactly_one(variables)
+
     def abs_diff_eq(self, a, b, value: int) -> None:
         is_ge = self.model.new_bool_var(f"is_ge_{id(a)}_{id(b)}")
         self.num_variables += 1
