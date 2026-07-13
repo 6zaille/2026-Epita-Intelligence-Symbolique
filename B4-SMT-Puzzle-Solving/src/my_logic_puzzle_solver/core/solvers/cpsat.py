@@ -31,6 +31,31 @@ class CPSATSolver(Solver):
         self.model.add(a - b == value).OnlyEnforceIf(is_ge)
         self.model.add(b - a == value).OnlyEnforceIf(is_ge.Not())
 
+    def bool_and(self, *variables):
+        r = self.model.new_bool_var("")
+        self.model.add_bool_and(variables).only_enforce_if(r)
+        self.model.add_bool_or([v.negated() for v in variables] + [r])
+        return r
+
+    def bool_or(self, *variables):
+        r = self.model.new_bool_var("")
+        self.model.add_bool_or(variables).only_enforce_if(r)
+        for v in variables:
+            self.model.add_implication(v, r)
+        return r
+
+    def bool_not(self, var):
+        return var.negated()
+
+    def reify(self, expression, negated_expression):
+        r = self.model.new_bool_var("")
+        self.model.add(expression).only_enforce_if(r)
+        self.model.add(negated_expression).only_enforce_if(~r)
+        return r
+
+    def assert_true(self, var) -> None:
+        self.model.add(var == 1)
+
     def solve(self):
         status = self.solver.solve(self.model)
         return status in (cp_model.OPTIMAL, cp_model.FEASIBLE)

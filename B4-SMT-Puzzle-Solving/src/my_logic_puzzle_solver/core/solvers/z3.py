@@ -31,6 +31,21 @@ class Z3Solver(Solver):
     def abs_diff_eq(self, a, b, value: int) -> None:
         self.solver.add(z3.If(a - b >= 0, a - b, b - a) == value)
 
+    def bool_and(self, *variables):
+        return z3.And(*variables)
+
+    def bool_or(self, *variables):
+        return z3.Or(*variables)
+
+    def bool_not(self, var):
+        return z3.Not(var)
+
+    def reify(self, expression, negated_expression):
+        return expression
+
+    def assert_true(self, var) -> None:
+        self.solver.add(var)
+
     def solve(self):
         valid = self.solver.check() == z3.sat
         if valid:
@@ -40,4 +55,5 @@ class Z3Solver(Solver):
     def get_value(self, var):
         if self.model is None:
             raise ValueError("Solver didn't solve any problem yet.")
-        return self.model.evaluate(var, model_completion=True).as_long()
+        value = self.model.evaluate(var, model_completion=True)
+        return value.as_long() if z3.is_int(var) else bool(value)

@@ -21,6 +21,44 @@ class Solver(ABC):
         ...
 
     @abstractmethod
+    def bool_and(self, *variables) -> Any:
+        """AND expression of the given `variables`."""
+        ...
+
+    @abstractmethod
+    def bool_or(self, *variables) -> Any:
+        """OR expression of the given `variables`."""
+        ...
+
+    @abstractmethod
+    def bool_not(self, var) -> Any:
+        """Not expression of `var`."""
+        ...
+
+    @abstractmethod
+    def reify(self, expression, negated_expression) -> Any:
+        """New expression equivalent to `expression`.
+
+        `negated_expression` must be `expression`'s exact negation
+        (for solvers using double implication).
+        """
+        ...
+
+    @abstractmethod
+    def assert_true(self, var) -> None:
+        """Add true constraint on `var`."""
+        ...
+
+    def assert_equiv(self, a, b) -> None:
+        """Add equivalence constraint between `a` and `b`."""
+        self.assert_true(
+            self.bool_or(
+                self.bool_and(a, b),
+                self.bool_and(self.bool_not(a), self.bool_not(b)),
+            )
+        )
+
+    @abstractmethod
     def solve(self) -> bool: ...
 
     @abstractmethod
