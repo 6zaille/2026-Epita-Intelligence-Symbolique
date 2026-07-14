@@ -1,0 +1,9 @@
+<http://dbpedia.org/resource/Paris> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> .
+<http://dbpedia.org/resource/Paris> <http://www.w3.org/2000/01/rdf-schema#label> "Paris"@fr .
+<https://www.data.gouv.fr/fr/datasets/velib> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#Dataset> .
+<https://www.data.gouv.fr/fr/datasets/velib> <http://purl.org/dc/terms/title> "Disponibilit\u00E9 des stations V\u00E9lib en temps r\u00E9el" .
+<https://www.data.gouv.fr/fr/datasets/velib> <http://purl.org/dc/terms/publisher> <https://www.data.gouv.fr/fr/organizations/ville-de-paris> .
+<https://www.data.gouv.fr/fr/organizations/ville-de-paris> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Organization> .
+<https://www.data.gouv.fr/fr/organizations/ville-de-paris> <http://xmlns.com/foaf/0.1/name> "Ville de Paris" .
+<https://www.data.gouv.fr/fr/organizations/ville-de-paris> <http://epita.fr/scia/2026/g5/catalog#employs> <https://example.org/people/agent-42> .
+<https://example.org/people/agent-42> <http://xmlns.com/foaf/0.1/name> "Alice Martin" .

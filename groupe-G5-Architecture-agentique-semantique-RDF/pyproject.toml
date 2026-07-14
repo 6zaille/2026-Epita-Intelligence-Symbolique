@@ -1,0 +1,27 @@
+[project]
+name = "rdf-agents"
+version = "1.0.0"
+description = "G5 - Architecture agentique semantique pour le traitement de documents RDF (EPITA SCIA 2026)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "rdflib>=7.0",
+    "pyshacl>=0.30",
+    "owlrl>=7.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rdf_agents"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv]
+# projet applicatif : le paquet rdf_agents est installé en editable par uv sync
