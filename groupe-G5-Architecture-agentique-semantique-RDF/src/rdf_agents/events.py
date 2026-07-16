@@ -13,7 +13,7 @@ import itertools
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List
 
 from rdflib import Literal, Namespace, RDF, URIRef, XSD
 
@@ -61,47 +61,39 @@ class SemanticEvent:
         for key, value in self.payload.items():
             if isinstance(value, (int, float, str, bool)):
                 yield (s, AG[key], Literal(value))
+            else:
+                # payload non scalaire : sérialisé en chaîne pour préserver
+                # l'auditabilité (aucun payload structuré n'est émis à ce jour)
+                yield (s, AG[key], Literal(str(value)))
 
     def __repr__(self) -> str:  # pragma: no cover - lisibilité des logs
         return f"<{self.type} doc={self.document.rsplit(':', 1)[-1]} by={self.emitter} {self.payload}>"
 
 
 class EventBus:
-    """Bus d'évènements publish/subscribe.
+    """Journal d'évènements sémantiques.
 
-    Les abonnés (l'orchestrateur, la couche métriques, ...) s'enregistrent sur
-    un type d'évènement ou sur ``'*'``. Chaque évènement publié est également
-    matérialisé dans le graphe d'évènements du blackboard si celui-ci est
-    attaché au bus.
+    Chaque évènement publié est (1) conservé dans un log en mémoire et (2)
+    matérialisé en RDF dans le graphe ``urn:graph:events`` du blackboard
+    attaché. Le bus est un **journal passif** : il n'orchestre rien. Le
+    séquencement des agents est assuré par l'orchestrateur (``orchestrator.py``),
+    qui réagit à la valeur de retour de chaque action ; les évènements servent
+    la traçabilité et l'auditabilité SPARQL, pas le contrôle du flux.
     """
 
     def __init__(self) -> None:
-        self._subscribers: Dict[str, List[Callable[[SemanticEvent], None]]] = {}
         self._log: List[SemanticEvent] = []
         self._blackboard = None  # attaché par le Blackboard lui-même
 
     def attach_blackboard(self, blackboard) -> None:
         self._blackboard = blackboard
 
-    def subscribe(self, event_type: str, handler: Callable[[SemanticEvent], None]) -> None:
-        self._subscribers.setdefault(event_type, []).append(handler)
-
     def publish(self, event: SemanticEvent) -> SemanticEvent:
         self._log.append(event)
         if self._blackboard is not None:
             self._blackboard.record_event(event)
-        for handler in self._subscribers.get(event.type, []):
-            handler(event)
-        for handler in self._subscribers.get("*", []):
-            handler(event)
         return event
 
     @property
     def log(self) -> List[SemanticEvent]:
         return list(self._log)
-
-    def last(self, event_type: Optional[str] = None) -> Optional[SemanticEvent]:
-        for ev in reversed(self._log):
-            if event_type is None or ev.type == event_type:
-                return ev
-        return None

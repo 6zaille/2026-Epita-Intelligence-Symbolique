@@ -9,8 +9,9 @@ Le blackboard est un ``rdflib.Dataset`` structuré en graphes nommés :
 * ``urn:graph:links``           : liens owl:sameAs vers le Linked Data ;
 * ``urn:graph:ontology``        : ontologie de domaine (TBox) partagée.
 
-Tous les agents lisent et écrivent dans ce même espace de connaissances, la
-coordination se faisant par évènements sémantiques (cf. ``events.py``).
+Tous les agents lisent et écrivent dans ce même espace de connaissances ; les
+évènements sémantiques y sont journalisés (cf. ``events.py``) tandis que le
+séquencement des agents est assuré par l'orchestrateur (cf. ``orchestrator.py``).
 """
 
 from __future__ import annotations
