@@ -171,7 +171,7 @@ class CPSATSolver(Solver):
         self.num_constraints += 1 + len(variables)
         return r
 
-    def bool_not(self, var) -> cp_model.Literal:
+    def bool_not(self, var) -> cp_model.LiteralT:
         """Negate a Boolean variable.
 
         Parameters
@@ -181,7 +181,7 @@ class CPSATSolver(Solver):
 
         Returns
         -------
-        cp_model.Literal
+        cp_model.LiteralT
             Negated Boolean literal.
         """
         return var.negated()
