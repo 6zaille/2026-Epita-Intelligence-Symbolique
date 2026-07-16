@@ -93,8 +93,8 @@ def test_full_corpus_and_metrics(system):
     assert report["pipeline"]["outcomes"] == {"published": 3, "quarantined": 3}
     assert report["pipeline"]["replanifications"] == 3
     assert report["validation_coverage"]["violating_runs"] == 1
-    # delta métier (hors bruit de clôture réflexif/axiomatique)
-    assert report["reasoning_quality"]["inferred_triples"] > 20
+    # inférences au niveau des individus du document (clôture TBox exclue)
+    assert report["reasoning_quality"]["inferred_triples"] >= 15
     assert report["reasoning_quality"]["inconsistencies_detected"] == 1
     assert report["reasoning_quality"]["sameas_links"] >= 3
     assert report["throughput"]["documents"] == 6

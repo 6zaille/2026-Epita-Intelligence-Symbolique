@@ -1,8 +1,12 @@
 """Agent de raisonnement OWL-RL.
 
 Calcule la clôture déductive OWL-RL (bibliothèque *owlrl*) du graphe du
-document augmenté de l'ontologie de domaine, puis matérialise le *delta*
-(triplets nouvellement inférés) dans le graphe ``urn:graph:inferred:<id>``.
+document augmenté de l'ontologie de domaine, puis matérialise dans le graphe
+``urn:graph:inferred:<id>`` le *delta au niveau des individus du document*
+(faits nouvellement inférés portant sur les ressources du document). La clôture
+de la TBox elle-même (subsomptions/domaines/co-domaines entre termes de
+l'ontologie), identique d'un document à l'autre, est exclue du compte : elle
+n'apprend rien sur le document et gonflerait artificiellement le ratio.
 Les inférences sont donc traçables séparément des faits assertés.
 
 L'agent détecte également les inconsistances : owlrl matérialise les
@@ -24,7 +28,7 @@ OWL = Namespace("http://www.w3.org/2002/07/owl#")
 #: vocabulaire utilisé par owlrl pour matérialiser les contradictions
 _ERR = Namespace("http://www.daml.org/2002/03/agents/agent-ont#")
 
-#: axiomatique interne d'owlrl que l'on ne matérialise pas comme "inférence métier"
+#: axiomatique interne d'owlrl que l'on ne matérialise pas comme inférence du document
 _NOISE_SUBJECTS = {OWL.Nothing, OWL.Thing}
 
 
@@ -59,20 +63,28 @@ class ReasoningAgent(Agent):
                              details="; ".join(sorted(errors)[:3]),
                              count=len(errors))
 
-        # Matérialisation du *delta métier* : ``before`` contient déjà les faits
-        # assertés ET l'ontologie (capturé après leur ajout), donc ``triple in
-        # before`` suffit à écarter l'un comme l'autre. On exclut en plus le
-        # bruit de clôture OWL-RL qui gonflerait artificiellement le ratio
-        # d'inférence sans rien apprendre sur le document : triplets réflexifs
-        # (X ⇔ X), littéraux en position sujet (RDF invalide), déclarations de
-        # datatypes et de propriétés d'annotation.
+        # Matérialisation des inférences AU NIVEAU DES INDIVIDUS du document.
+        # ``before`` contient déjà les faits assertés ET l'ontologie (capturé
+        # après leur ajout), donc ``triple in before`` écarte l'un comme l'autre.
+        # On exclut en outre :
+        #  * la clôture de la TBox elle-même (subClassOf/domain/range/… entre
+        #    termes de l'ontologie) : ces triplets ne disent rien du document,
+        #    sont identiques d'un document à l'autre et gonfleraient le compte et
+        #    le ratio ; on les reconnaît à un sujet déjà défini dans l'ontologie
+        #    (classes, propriétés, noeuds anonymes de restriction) ;
+        #  * le bruit de clôture OWL-RL : triplets réflexifs (X ⇔ X), typage
+        #    owl:Thing/owl:Nothing, littéraux en position sujet, déclarations de
+        #    datatypes et de propriétés d'annotation.
+        onto_terms = set(self.blackboard.ontology.subjects())
         inferred_graph = self.blackboard.inferred_graph(doc_uri)
         new_count = 0
         for triple in work:
             if triple in before:
                 continue
             s, p, o = triple
-            if s in _NOISE_SUBJECTS or o in _NOISE_SUBJECTS or p == _ERR.error:
+            if s in onto_terms:                       # clôture TBox (hors document)
+                continue
+            if s in _NOISE_SUBJECTS or o in _NOISE_SUBJECTS:
                 continue
             if s == o:
                 continue
