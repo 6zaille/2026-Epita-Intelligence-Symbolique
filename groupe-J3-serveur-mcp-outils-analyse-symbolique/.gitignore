@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+eval/results.json
+.pytest_cache/
+
+# Fichier de passation local (envoyé via Discord, pas versionné)
+RECAP.md
