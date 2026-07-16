@@ -2,7 +2,8 @@
 
 Trois familles de métriques, conformément au sujet :
 
-* **débit** : documents/s et triplets/s, globalement et par agent ;
+* **débit** : documents/s et triplets/s globaux ; temps cumulé et nombre
+  d'appels par agent ;
 * **couverture de validation** : shapes évaluées, taux de conformité,
   violations par sévérité ;
 * **qualité du raisonnement** : triplets inférés, ratio d'inférence,
@@ -70,10 +71,13 @@ def evaluate(blackboard: Blackboard, trace: List[dict],
     inferred_total = sum(e.payload.get("inferredTriples", 0) for e in inferences)
     asserted_total = sum(e.payload.get("assertedTriples", 0) for e in inferences)
 
+    per_doc_ratios = [e.payload.get("inferenceRatio", 0) for e in inferences]
     reasoning_quality = {
         "documents_reasoned": len(inferences),
         "inferred_triples": inferred_total,
-        "mean_inference_ratio": round(inferred_total / max(asserted_total, 1), 3),
+        # ratio agrégé (Σ inférés / Σ assertés) vs moyenne des ratios par document
+        "pooled_inference_ratio": round(inferred_total / max(asserted_total, 1), 3),
+        "mean_inference_ratio": round(sum(per_doc_ratios) / max(len(per_doc_ratios), 1), 3),
         "inconsistencies_detected": len(inconsistencies),
         "sameas_links": sum(e.payload.get("sameAsLinks", 0) for e in linkings),
     }
