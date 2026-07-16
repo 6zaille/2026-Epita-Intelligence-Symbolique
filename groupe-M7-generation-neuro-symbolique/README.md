@@ -97,24 +97,44 @@ python -m pytest tests/ -q
 Les tests utilisent `ScriptedGenerator`, qui rejoue des reponses fixees. Aucun appel reseau,
 resultats deterministes, cout nul. Le vrai generateur expose la meme interface.
 
-## Etat
+## Resultats
 
-Fait :
+10 runs par configuration, `gpt-4o-mini`, budget 5 cycles, syllabus `data/syllabus.json`.
+Reproductible via `python run_experiment.py --runs 10`, donnees brutes dans
+`results/experiment.json`.
 
-- validateur complet (5 familles de violations) et teste
-- detection d'infaisabilite d'instance par noyau CP-SAT
-- boucle complete, verifiee de bout en bout avec generateur scripte
-- baselines LLM-seul et CSP-seul
-- notebook explicatif, execute
+| Approche | Plans valides | Cycles | Qualite des titres |
+|---|---|---|---|
+| LLM seul | 0 / 10 | 1 | bonne |
+| LLM + feedback naif | 0 / 10 | 5 (budget epuise) | bonne |
+| LLM + feedback cible | **10 / 10** | 3.10 +/- 0.32 | bonne |
+| CP-SAT seul | 10 / 10 par construction | 0 | inutilisable |
 
-A faire :
+Trois observations, plus interessantes que le tableau :
 
-- executions LLM reelles et mesures de convergence (objectif 3)
-- ablation feedback cible / feedback naif
-- evaluation de la qualite semantique des plans finaux : elle ne se mesure pas
-  automatiquement. Une grille manuelle sur une dizaine de plans est le choix retenu, avec sa
-  subjectivite assumee.
-- objectif 5 (memoire vectorielle anti-repetition) : non traite
+**Le LLM a un angle mort systematique.** Sur 10 runs, il oublie `ARGU` et `KR` a chaque fois.
+Ce n'est pas du bruit : ce sont les deux objectifs qui ne sont pas sur la chaine principale
+`LOGIC -> SAT -> SMT -> VERIF`. Le modele suit le fil narratif et laisse tomber les branches
+laterales. Un echec structurel, pas aleatoire.
+
+**Le feedback naif ne suffit pas du tout.** Dire "invalide, recommence" fait recuperer `ARGU`,
+puis plafonne sur `KR` pendant les 5 cycles (9 runs sur 10 finissent avec exactement `KR`
+manquant). Meme LLM, meme solveur, meme reinjection du plan precedent : seule la formulation
+du feedback change, et elle fait passer de 0 % a 100 %. C'est le resultat central du projet.
+
+**La convergence n'est pas monotone.** La trajectoire typique est `[1, 2, 0]` (8 runs sur 10) :
+nommer l'objectif manquant fait ajouter `KR`, ce qui casse l'arithmetique des creneaux, que le
+cycle suivant repare. L'etat intermediaire est *pire* que le depart. C'est ce qui justifie une
+boucle plutot qu'une passe de correction unique.
+
+### Limites
+
+- Un seul syllabus, un seul modele. Rien ne dit que le plateau du feedback naif se generalise.
+- N = 10 : suffisant pour separer 0 % de 100 %, trop faible pour un intervalle de confiance
+  serre sur le nombre de cycles.
+- La qualite semantique n'est pas mesuree, seulement constatee a la lecture. La comparaison
+  "titres bons vs inutilisables" est un jugement, pas une metrique.
+- Objectif 5 (memoire vectorielle anti-repetition) : non traite.
 
 ## References
 
