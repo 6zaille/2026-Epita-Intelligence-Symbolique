@@ -23,7 +23,7 @@ flowchart TB
         A1["ExtractionAgent<br/>ETL multi-format<br/>(Turtle, RDF/XML, JSON-LD, N-Triples)"]
         A2["ValidationAgent<br/>SHACL via pySHACL<br/>(node/property shapes, SPARQL constraints)"]
         A3["ReasoningAgent<br/>Clôture OWL-RL (owlrl)<br/>+ détection d'inconsistances"]
-        A4["QueryAgent<br/>Partitionnement & indexation SPARQL<br/>+ requêtes inter-graphes"]
+        A4["QueryAgent<br/>Partitionnement & statistiques SPARQL<br/>+ requêtes inter-graphes"]
         A5["LinkingAgent<br/>Alignement owl:sameAs<br/>DBpedia / Wikidata"]
     end
 
@@ -98,7 +98,7 @@ uv run pytest -v
 |---|---|---|---|
 | `doc1_datagouv_catalog.ttl` | Turtle | Catalogue type data.gouv.fr (INSEE), conforme | **publié** (+ liage DBpedia/Wikidata) |
 | `doc2_transport.rdf` | RDF/XML | Jeu transport.data.gouv.fr, conforme | **publié** (+ liage) |
-| `doc3_energie.jsonld` | JSON-LD | Titre manquant, `modified < issued`, mbox invalide | **quarantaine** (5 violations SHACL, 1 replanification) |
+| `doc3_energie.jsonld` | JSON-LD | Titre manquant, `modified < issued`, mbox invalide | **quarantaine** (5 résultats SHACL : 4 `sh:Violation` + 1 `sh:Warning`, 1 replanification) |
 | `doc4_dbpedia_excerpt.nt` | N-Triples | Extrait DBpedia + dataset Vélib | **publié** (+ liage) |
 | `doc5_broken.ttl` | Turtle invalide | Erreur de syntaxe | **quarantaine** (ExtractionFailed) |
 | `doc6_inconsistent.ttl` | Turtle | Individu ∈ `foaf:Person ⊓ foaf:Organization` (disjointes) | **quarantaine** (InconsistencyDetected par OWL-RL, règle cax-dw) |
@@ -109,16 +109,18 @@ uv run pytest -v
 * **Débit** : le raisonnement OWL-RL domine le coût du pipeline (~60 % du temps
   agent) ; le débit absolu (documents/s, triplets/s) dépend de la machine et est
   reporté tel quel dans `docs/evaluation_report.json`.
-* **Couverture de validation** : 11 contraintes SHACL évaluées par passe
-  (property shapes + contrainte SPARQL), 8 passes de validation (validation +
-  revalidation post-inférence), taux de conformité 0,875, violations ventilées
-  par sévérité (`sh:Violation`, `sh:Warning`).
-* **Qualité du raisonnement** : 67 triplets *métier* inférés hors bruit de
-  clôture réflexif/axiomatique (ratio moyen ×1,9 par document), 1 inconsistance
-  détectée, 6 liens `owl:sameAs` produits. Exemple d'inférence non triviale : la
-  restriction `dcat:Dataset ⊓ ∃ dct:publisher.PublicBody ⊑ ex:GovDataset` permet
-  de répondre à la requête « quels sont les jeux de données gouvernementaux ? »
-  alors qu'aucun document n'asserte ce type.
+* **Couverture de validation** : 11 contraintes SHACL déclarées (10 property
+  shapes + 1 contrainte SPARQL) soumises au moteur à chaque passe, 8 passes de
+  validation (validation + revalidation post-inférence), taux de conformité
+  0,875, violations ventilées par sévérité (`sh:Violation`, `sh:Warning`).
+* **Qualité du raisonnement** : 19 triplets inférés *au niveau des individus des
+  documents* — la clôture de la TBox, identique d'un document à l'autre, est
+  exclue du compte —, soit un ratio d'enrichissement moyen ≈ 0,5 par document
+  conforme ; 1 inconsistance détectée, 6 liens `owl:sameAs` produits. Exemple
+  d'inférence non triviale : la subsomption `dcat:Dataset ⊓ ∃
+  dct:publisher.PublicBody ⊑ ex:GovDataset` permet de répondre à la requête
+  « quels sont les jeux de données gouvernementaux ? » alors qu'aucun document
+  n'asserte ce type.
 
 ## Correspondance avec les objectifs du sujet
 
