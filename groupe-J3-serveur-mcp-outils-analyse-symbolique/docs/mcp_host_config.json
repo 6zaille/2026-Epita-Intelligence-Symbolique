@@ -1,0 +1,12 @@
+{
+  "_comment": "Exemple de configuration pour brancher le serveur MCP sur un hote MCP compatible. Copier ce bloc dans le fichier de configuration de votre hote MCP (schema 'mcpServers'), en remplaçant ABSOLUTE_PATH par le chemin absolu du dossier du projet.",
+  "mcpServers": {
+    "symbolic-analysis": {
+      "command": "ABSOLUTE_PATH/groupe-J3-serveur-mcp-outils-analyse-symbolique/.venv/bin/python",
+      "args": ["-m", "symbolic_mcp.server"],
+      "env": {
+        "PYTHONPATH": "ABSOLUTE_PATH/groupe-J3-serveur-mcp-outils-analyse-symbolique/src"
+      }
+    }
+  }
+}
