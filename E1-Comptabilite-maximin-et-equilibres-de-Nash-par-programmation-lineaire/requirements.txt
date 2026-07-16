@@ -3,3 +3,4 @@ nashpy
 numpy
 scipy
 pandas
+jupyter
