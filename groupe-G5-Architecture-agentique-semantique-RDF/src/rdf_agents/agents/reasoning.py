@@ -5,15 +5,17 @@ document augmenté de l'ontologie de domaine, puis matérialise le *delta*
 (triplets nouvellement inférés) dans le graphe ``urn:graph:inferred:<id>``.
 Les inférences sont donc traçables séparément des faits assertés.
 
-L'agent détecte également les inconsistances : un individu inféré membre de
-``owl:Nothing`` (p.ex. typé dans deux classes disjointes) déclenche
-``InconsistencyDetected`` et la mise en quarantaine du document.
+L'agent détecte également les inconsistances : owlrl matérialise les
+contradictions (p.ex. individu commun à deux classes disjointes, règle cax-dw)
+sous forme d'un nœud d'erreur portant la propriété ``agent-ont#error`` ;
+l'agent le convertit en ``InconsistencyDetected`` (mise en quarantaine du
+document). Un individu inféré membre de ``owl:Nothing`` sert de filet secondaire.
 """
 
 from __future__ import annotations
 
 from owlrl import DeductiveClosure, OWLRL_Semantics
-from rdflib import Graph, Namespace, RDF, URIRef
+from rdflib import Graph, Literal, Namespace, RDF, RDFS, URIRef
 
 from ..events import INCONSISTENCY_DETECTED, TRIPLES_INFERRED, SemanticEvent
 from .base import Agent
@@ -57,15 +59,26 @@ class ReasoningAgent(Agent):
                              details="; ".join(sorted(errors)[:3]),
                              count=len(errors))
 
-        # Matérialisation du delta d'inférence, hors ontologie et bruit axiomatique
-        ontology_triples = set(self.blackboard.ontology)
+        # Matérialisation du *delta métier* : ``before`` contient déjà les faits
+        # assertés ET l'ontologie (capturé après leur ajout), donc ``triple in
+        # before`` suffit à écarter l'un comme l'autre. On exclut en plus le
+        # bruit de clôture OWL-RL qui gonflerait artificiellement le ratio
+        # d'inférence sans rien apprendre sur le document : triplets réflexifs
+        # (X ⇔ X), littéraux en position sujet (RDF invalide), déclarations de
+        # datatypes et de propriétés d'annotation.
         inferred_graph = self.blackboard.inferred_graph(doc_uri)
         new_count = 0
         for triple in work:
-            if triple in before or triple in ontology_triples:
+            if triple in before:
                 continue
             s, p, o = triple
             if s in _NOISE_SUBJECTS or o in _NOISE_SUBJECTS or p == _ERR.error:
+                continue
+            if s == o:
+                continue
+            if isinstance(s, Literal):
+                continue
+            if p == RDF.type and o in (RDFS.Datatype, OWL.AnnotationProperty):
                 continue
             inferred_graph.add(triple)
             new_count += 1
