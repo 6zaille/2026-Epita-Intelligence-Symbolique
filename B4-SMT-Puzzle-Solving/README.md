@@ -26,3 +26,22 @@ Les puzzles logiques (Einstein/Zebra, Knights and Knaves, Nonograms/Picross, Sud
 - Eiter, T. et al. (2023). "Answer Set Programming and SMT for Combinatorial Problem Solving." *Kuenstliche Intelligenz*. [springer.com](https://link.springer.com/article/10.1007/s13218-023-00816-5)
 
 ### Difficulte : 2/5
+
+## Setup
+
+### Installation
+
+Si vous utilisez nix, vous pouvez simplement développer la flake pour avoir la bonne version de python et uv avec
+```sh
+nix --extra-experimental-features "nix-command flakes" develop
+```
+
+Puis, pour installer les dépendence, lancez
+```sh
+uv sync
+```
+
+Et pour lancer le notebook de démonstration, vous aurez besoin d'exécuter
+```sh
+uv sync --extra notebook
+```
