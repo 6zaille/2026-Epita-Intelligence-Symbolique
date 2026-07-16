@@ -1,0 +1,11 @@
+[project]
+name = "iasym-connect-four"
+version = "0.1.0"
+description = "Joueurs artificiels pour Puissance 4 : minimax/alpha-beta, MCTS, DQN."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+# Permet d'importer game/, agents/, etc. depuis la racine du projet dans les tests.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

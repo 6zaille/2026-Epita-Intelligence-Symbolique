@@ -1,0 +1,15 @@
+Entraînement DQN sur 2500 épisodes (device=cpu)...
+Épisode   250 | eps=0.88 | loss=0.0030 | winrate vs Random=79.00%
+Épisode   500 | eps=0.76 | loss=0.0018 | winrate vs Random=94.00%
+Épisode   750 | eps=0.64 | loss=0.0026 | winrate vs Random=91.00%
+Épisode  1000 | eps=0.53 | loss=0.0009 | winrate vs Random=96.00%
+Épisode  1250 | eps=0.41 | loss=0.0027 | winrate vs Random=96.00%
+Épisode  1500 | eps=0.29 | loss=0.0022 | winrate vs Random=94.00%
+Épisode  1750 | eps=0.17 | loss=0.0016 | winrate vs Random=95.00%
+Épisode  2000 | eps=0.05 | loss=0.0011 | winrate vs Random=96.00%
+Épisode  2250 | eps=0.05 | loss=0.0037 | winrate vs Random=96.00%
+Épisode  2500 | eps=0.05 | loss=0.0018 | winrate vs Random=99.00%
+
+Modèle sauvegardé   -> models/dqn.pt
+Historique sauvegardé -> models/dqn_history.npz
+Taux de victoire final vs Random : 99.0%
