@@ -58,7 +58,7 @@ def test_validation_conforming_document(blackboard):
     agent = ValidationAgent(blackboard, ROOT / "shapes/dataset_shapes.ttl")
     event = agent.perform("validate", doc_uri)
     assert event.type == VALIDATION_SUCCEEDED
-    # 10 property shapes + 1 contrainte SPARQL réellement évaluées
+    # 10 property shapes + 1 contrainte SPARQL déclarées, soumises au moteur
     assert event.payload["constraintsEvaluated"] == 11
 
 

@@ -28,9 +28,14 @@ class ValidationAgent(Agent):
     def __init__(self, blackboard, shapes_path: Path) -> None:
         super().__init__(blackboard)
         self.shapes = Graph().parse(shapes_path)
-        # Nombre de contraintes réellement évaluées : les property shapes (le
-        # plus souvent des nœuds anonymes non typés ``sh:PropertyShape``) et les
-        # contraintes SPARQL — et non le seul décompte des NodeShapes.
+        # Nombre de contraintes DÉCLARÉES soumises au moteur à chaque passe : les
+        # property shapes (le plus souvent des nœuds anonymes non typés
+        # ``sh:PropertyShape``) et les contraintes SPARQL — et non le seul
+        # décompte des NodeShapes. C'est une mesure statique de la couverture des
+        # shapes (indépendante du document) : une property shape n'est réellement
+        # exercée que si sa NodeShape sélectionne des noeuds-cibles dans les
+        # données, et elle peut regrouper plusieurs composants (minCount,
+        # datatype, pattern…). On rapporte donc « soumises », pas « exercées ».
         self.constraint_count = (len(list(self.shapes.objects(None, SH.property))) +
                                  len(list(self.shapes.objects(None, SH["sparql"]))))
 

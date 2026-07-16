@@ -4,8 +4,11 @@ Rôles :
 1. **Partitionnement** : segmente le graphe (asserté + inféré) d'un document
    en partitions thématiques par classe (une requête CONSTRUCT par classe
    cible), stockées comme graphes nommés ``urn:graph:partition:<id>:<classe>``.
-2. **Indexation** : exécute une requête d'agrégation SPARQL et mémorise les
-   statistiques d'entités par type, exploitées par la couche d'évaluation.
+2. **Statistiques par type** : exécute une requête d'agrégation SPARQL
+   (``GROUP BY`` sur ``rdf:type``) et mémorise le décompte d'entités par type,
+   exploité par la couche d'évaluation. Il s'agit d'une agrégation, non de la
+   construction d'un index d'accélération : c'est le partitionnement (1.) qui
+   matérialise les vues réutilisables.
 3. **Requêtage inter-graphes** : expose ``federated_query`` pour interroger
    l'union des graphes du blackboard (hors journal d'évènements).
 """
