@@ -72,7 +72,18 @@ def test_plans_are_optimal_bfs():
         init=[("raw", "d"), ("link-satisfied", "d")],
         goal=[("processed", "d")])
     steps = plan(DOMAIN, problem)
-    assert len(steps) == 6  # BFS garantit le plan le plus court
+    # BFS => plan optimal : la séquence nominale complète, sans détour ni action
+    # superflue (comparaison exacte, pas seulement la longueur).
+    assert _names(steps) == ["extract", "validate", "reason",
+                             "revalidate", "index", "publish"]
+    assert len(steps) == 6
+    # Borne inférieure : un état déjà à un pas du but n'engendre qu'une action.
+    # Un planificateur sous-optimal qui rallongerait le plan échouerait ici.
+    near = Problem.build(
+        objects={"d": "document"},
+        init=[("indexed", "d"), ("link-satisfied", "d")],
+        goal=[("processed", "d")])
+    assert _names(plan(DOMAIN, near)) == ["publish"]
 
 
 def test_multi_document_grounding():
@@ -83,4 +94,10 @@ def test_multi_document_grounding():
         goal=[("processed", "a"), ("processed", "b")])
     steps = plan(DOMAIN, problem)
     assert steps is not None
+    # 6 actions nominales par document, aucune mutualisation entre documents
+    assert len(steps) == 12
     assert {args for s in steps for args in s.args} == {"a", "b"}
+    # chaque document parcourt réellement sa propre séquence nominale jusqu'à publish
+    nominal = ["extract", "validate", "reason", "revalidate", "index", "publish"]
+    assert [s.name for s in steps if s.args == ("a",)] == nominal
+    assert [s.name for s in steps if s.args == ("b",)] == nominal

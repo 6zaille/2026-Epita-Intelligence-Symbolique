@@ -33,6 +33,9 @@ from .agents.base import Agent
 #: évènements qui invalident le plan courant et déclenchent la replanification
 _FAILURE_EVENTS = {EXTRACTION_FAILED, VIOLATION_DETECTED, INCONSISTENCY_DETECTED}
 
+#: actions du plan gérées directement par l'orchestrateur (sans agent dédié)
+_BUILTIN_ACTIONS = {"publish", "quarantine"}
+
 
 class Orchestrator(Agent):
     name = "OrchestratorAgent"
@@ -45,6 +48,14 @@ class Orchestrator(Agent):
         for agent in agents:
             for act in agent.handles:
                 self.dispatch[act] = agent
+        # Garde de couverture : toute action du domaine qui n'est pas gérée en
+        # interne (publish/quarantine) doit avoir un agent qui la déclare. On le
+        # vérifie à la construction plutôt que de risquer un KeyError à l'exécution.
+        missing = sorted(a.name for a in self.domain.actions
+                         if a.name not in _BUILTIN_ACTIONS
+                         and a.name not in self.dispatch)
+        if missing:
+            raise ValueError(f"Actions du domaine sans agent (handles) : {missing}")
         self.trace: List[dict] = []
 
     # ------------------------------------------------------------------ état
@@ -73,6 +84,8 @@ class Orchestrator(Agent):
         state = self._initial_state(doc_id, needs_linking)
         executed: List[str] = []
         replans = 0
+        failed_action: Optional[str] = None
+        failure_event: Optional[str] = None
         started = time.perf_counter()
 
         while True:
@@ -101,7 +114,11 @@ class Orchestrator(Agent):
 
                 if outcome is not None and outcome.type in _FAILURE_EVENTS:
                     # L'issue contredit l'effet attendu -> correction de l'état
-                    # du monde et replanification (route de quarantaine).
+                    # du monde et replanification (route de quarantaine). On note
+                    # l'action fautive et l'évènement d'échec pour l'audit, sans
+                    # altérer la liste `executed` (l'action a bien été tentée).
+                    failed_action = step.signature
+                    failure_event = outcome.type
                     state.add(("failed", doc_id))
                     replans += 1
                     failed = True
@@ -120,6 +137,8 @@ class Orchestrator(Agent):
             "status": self.blackboard.documents[doc_uri]["status"],
             "plan": executed,
             "replans": replans,
+            "failed_action": failed_action,
+            "failure_event": failure_event,
             "seconds": elapsed,
             "triples": self.blackboard.documents[doc_uri].get("triples", 0),
             "inferred": self.blackboard.documents[doc_uri].get("inferred", 0),

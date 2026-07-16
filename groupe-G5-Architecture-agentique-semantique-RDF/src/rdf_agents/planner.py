@@ -1,10 +1,13 @@
 """Planificateur PDDL (sous-ensemble STRIPS typé) écrit from scratch.
 
-Le sous-ensemble supporté couvre : ``:strips``, ``:typing`` et
-``:negative-preconditions`` — suffisant pour le domaine ``rdf-pipeline``.
+Le sous-ensemble supporté couvre : ``:strips``, ``:typing`` (types *plats*,
+sans hiérarchie de types) et ``:negative-preconditions`` — suffisant pour le
+domaine ``rdf-pipeline``. Les ``:requirements`` déclarés sont validés au
+parsing (toute exigence hors de ce sous-ensemble est rejetée).
 La recherche est une exploration en largeur (BFS) sur l'espace d'états
 (ensembles de faits ground), garantissant des plans optimaux en nombre
-d'actions. L'orchestrateur utilise ce planificateur en boucle
+d'actions dans la limite de ``max_states`` états explorés. L'orchestrateur
+utilise ce planificateur en boucle
 *plan → exécution → supervision → replanification* : quand l'issue réelle
 d'une action (p.ex. une violation SHACL) contredit l'effet attendu,
 l'état du monde est corrigé et un nouveau plan est calculé.
@@ -84,10 +87,16 @@ class GroundAction:
         return (state - self.del_effects) | self.add_effects
 
 
+_SUPPORTED_REQUIREMENTS = {":strips", ":typing", ":negative-preconditions"}
+
+
 class Domain:
-    def __init__(self, name: str, actions: List[Action]):
+    def __init__(self, name: str, actions: List[Action],
+                 requirements: Sequence[str] = (), types: Sequence[str] = ()):
         self.name = name
         self.actions = actions
+        self.requirements = tuple(requirements)
+        self.types = tuple(types)
 
     @classmethod
     def parse(cls, path: Path) -> "Domain":
@@ -95,22 +104,32 @@ class Domain:
         assert expr[0] == "define"
         name = expr[1][1]
         actions: List[Action] = []
+        requirements: List[str] = []
+        types: List[str] = []
         for section in expr[2:]:
-            if section[0] != ":action":
-                continue
-            action = Action(name=section[1], parameters=[])
-            i = 2
-            while i < len(section):
-                key, value = section[i], section[i + 1]
-                if key == ":parameters":
-                    action.parameters = _parse_typed_list(value)
-                elif key == ":precondition":
-                    _collect(value, action.positive_pre, action.negative_pre)
-                elif key == ":effect":
-                    _collect(value, action.add_effects, action.del_effects)
-                i += 2
-            actions.append(action)
-        return cls(name, actions)
+            head = section[0]
+            if head == ":requirements":
+                requirements = list(section[1:])
+            elif head == ":types":
+                # types plats : les éventuels super-types (``- super``) sont ignorés
+                types = [t for t in section[1:] if t != "-"]
+            elif head == ":action":
+                action = Action(name=section[1], parameters=[])
+                i = 2
+                while i < len(section):
+                    key, value = section[i], section[i + 1]
+                    if key == ":parameters":
+                        action.parameters = _parse_typed_list(value)
+                    elif key == ":precondition":
+                        _collect(value, action.positive_pre, action.negative_pre)
+                    elif key == ":effect":
+                        _collect(value, action.add_effects, action.del_effects)
+                    i += 2
+                actions.append(action)
+        unsupported = [r for r in requirements if r not in _SUPPORTED_REQUIREMENTS]
+        if unsupported:
+            raise ValueError(f"Requirements PDDL non supportés : {unsupported}")
+        return cls(name, actions, requirements, types)
 
 
 def _collect(expr, positive: List[Fact], negative: List[Fact]) -> None:
