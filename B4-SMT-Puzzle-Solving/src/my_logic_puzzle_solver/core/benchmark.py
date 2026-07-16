@@ -26,6 +26,7 @@ class BenchmarkResult:
     num_constraints : int
         Number of constraints added to the solver model.
     """
+
     label: str
     solved: bool
     time_seconds: float
@@ -82,7 +83,7 @@ def run_benchmarks(
     ----------
     cases : list[tuple[str, Callable[[], Solver], Callable[[Solver], Puzzle]]]
         Benchmark cases. Each case contains:
-        
+
         - a benchmark label,
         - a solver factory function,
         - a puzzle factory function.
