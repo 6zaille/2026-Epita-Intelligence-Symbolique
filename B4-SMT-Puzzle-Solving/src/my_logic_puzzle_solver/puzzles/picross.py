@@ -14,10 +14,7 @@ class Picross(Puzzle):
         self.n_rows = len(row_clues)
         self.n_cols = len(col_clues)
         self.grid = [
-            [
-                solver.create_bool_var(f"cell_{i}_{j}")
-                for j in range(self.n_cols)
-            ]
+            [solver.create_bool_var(f"cell_{i}_{j}") for j in range(self.n_cols)]
             for i in range(self.n_rows)
         ]
 
@@ -55,6 +52,5 @@ class Picross(Puzzle):
         if not self.solver.solve():
             return None
         return [
-            [bool(self.solver.get_value(cell)) for cell in row]
-            for row in self.grid
+            [bool(self.solver.get_value(cell)) for cell in row] for row in self.grid
         ]

@@ -6,9 +6,7 @@ class KnightsKnaves(Puzzle):
         super().__init__(solver)
         self.persons = persons
         self.statements = statements
-        self.is_knight = {
-            name: solver.create_bool_var(name) for name in persons
-        }
+        self.is_knight = {name: solver.create_bool_var(name) for name in persons}
 
     def _build_constraints(self):
         for name, statement_fn in self.statements.items():

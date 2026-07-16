@@ -45,3 +45,18 @@ Et pour lancer le notebook de démonstration, vous aurez besoin d'exécuter
 ```sh
 uv sync --extra notebook
 ```
+
+### Formattage
+
+Le code est formatté avec Black. Pour le faire, lancez
+```sh
+uv run black src/
+```
+
+## Exécution
+
+Un notebook de démonstration permet de tester le code. Vous le trouverez dans `notebooks/demo.ipynb`.
+
+## Présentation
+
+Vous pouvez retrouver nos transparents [ici](https://epitafr-my.sharepoint.com/:p:/g/personal/brendan_martin_epita_fr/IQC8_Q2_kYrJS7cCMlSQF_f1ASWOdmywN9PN82g_I7LjK8U?rtime=-m4djXHj3kg).

@@ -53,9 +53,7 @@ class SudokuBoolean(Sudoku):
         return [
             [
                 next(
-                    n + 1
-                    for n in range(9)
-                    if self.solver.get_value(self.vars[x][y][n])
+                    n + 1 for n in range(9) if self.solver.get_value(self.vars[x][y][n])
                 )
                 for y in range(9)
             ]
@@ -85,8 +83,7 @@ class _SudokuIntegerBase(Sudoku):
         if not self.solver.solve():
             return None
         return [
-            [self.solver.get_value(self.vars[x][y]) for y in range(9)]
-            for x in range(9)
+            [self.solver.get_value(self.vars[x][y]) for y in range(9)] for x in range(9)
         ]
 
 
