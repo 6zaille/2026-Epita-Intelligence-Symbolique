@@ -2,17 +2,16 @@
 
 Pour chaque document, l'orchestrateur :
 
-1. construit un problème PDDL à partir de l'état courant du document dans le
-   graphe de connaissances (``raw``, ``needs-linking``...), avec pour but
-   ``(processed doc)`` ;
+1. construit un problème PDDL à partir des paramètres d'entrée (statut initial
+   ``raw`` et besoin de liage ``needs-linking``/``link-satisfied``), avec pour
+   but ``(processed doc)`` ;
 2. calcule un plan optimal avec le planificateur STRIPS (``planner.py``) ;
 3. exécute le plan en dispatchant chaque action à l'agent spécialisé qui la
    déclare dans ``handles`` ;
-4. **supervise** l'issue réelle via les évènements sémantiques : si l'issue
-   contredit l'effet attendu (``ViolationDetected``, ``ExtractionFailed``,
-   ``InconsistencyDetected``), il corrige l'état du monde — ajout du fait
-   ``(failed doc)`` — puis **replanifie**. Le nouveau plan emprunte alors la
-   route de quarantaine.
+4. **supervise** l'issue réelle : si l'agent émet un évènement d'échec
+   (``ViolationDetected``, ``ExtractionFailed``, ``InconsistencyDetected``), il
+   corrige l'état du monde — ajout du fait ``(failed doc)`` — puis
+   **replanifie** ; le nouveau plan emprunte alors la route de quarantaine.
 
 Ce couplage plan/supervision/replanification est la traduction opérationnelle
 du paradigme *sense–plan–act* des systèmes multi-agents symboliques.
@@ -33,18 +32,6 @@ from .agents.base import Agent
 
 #: évènements qui invalident le plan courant et déclenchent la replanification
 _FAILURE_EVENTS = {EXTRACTION_FAILED, VIOLATION_DETECTED, INCONSISTENCY_DETECTED}
-
-#: effet PDDL attendu (fait ajouté) par action réussie
-_EXPECTED_ADD = {
-    "extract": "extracted",
-    "validate": "validated",
-    "reason": "enriched",
-    "revalidate": "revalidated",
-    "link": "link-satisfied",
-    "index": "indexed",
-    "publish": "processed",
-    "quarantine": "processed",
-}
 
 
 class Orchestrator(Agent):
@@ -95,7 +82,6 @@ class Orchestrator(Agent):
             if not steps:
                 break  # but atteint
 
-            plan_sig = [s.signature for s in steps]
             failed = False
             for step in steps:
                 if step.name == "quarantine":
