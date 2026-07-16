@@ -1,0 +1,105 @@
+[
+  {
+    "id": "SAT_01_KNIGHTS_KNAVES_A",
+    "text": "Sur une île, chaque habitant est soit un Chevalier (qui dit toujours la vérité), soit un Valet (qui ment toujours). L'habitant A déclare : « Au moins l'un de nous deux, A ou B, est un Valet. » L'habitant B ne dit rien. Déterminez la nature (Chevalier ou Valet) de A et de B.",
+    "category": "sat_pure_logic"
+  },
+  {
+    "id": "SAT_02_KNIGHTS_KNAVES_XYZ",
+    "text": "Trois habitants X, Y et Z vivent sur l'île des Chevaliers (toujours vrais) et des Valets (toujours menteurs). X dit : « Nous sommes tous les trois des Valets. » Y dit : « Exactement un d'entre nous est un Chevalier. » Z se tait. Trouvez la nature réelle de chacun.",
+    "category": "sat_pure_logic"
+  },
+  {
+    "id": "SAT_03_IMPLICATION_CHAIN_UNSAT",
+    "text": "On considère trois propositions booléennes P, Q et R. On sait que : si P est vraie alors Q est vraie ; si Q est vraie alors R est vraie ; et P est vraie. Est-il possible que R soit fausse ? Si c'est impossible, le solveur doit le prouver.",
+    "category": "sat_pure_logic"
+  },
+  {
+    "id": "SAT_04_DEPENDENCY_HELL",
+    "text": "Un installeur logiciel gère des paquets booléens (installé ou non). Si le Paquet_A est installé, alors le Paquet_B doit l'être. Si le Paquet_B est installé, alors le Paquet_C ou le Paquet_D doit l'être. Si le Paquet_D est installé, alors le Paquet_A ne doit pas l'être. On souhaite installer ensemble le Paquet_A et le Paquet_D. Est-ce réalisable ?",
+    "category": "sat_software_verification"
+  },
+  {
+    "id": "SAT_05_CIRCUIT_NAND_COUNTEREXAMPLE",
+    "text": "Un circuit possède deux entrées booléennes In1 et In2 et une sortie Out reliée par une porte NON-ET (NAND) : Out est vraie sauf lorsque In1 et In2 sont toutes deux vraies. On prétend que « si In1 est vraie, alors Out est forcément fausse ». Trouvez un contre-exemple (des valeurs de In1 et In2) qui prouve que cette affirmation est fausse.",
+    "category": "sat_hardware_verification"
+  },
+
+  {
+    "id": "SMT_01_MARBLES",
+    "text": "Alice possède exactement 3 fois plus de billes que Bob. Ensemble, ils possèdent 40 billes. Combien de billes possède Bob ?",
+    "category": "smt_arithmetic"
+  },
+  {
+    "id": "SMT_02_AGES",
+    "text": "La somme des âges de deux personnes vaut 30 ans. La première personne a exactement le double de l'âge de la seconde. Quel est l'âge (en années entières) de chacune ?",
+    "category": "smt_arithmetic"
+  },
+  {
+    "id": "SMT_03_MAXIMIZE_PROFIT",
+    "text": "Un atelier fabrique x tables et y chaises, en quantités entières positives. Les contraintes de production imposent x inférieur ou égal à 10 et y inférieur ou égal à 5. Chaque table rapporte 3 euros et chaque chaise 4 euros. Maximisez le profit total 3*x + 4*y et donnez les quantités optimales.",
+    "category": "smt_optimization"
+  },
+  {
+    "id": "SMT_04_MINIMIZE_COST",
+    "text": "On achète x sacs de ciment et y sacs de sable, en nombres entiers non négatifs. Un sac de ciment pèse 2 kg, un sac de sable pèse 1 kg, et il faut transporter au moins 10 kg de matériau (2*x + y au moins égal à 10). Un sac de ciment coûte 5 euros et un sac de sable 3 euros. Minimisez le coût total 5*x + 3*y.",
+    "category": "smt_optimization"
+  },
+  {
+    "id": "SMT_05_NO_INTEGER_UNSAT",
+    "text": "Existe-t-il un nombre entier x vérifiant l'équation 2*x = 7 ? Si aucune solution entière n'existe, le solveur doit prouver l'impossibilité (UNSAT) sans altérer l'équation.",
+    "category": "smt_arithmetic"
+  },
+
+  {
+    "id": "CSP_01_EINSTEIN_MINI",
+    "text": "Trois maisons sont alignées aux positions 1, 2 et 3. Dans chacune vit une personne de nationalité différente parmi Français, Anglais et Espagnol, et chacune boit une boisson différente parmi eau, vin et lait. Le Français vit en position 1. La personne qui boit du lait vit en position 2. L'Anglais boit du vin. L'Espagnol ne vit pas en position 3. Déterminez, pour chaque position, la nationalité et la boisson.",
+    "category": "csp_multi_attribute"
+  },
+  {
+    "id": "CSP_02_HOUSE_COLORS",
+    "text": "Quatre maisons occupent les positions 1 à 4 de gauche à droite. Chaque maison a une couleur unique parmi rouge, bleue, verte et jaune. La maison bleue est en position 1. La maison jaune est en position 4. La maison rouge est immédiatement à gauche de la maison verte. Donnez la position de chaque couleur.",
+    "category": "csp_positions"
+  },
+  {
+    "id": "CSP_03_SEATING",
+    "text": "Quatre amis — Anna, Ben, Clara et David — s'assoient sur quatre chaises numérotées de 1 à 4, une personne par chaise. Anna est assise sur une chaise adjacente à celle de Ben (numéros consécutifs). David occupe la chaise 4. Clara n'est pas sur la chaise 1. Trouvez une attribution des chaises satisfaisant toutes ces contraintes.",
+    "category": "csp_assignment"
+  },
+  {
+    "id": "CSP_04_LATIN_SQUARE_3X3",
+    "text": "On remplit une grille 3x3 avec des entiers de 1 à 3 de sorte que chaque ligne et chaque colonne contienne les trois valeurs 1, 2 et 3 sans répétition (carré latin). La case en haut à gauche vaut 1 et la case du centre vaut 2. Complétez la grille.",
+    "category": "csp_grid"
+  },
+  {
+    "id": "CSP_05_COURSE_SCHEDULE",
+    "text": "Cinq cours doivent être placés à cinq créneaux distincts numérotés de 1 à 5, un cours par créneau. Le cours de Maths a lieu avant celui de Physique. Le cours d'Anglais a lieu au créneau 3. Le cours d'Histoire a lieu juste après celui de Physique. Le cours de Sport a lieu au créneau 1. Donnez le créneau de chaque cours.",
+    "category": "csp_scheduling"
+  },
+
+  {
+    "id": "PDDL_01_ROBOT_2ROOMS",
+    "text": "Un robot se trouve dans la pièce A. Les pièces A et B sont connectées. Le robot peut se déplacer d'une pièce vers une pièce qui lui est connectée, ce qui change la pièce où il se trouve. Trouvez un plan d'actions amenant le robot dans la pièce B.",
+    "category": "pddl_navigation"
+  },
+  {
+    "id": "PDDL_02_ROBOT_3ROOMS_LINEAR",
+    "text": "Un robot est initialement dans la pièce A. Les connexions sont : A est reliée à B, et B est reliée à C. Le robot peut se déplacer vers toute pièce qui lui est directement connectée. Trouvez un plan d'actions amenant le robot dans la pièce C.",
+    "category": "pddl_navigation"
+  },
+  {
+    "id": "PDDL_03_ROBOT_SQUARE",
+    "text": "Quatre pièces forment une boucle : A est reliée à B, B à C, C à D et D à A. Un robot part de la pièce A et peut se déplacer vers une pièce directement connectée. Trouvez un plan d'actions amenant le robot dans la pièce C.",
+    "category": "pddl_navigation"
+  },
+  {
+    "id": "PDDL_04_BLOCKS_STACK",
+    "text": "Deux blocs A et B sont posés sur une table et chacun est libre (rien n'est posé dessus). Un bras robotique peut empiler un bloc libre sur un autre bloc libre, ce qui rend le bloc du dessous non libre. Trouvez un plan d'actions pour que le bloc A soit posé sur le bloc B.",
+    "category": "pddl_blocks_world"
+  },
+  {
+    "id": "PDDL_05_HANOI_2_DISKS",
+    "text": "Tour de Hanoï à deux disques et trois tiges (gauche, milieu, droite). Au départ, le petit disque est posé sur le grand disque, et les deux sont sur la tige gauche. On veut déplacer les deux disques sur la tige droite, en ne déplaçant qu'un seul disque à la fois et sans jamais poser un grand disque sur un plus petit. Trouvez un plan d'actions.",
+    "category": "pddl_planning"
+  }
+]
