@@ -1,0 +1,4 @@
+# Document volontairement malformé : Turtle invalide -> ExtractionFailed
+@prefix dcat: <http://www.w3.org/ns/dcat# .
+<https://example.org/broken> a dcat:Dataset
+    dct:title "Sans point-virgule ni préfixe déclaré

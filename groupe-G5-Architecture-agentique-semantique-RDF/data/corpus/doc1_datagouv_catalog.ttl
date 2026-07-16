@@ -1,0 +1,28 @@
+# Extrait de catalogue inspiré de data.gouv.fr (Turtle) — document conforme
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://epita.fr/scia/2026/g5/catalog#> .
+@prefix res:  <https://www.data.gouv.fr/fr/datasets/> .
+@prefix org:  <https://www.data.gouv.fr/fr/organizations/> .
+
+org:insee a foaf:Organization, ex:PublicBody ;
+    foaf:name "Institut national de la statistique et des études économiques" ;
+    rdfs:label "INSEE" ;
+    foaf:mbox <mailto:contact@insee.fr> .
+
+res:population-communes a dcat:Dataset ;
+    dct:title "Population légale des communes"@fr ;
+    dct:description "Recensement de la population par commune."@fr ;
+    dct:publisher org:insee ;
+    dct:issued "2025-01-15"^^xsd:date ;
+    dct:modified "2025-06-01"^^xsd:date ;
+    dcat:distribution res:population-communes-csv ;
+    ex:partOfCatalog <https://www.data.gouv.fr/catalog> .
+
+res:population-communes-csv a dcat:Distribution ;
+    dct:format "text/csv" ;
+    dcat:downloadURL <https://www.data.gouv.fr/fr/datasets/r/pop-communes.csv> .
+

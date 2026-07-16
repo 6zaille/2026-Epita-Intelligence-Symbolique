@@ -1,0 +1,11 @@
+# Cache local d'un extrait DBpedia (permet l'exécution hors-ligne du LinkingAgent).
+# Extrait figé pour la reproductibilité hors-ligne ; régénérable manuellement
+# via une requête sur l'endpoint https://dbpedia.org/sparql.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://dbpedia.org/resource/Institut_national_de_la_statistique_et_des_études_économiques>
+    rdfs:label "Institut national de la statistique et des études économiques"@fr .
+<http://dbpedia.org/resource/Île-de-France_Mobilités>
+    rdfs:label "Île-de-France Mobilités"@fr .
+<http://dbpedia.org/resource/Paris> rdfs:label "Paris"@fr, "Paris"@en .
+<http://dbpedia.org/resource/RTE_(company)> rdfs:label "RTE"@fr .
