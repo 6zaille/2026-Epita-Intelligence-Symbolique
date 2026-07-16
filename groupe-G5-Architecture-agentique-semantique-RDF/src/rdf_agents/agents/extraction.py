@@ -45,10 +45,18 @@ class ExtractionAgent(Agent):
             except Exception as exc:  # noqa: BLE001 - on tente le format suivant
                 error = str(exc)
 
-        if parsed is None or len(parsed) == 0:
+        if parsed is None:
+            # Aucun format candidat n'a parsé : vraie erreur de syntaxe/format.
             meta["status"] = "failed"
             return self.emit(EXTRACTION_FAILED, doc_uri,
-                             reason=error or "document vide",
+                             reason=error or "format non reconnu",
+                             file=str(path.name))
+        if len(parsed) == 0:
+            # Parsing réussi mais document sans triplet : cas distinct d'une
+            # erreur de parsing (rien à valider/enrichir), signalé comme tel.
+            meta["status"] = "failed"
+            return self.emit(EXTRACTION_FAILED, doc_uri,
+                             reason="document valide mais sans triplet",
                              file=str(path.name))
 
         target = self.blackboard.doc_graph(doc_uri)

@@ -26,11 +26,19 @@ from .base import Agent
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
 DCT = Namespace("http://purl.org/dc/terms/")
 SKOS = Namespace("http://www.w3.org/2004/02/skos/core#")
-DCAT = Namespace("http://www.w3.org/ns/dcat#")
+EX = Namespace("http://epita.fr/scia/2026/g5/catalog#")
+DBO = Namespace("http://dbpedia.org/ontology/")
 
-#: types dont les instances ne sont pas des entités à aligner (un jeu de
-#: données ou une distribution n'a pas d'équivalent owl:sameAs sur DBpedia)
-_NON_ENTITY_TYPES = (DCAT.Dataset, DCAT.Distribution)
+#: garde de type POSITIVE : seuls les individus typés (asserté OU inféré) comme
+#: entités nommables — agents/organisations/personnes/organismes publics,
+#: concepts, lieux — sont candidats à un owl:sameAs. Une allowlist est plus sûre
+#: qu'une simple exclusion des jeux de données/distributions : elle écarte AUSSI
+#: les sujets NON typés, dont un titre homonyme d'une ressource DBpedia
+#: provoquerait une fusion d'identités erronée. Limite connue : le cache local
+#: ne type pas les entités distantes, donc la compatibilité de type
+#: local↔distant n'est pas encore vérifiée (extension : typer le cache).
+_LINKABLE_TYPES = (FOAF.Agent, FOAF.Organization, FOAF.Person,
+                   EX.PublicBody, SKOS.Concept, DBO.Place, DBO.City)
 
 _LABEL_PROPS = (RDFS.label, FOAF.name, DCT.title, SKOS.prefLabel)
 
@@ -57,21 +65,20 @@ class LinkingAgent(Agent):
         combined = self.blackboard.combined_doc_graph(doc_uri)
         links_graph = self.blackboard.links_graph
 
-        # Garde de type : l'égalité de label ne suffit pas à établir owl:sameAs
-        # (identité forte). On exclut les sujets typés comme jeu de données /
-        # distribution, dont un titre homonyme d'une entité DBpedia (p.ex. une
-        # ville) provoquerait une fusion d'identités erronée.
-        non_entity = {s for t in _NON_ENTITY_TYPES
-                      for s in combined.subjects(RDF.type, t)}
+        # Garde de type (cf. _LINKABLE_TYPES) : l'égalité de label ne fonde une
+        # identité forte owl:sameAs que si le sujet local est typé comme entité
+        # nommable. On aligne donc UNIQUEMENT les sujets dont le type (asserté ou
+        # inféré : le graphe combiné inclut la clôture) figure dans l'allowlist.
+        linkable = {s for t in _LINKABLE_TYPES for s in combined.subjects(RDF.type, t)}
 
-        candidates = 0
+        counted: set = set()      # sujets distincts comptés comme candidats
         links = 0
         seen_pairs = set()
         for prop in _LABEL_PROPS:
             for subject, label in combined.subject_objects(prop):
-                if not isinstance(subject, URIRef) or subject in non_entity:
+                if not isinstance(subject, URIRef) or subject not in linkable:
                     continue
-                candidates += 1
+                counted.add(subject)
                 for remote in self.remote_index.get(_norm(str(label)), []):
                     if remote == subject or (subject, remote) in seen_pairs:
                         continue
@@ -84,4 +91,4 @@ class LinkingAgent(Agent):
         meta = self.blackboard.documents[doc_uri]
         meta.update(status="linked", sameas_links=links)
         return self.emit(LINKING_COMPLETED, doc_uri,
-                         candidates=candidates, sameAsLinks=links)
+                         candidates=len(counted), sameAsLinks=links)
