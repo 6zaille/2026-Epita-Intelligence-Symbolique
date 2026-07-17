@@ -1,0 +1,60 @@
+{
+  "edges": [
+    {
+      "start": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "end": {"label": "drink", "language": "en", "@id": "/c/en/drink"},
+      "rel": {"label": "UsedFor"},
+      "weight": 2.0,
+      "surfaceText": "milk is used for drink"
+    },
+    {
+      "start": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "end": {"label": "food", "language": "en", "@id": "/c/en/food"},
+      "rel": {"label": "IsA"},
+      "weight": 1.8,
+      "surfaceText": "milk is a kind of food"
+    },
+    {
+      "start": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "end": {"label": "refrigerator", "language": "en", "@id": "/c/en/refrigerator"},
+      "rel": {"label": "AtLocation"},
+      "weight": 2.2,
+      "surfaceText": "milk is usually found at refrigerator"
+    },
+    {
+      "start": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "end": {"label": "white", "language": "en", "@id": "/c/en/white"},
+      "rel": {"label": "HasProperty"},
+      "weight": 1.7,
+      "surfaceText": "milk has the property of being white"
+    },
+    {
+      "start": {"label": "cow", "language": "en", "@id": "/c/en/cow"},
+      "end": {"label": "produce milk", "language": "en", "@id": "/c/en/produce_milk"},
+      "rel": {"label": "CapableOf"},
+      "weight": 2.4,
+      "surfaceText": "cow is capable of producing milk"
+    },
+    {
+      "start": {"label": "refrigerator", "language": "en", "@id": "/c/en/refrigerator"},
+      "end": {"label": "store milk", "language": "en", "@id": "/c/en/store_milk"},
+      "rel": {"label": "UsedFor"},
+      "weight": 2.1,
+      "surfaceText": "refrigerator is used for storing milk"
+    },
+    {
+      "start": {"label": "breakfast", "language": "en", "@id": "/c/en/breakfast"},
+      "end": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "rel": {"label": "UsedFor"},
+      "weight": 1.6,
+      "surfaceText": "breakfast is used for milk"
+    },
+    {
+      "start": {"label": "coffee", "language": "en", "@id": "/c/en/coffee"},
+      "end": {"label": "milk", "language": "en", "@id": "/c/en/milk"},
+      "rel": {"label": "HasProperty"},
+      "weight": 1.5,
+      "surfaceText": "coffee has the property of being combined with milk"
+    }
+  ]
+}

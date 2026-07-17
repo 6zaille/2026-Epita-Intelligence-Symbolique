@@ -1,0 +1,8 @@
+# Cache local d'un extrait Wikidata (labels français).
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix wd:   <http://www.wikidata.org/entity/> .
+
+wd:Q156616 rdfs:label "Institut national de la statistique et des études économiques"@fr .
+wd:Q90     rdfs:label "Paris"@fr .
+wd:Q1142326 rdfs:label "Ville de Paris"@fr .
+wd:Q3147623 rdfs:label "Île-de-France Mobilités"@fr .

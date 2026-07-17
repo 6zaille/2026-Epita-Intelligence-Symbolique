@@ -1,0 +1,90 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ex:   <http://epita.fr/scia/2026/g5/catalog#> .
+
+ex: a owl:Ontology ;
+    rdfs:label "Ontologie de catalogue de données ouvertes (G5)"@fr ;
+    rdfs:comment "TBox de domaine : spécialise DCAT/FOAF pour le corpus data.gouv.fr et fournit les axiomes exploités par le raisonnement OWL-RL."@fr .
+
+##### Hiérarchie de classes #####
+
+ex:OpenDataset a owl:Class ;
+    rdfs:subClassOf dcat:Dataset ;
+    rdfs:label "Jeu de données ouvert"@fr .
+
+ex:GovDataset a owl:Class ;
+    rdfs:subClassOf ex:OpenDataset ;
+    rdfs:label "Jeu de données gouvernemental"@fr .
+
+ex:GeoDataset a owl:Class ;
+    rdfs:subClassOf ex:OpenDataset ;
+    rdfs:label "Jeu de données géographique"@fr .
+
+foaf:Person a owl:Class .
+foaf:Organization a owl:Class .
+ex:PublicBody a owl:Class ;
+    rdfs:subClassOf foaf:Organization ;
+    rdfs:label "Organisme public"@fr .
+
+# Personnes et organisations sont disjointes : un individu typé dans les deux
+# rend la base inconsistante (détection par le ReasoningAgent).
+foaf:Person owl:disjointWith foaf:Organization .
+
+foaf:Organization rdfs:subClassOf foaf:Agent .
+foaf:Person rdfs:subClassOf foaf:Agent .
+
+##### Propriétés et axiomes #####
+
+# Domaine / co-domaine : l'inférence type automatiquement les individus.
+dct:publisher rdfs:range foaf:Agent .
+dcat:distribution rdfs:domain dcat:Dataset ; rdfs:range dcat:Distribution .
+
+ex:distributionOf a owl:ObjectProperty ;
+    owl:inverseOf dcat:distribution ;
+    rdfs:label "distribution de"@fr .
+
+ex:partOfCatalog a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "fait partie du catalogue"@fr ;
+    rdfs:range dcat:Catalog .
+
+ex:maintainedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf dct:publisher ;
+    rdfs:label "maintenu par"@fr .
+
+ex:worksFor a owl:ObjectProperty ;
+    rdfs:domain foaf:Person ;
+    rdfs:range foaf:Organization ;
+    rdfs:label "travaille pour"@fr .
+
+ex:employs a owl:ObjectProperty ;
+    owl:inverseOf ex:worksFor .
+
+# Toute dcat:Dataset publiée par un organisme public est un GovDataset.
+# L'antécédent est l'INTERSECTION (dcat:Dataset ⊓ ∃dct:publisher.PublicBody)
+# et non la seule restriction : sans l'intersection avec dcat:Dataset, n'importe
+# quelle ressource (même non-dataset) publiée par un PublicBody serait inférée
+# GovDataset ⊑ dcat:Dataset.
+#
+# Conformité OWL 2 RL : owl:someValuesFrom n'est autorisé qu'en position
+# sous-classe (subClassExpression), jamais dans une équivalence ni en
+# super-classe. On axiomatise donc l'implication par un rdfs:subClassOf direct
+# sur l'intersection anonyme (someValuesFrom en sous-classe = RL-valide), au lieu
+# d'un owl:equivalentClass (qui placerait someValuesFrom en super-classe, hors
+# profil). OWL-RL applique cls-int1 + cls-svf1 et l'inférence GovDataset est
+# préservée (seule la direction utile — antécédent ⊑ conséquent — est requise).
+ex:PublishedByPublicBody a owl:Class ;
+    rdfs:subClassOf ex:GovDataset .
+
+[ a owl:Class ;
+  owl:intersectionOf (
+      dcat:Dataset
+      [ a owl:Restriction ;
+        owl:onProperty dct:publisher ;
+        owl:someValuesFrom ex:PublicBody ]
+  )
+] rdfs:subClassOf ex:PublishedByPublicBody .
